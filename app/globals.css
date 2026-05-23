@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg: 255 255 255;
+    --bg2: 245 245 243;
+    --bg3: 238 237 233;
+    --text: 26 26 24;
+    --text2: 107 107 103;
+    --text3: 155 155 150;
+    --border: 0 0 0 / 0.1;
+    --border2: 0 0 0 / 0.2;
+
+    --blue: 24 95 165;
+    --blue-bg: 230 241 251;
+    --green: 59 109 17;
+    --green-bg: 234 243 222;
+    --amber: 133 79 11;
+    --amber-bg: 250 238 218;
+    --red: 163 45 45;
+    --red-bg: 252 235 235;
+    --purple: 60 52 137;
+    --purple-bg: 238 237 254;
+    --pink: 114 36 62;
+    --pink-bg: 251 234 240;
+    --gray: 95 94 90;
+    --gray-bg: 241 239 232;
+
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: 30 30 28;
+      --bg2: 42 42 40;
+      --bg3: 51 51 49;
+      --text: 240 239 235;
+      --text2: 168 168 163;
+      --text3: 107 107 103;
+      --border: 255 255 255 / 0.1;
+      --border2: 255 255 255 / 0.2;
+
+      --blue: 91 163 232;
+      --blue-bg: 12 45 74;
+      --green: 151 196 89;
+      --green-bg: 26 51 8;
+      --amber: 239 159 39;
+      --amber-bg: 58 34 5;
+      --red: 240 149 149;
+      --red-bg: 58 16 16;
+      --purple: 175 169 236;
+      --purple-bg: 38 33 92;
+      --pink: 237 147 177;
+      --pink-bg: 75 21 40;
+      --gray: 180 178 169;
+      --gray-bg: 44 44 42;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background: rgb(var(--bg3));
+    color: rgb(var(--text));
+    min-height: 100vh;
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+}
+
+@layer utilities {
+  .text-app { color: rgb(var(--text)); }
+  .text-muted { color: rgb(var(--text2)); }
+  .text-faint { color: rgb(var(--text3)); }
+
+  .bg-app { background: rgb(var(--bg)); }
+  .bg-app2 { background: rgb(var(--bg2)); }
+  .bg-app3 { background: rgb(var(--bg3)); }
+
+  .border-app { border-color: rgb(var(--border)); }
+  .border-app2 { border-color: rgb(var(--border2)); }
+
+  /* Day type badge colours */
+  .badge-push  { background: rgb(var(--blue-bg)); color: rgb(var(--blue)); }
+  .badge-pull  { background: rgb(var(--green-bg)); color: rgb(var(--green)); }
+  .badge-legs  { background: rgb(var(--amber-bg)); color: rgb(var(--amber)); }
+  .badge-upper { background: rgb(var(--purple-bg)); color: rgb(var(--purple)); }
+  .badge-lower { background: rgb(var(--pink-bg)); color: rgb(var(--pink)); }
+  .badge-rest  { background: rgb(var(--gray-bg)); color: rgb(var(--gray)); }
+}
