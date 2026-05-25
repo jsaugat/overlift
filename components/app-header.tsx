@@ -1,13 +1,13 @@
-'use client'
+"use client";
 
-import { getDayName, getTodayKey, getProgramDay } from '@/lib/program'
-import { Dumbbell } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { getDayName, getTodayKey, getProgramDay } from "@/lib/program";
+import { Dumbbell } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function AppHeader() {
-  const todayKey = getTodayKey()
-  const day = getProgramDay(todayKey)
-  const dayName = getDayName()
+  const todayKey = getTodayKey();
+  const day = getProgramDay(todayKey);
+  const dayName = getDayName();
 
   return (
     <div className="mb-12">
@@ -15,9 +15,9 @@ export function AppHeader() {
         OVERLIFT // SYSTEM v2.0
       </div>
       <h1 className="font-bebas text-[clamp(52px,12vw,110px)] leading-[0.88] tracking-[0.02em]">
-        WEEKLY <span className="text-accent block">TRAINING</span>
+        PROJECT <span className="text-accent block">OVERLIFT</span>
       </h1>
-      
+
       <div className="flex gap-[20px] mt-[20px] flex-wrap">
         <div className="flex items-center gap-[7px] text-[11px] text-muted font-mono">
           <div className="w-[6px] h-[6px] rounded-full bg-accent shrink-0"></div>
@@ -29,5 +29,5 @@ export function AppHeader() {
         </div>
       </div>
     </div>
-  )
+  );
 }

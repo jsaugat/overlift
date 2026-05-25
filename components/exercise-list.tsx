@@ -47,8 +47,11 @@ export function ExerciseList({ day }: ExerciseListProps) {
   const [sets, setSets] = useState<SetsMap>({});
   const [saving, setSaving] = useState<Record<string, boolean>>({});
   const [dbExercises, setDbExercises] = useState<DbExercise[]>([]);
-  const [targetWeights, setTargetWeights] = useState<Record<string, number>>({});
+  const [targetWeights, setTargetWeights] = useState<Record<string, number>>(
+    {},
+  );
   const [loadingExercises, setLoadingExercises] = useState(false);
+  const [editingSet, setEditingSet] = useState<string | null>(null);
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -62,25 +65,25 @@ export function ExerciseList({ day }: ExerciseListProps) {
     async function loadExercises() {
       if (!day.dbDayType) return;
       setLoadingExercises(true);
-      
+
       const [exRes, weightRes] = await Promise.all([
         supabase
           .from("exercises")
           .select("id,name,muscle_group,equipment,day_type")
           .eq("day_type", day.dbDayType)
           .order("name"),
-        supabase.from("v_latest_weights").select("exercise, weight_kg")
+        supabase.from("v_latest_weights").select("exercise, weight_kg"),
       ]);
 
       if (!isMounted) return;
-      
+
       if (exRes.error) {
         console.error("Failed to load exercises:", exRes.error);
         setDbExercises([]);
       } else {
         setDbExercises(exRes.data ?? []);
       }
-      
+
       if (!weightRes.error && weightRes.data) {
         const weights: Record<string, number> = {};
         (weightRes.data as any[]).forEach((w) => {
@@ -88,7 +91,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
         });
         setTargetWeights(weights);
       }
-      
+
       setLoadingExercises(false);
     }
 
@@ -122,7 +125,13 @@ export function ExerciseList({ day }: ExerciseListProps) {
    * Creates a workout_session for today if one doesn't exist, then upserts the set_log.
    */
   const saveToDb = useCallback(
-    async (ex: ProgramExercise, idx: number, exerciseId?: number, setNumber: number = 1, setId?: string) => {
+    async (
+      ex: ProgramExercise,
+      idx: number,
+      exerciseId?: number,
+      setNumber: number = 1,
+      setId?: string,
+    ) => {
       const id = setId || `${day.key}-${idx}`;
       const entry = sets[id];
       if (!entry?.weight || !entry?.reps) return;
@@ -167,7 +176,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
 
         // 3. Insert set
         await supabase.from("set_logs").insert({
-          session_id: session!.id,
+          session_id: (session as any)!.id,
           exercise_id: resolvedExerciseId,
           set_number: setNumber,
           weight_kg: parseFloat(entry.weight),
@@ -309,76 +318,148 @@ export function ExerciseList({ day }: ExerciseListProps) {
 
                 {/* Interesting Sets Card */}
                 {!isDone && (
-                  <div className="mt-4 bg-[#141414] rounded-xl border border-app2 overflow-hidden">
-                    {/* Table-like Header */}
-                    <div className="flex items-center px-4 py-2 border-b border-app2 bg-[#181818]">
-                      <div className="w-8 text-[10px] font-mono text-muted uppercase">Set</div>
-                      <div className="flex-1 text-[10px] font-mono text-muted uppercase">Target</div>
-                      <div className="w-14 text-[10px] font-mono text-muted uppercase text-center">kg</div>
-                      <div className="w-14 text-[10px] font-mono text-muted uppercase text-center ml-2">Reps</div>
-                      <div className="w-12 ml-2"></div>
-                    </div>
-                    
-                    {/* Sets Rows */}
-                    <div className="flex flex-col">
-                      {Array.from({ length: parseInt(ex.sets) || 3 }).map((_, setIdx) => {
-                        const setId = `${id}-${setIdx}`;
-                        const setEntry = sets[setId] ?? { weight: "", reps: "" };
-                        const isSetSaving = saving[setId];
-                        const targetWeight = targetWeights[ex.name] ? `${targetWeights[ex.name]}kg` : '-';
+                  <div className="mt-5">
+                    <div className="grid grid-cols-3 gap-3">
+                      {Array.from({ length: parseInt(ex.sets) || 3 }).map(
+                        (_, setIdx) => {
+                          const setId = `${id}-${setIdx}`;
+                          const setEntry = sets[setId] ?? {
+                            weight: "",
+                            reps: "",
+                          };
+                          const isSetSaving = saving[setId];
+                          const isEditing = editingSet === setId;
 
-                        return (
-                          <div key={setId} className="flex items-center px-4 py-2.5 border-b border-app2/50 last:border-b-0">
-                            <div className="w-8 text-xs font-mono text-app">{setIdx + 1}</div>
-                            <div className="flex-1 flex flex-col text-[11px] text-muted">
-                              <span>{ex.reps} reps</span>
-                              <span className="text-[9px] text-faint">{targetWeight}</span>
-                            </div>
-                            <div className="w-14">
-                              <input
-                                type="number"
-                                placeholder={targetWeights[ex.name]?.toString() ?? "-"}
-                                value={setEntry.weight}
-                                onChange={(e) => updateSet(setId, "weight", e.target.value)}
-                                className="w-full text-center px-1 py-1.5 text-xs rounded-md border border-app2 bg-[#1a1a1a] text-app focus:outline-none focus:border-accent transition-colors"
-                              />
-                            </div>
-                            <div className="w-14 ml-2">
-                              <input
-                                type="number"
-                                placeholder={ex.reps.split("–")[0] ?? "-"}
-                                value={setEntry.reps}
-                                onChange={(e) => updateSet(setId, "reps", e.target.value)}
-                                className="w-full text-center px-1 py-1.5 text-xs rounded-md border border-app2 bg-[#1a1a1a] text-app focus:outline-none focus:border-accent transition-colors"
-                              />
-                            </div>
-                            <div className="w-12 ml-2 flex justify-end">
-                              <button
-                                onClick={() => saveToDb(ex, i, ex.id, setIdx + 1, setId)}
-                                disabled={isSetSaving}
+                          // Treat as 'done' visually if local storage has values for both
+                          const hasData =
+                            setEntry.weight !== "" && setEntry.reps !== "";
+
+                          const targetWeight = targetWeights[ex.name]
+                            ? targetWeights[ex.name]
+                            : null;
+                          const displayWeight =
+                            setEntry.weight || targetWeight || "—";
+                          const displayReps =
+                            setEntry.reps || ex.reps.split("–")[0] || "—";
+
+                          return (
+                            <div
+                              key={setId}
+                              onClick={() => !isEditing && setEditingSet(setId)}
+                              className={cn(
+                                "relative flex flex-col justify-center min-h-[90px] p-2 text-center border rounded-xl transition-all duration-200 cursor-pointer overflow-hidden",
+                                isEditing
+                                  ? "bg-[#181822] border-[#00bfff] shadow-[0_0_0_1px_rgba(0,191,255,0.2)] cursor-default"
+                                  : hasData
+                                    ? "bg-[rgba(204,255,0,0.02)] border-[rgba(204,255,0,0.3)] hover:translate-y-[-2px]"
+                                    : "bg-[#1c1c24] border-app2 hover:border-muted hover:translate-y-[-2px]",
+                              )}
+                              style={isEditing ? { gridColumn: "span 1" } : {}}
+                            >
+                              {/* Status Dot */}
+                              <div
                                 className={cn(
-                                  "text-[10px] px-2 py-1.5 rounded transition-colors font-medium cursor-pointer w-full text-center disabled:opacity-50",
-                                  isSetSaving 
-                                    ? "bg-app2 text-faint" 
-                                    : "bg-[#222] text-app hover:bg-[#333]"
+                                  "absolute top-2 right-2 w-1.5 h-1.5 rounded-full",
+                                  isEditing
+                                    ? "bg-[#00bfff] shadow-[0_0_8px_#00bfff]"
+                                    : hasData
+                                      ? "bg-[#ccff00] shadow-[0_0_8px_#ccff00]"
+                                      : "bg-[#27272a]",
+                                )}
+                              />
+
+                              <div
+                                className={cn(
+                                  "text-[10px] uppercase font-bold tracking-widest mb-1.5 transition-colors",
+                                  isEditing
+                                    ? "text-[#00bfff]"
+                                    : hasData
+                                      ? "text-[#ccff00]"
+                                      : "text-muted",
                                 )}
                               >
-                                {isSetSaving ? "..." : "Log"}
-                              </button>
+                                Set {setIdx + 1}
+                              </div>
+
+                              {!isEditing ? (
+                                <div className="flex flex-col items-center">
+                                  <div className="text-xl font-black leading-none mb-0.5 text-app">
+                                    {displayWeight}
+                                    <span className="text-[10px] text-muted font-normal ml-0.5">
+                                      kg
+                                    </span>
+                                  </div>
+                                  <div
+                                    className={cn(
+                                      "text-xs font-semibold",
+                                      hasData ? "text-app" : "text-muted",
+                                    )}
+                                  >
+                                    {displayReps} Reps
+                                  </div>
+                                </div>
+                              ) : (
+                                <div
+                                  className="flex flex-col gap-1.5 items-center w-full"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <input
+                                    type="number"
+                                    placeholder={
+                                      targetWeights[ex.name]?.toString() ?? "kg"
+                                    }
+                                    value={setEntry.weight}
+                                    onChange={(e) =>
+                                      updateSet(setId, "weight", e.target.value)
+                                    }
+                                    className="w-[85%] bg-[#0a0a0c] border border-app2 rounded-md text-app px-1 py-1 text-center font-bold text-sm focus:outline-none focus:border-[#00bfff]"
+                                    autoFocus
+                                  />
+                                  <input
+                                    type="number"
+                                    placeholder={
+                                      ex.reps.split("–")[0] ?? "reps"
+                                    }
+                                    value={setEntry.reps}
+                                    onChange={(e) =>
+                                      updateSet(setId, "reps", e.target.value)
+                                    }
+                                    className="w-[85%] bg-[#0a0a0c] border border-app2 rounded-md text-app px-1 py-1 text-center font-bold text-sm focus:outline-none focus:border-[#00bfff]"
+                                  />
+                                  <button
+                                    onClick={async () => {
+                                      await saveToDb(
+                                        ex,
+                                        i,
+                                        ex.id,
+                                        setIdx + 1,
+                                        setId,
+                                      );
+                                      setEditingSet(null);
+                                    }}
+                                    disabled={isSetSaving}
+                                    className="w-[85%] bg-[#00bfff] text-black border-none rounded-md py-1 font-extrabold text-[10px] uppercase cursor-pointer hover:bg-white transition-colors disabled:opacity-50"
+                                  >
+                                    {isSetSaving ? "..." : "Save"}
+                                  </button>
+                                </div>
+                              )}
                             </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        },
+                      )}
                     </div>
-                    
-                    {/* Rest Timer Button in footer */}
-                    <div className="bg-[#181818] px-4 py-2.5 flex justify-end border-t border-app2">
+
+                    <div className="flex justify-between items-center mt-4">
+                      <p className="text-[10px] text-muted">
+                        Tap a set to log or adjust.
+                      </p>
                       <button
-                         onClick={() => router.push("/timer")}
-                        className="flex items-center gap-1.5 text-[11px] text-muted hover:text-app transition-colors"
+                        onClick={() => router.push("/timer")}
+                        className="flex items-center gap-1 text-[11px] text-muted hover:text-app transition-colors"
                       >
                         <Timer size={12} />
-                        Rest Timer
+                        Rest
                       </button>
                     </div>
                   </div>
