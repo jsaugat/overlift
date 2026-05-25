@@ -47,6 +47,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
   const [sets, setSets] = useState<SetsMap>({});
   const [saving, setSaving] = useState<Record<string, boolean>>({});
   const [dbExercises, setDbExercises] = useState<DbExercise[]>([]);
+  const [targetWeights, setTargetWeights] = useState<Record<string, number>>({});
   const [loadingExercises, setLoadingExercises] = useState(false);
 
   // Load from localStorage on mount
@@ -61,19 +62,33 @@ export function ExerciseList({ day }: ExerciseListProps) {
     async function loadExercises() {
       if (!day.dbDayType) return;
       setLoadingExercises(true);
-      const { data, error } = await supabase
-        .from("exercises")
-        .select("id,name,muscle_group,equipment,day_type")
-        .eq("day_type", day.dbDayType)
-        .order("name");
+      
+      const [exRes, weightRes] = await Promise.all([
+        supabase
+          .from("exercises")
+          .select("id,name,muscle_group,equipment,day_type")
+          .eq("day_type", day.dbDayType)
+          .order("name"),
+        supabase.from("v_latest_weights").select("exercise, weight_kg")
+      ]);
 
       if (!isMounted) return;
-      if (error) {
-        console.error("Failed to load exercises:", error);
+      
+      if (exRes.error) {
+        console.error("Failed to load exercises:", exRes.error);
         setDbExercises([]);
       } else {
-        setDbExercises(data ?? []);
+        setDbExercises(exRes.data ?? []);
       }
+      
+      if (!weightRes.error && weightRes.data) {
+        const weights: Record<string, number> = {};
+        (weightRes.data as any[]).forEach((w) => {
+          weights[w.exercise] = w.weight_kg;
+        });
+        setTargetWeights(weights);
+      }
+      
       setLoadingExercises(false);
     }
 
@@ -107,8 +122,8 @@ export function ExerciseList({ day }: ExerciseListProps) {
    * Creates a workout_session for today if one doesn't exist, then upserts the set_log.
    */
   const saveToDb = useCallback(
-    async (ex: ProgramExercise, idx: number, exerciseId?: number) => {
-      const id = `${day.key}-${idx}`;
+    async (ex: ProgramExercise, idx: number, exerciseId?: number, setNumber: number = 1, setId?: string) => {
+      const id = setId || `${day.key}-${idx}`;
       const entry = sets[id];
       if (!entry?.weight || !entry?.reps) return;
 
@@ -127,7 +142,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
         if (!session) {
           const { data: newSession, error } = await supabase
             .from("workout_sessions")
-            .insert({ session_date: today, day_type: day.dbDayType })
+            .insert({ session_date: today, day_type: day.dbDayType } as any)
             .select("id")
             .single();
           if (error) throw error;
@@ -147,17 +162,17 @@ export function ExerciseList({ day }: ExerciseListProps) {
             console.warn("Exercise not found in DB:", ex.name);
             return;
           }
-          resolvedExerciseId = exerciseRow.id;
+          resolvedExerciseId = (exerciseRow as any).id;
         }
 
-        // 3. Insert set (set_number = 1 per log entry from UI; a future enhancement could track multiple sets)
+        // 3. Insert set
         await supabase.from("set_logs").insert({
-          session_id: session.id,
+          session_id: session!.id,
           exercise_id: resolvedExerciseId,
-          set_number: 1,
+          set_number: setNumber,
           weight_kg: parseFloat(entry.weight),
           reps: parseInt(entry.reps),
-        });
+        } as any);
       } catch (err) {
         console.error("Failed to save set:", err);
       } finally {
@@ -215,7 +230,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
             className="font-bebas text-[clamp(24px,4vw,32px)] tracking-[0.04em] uppercase"
             style={{ color: `var(--color-${day.type.toLowerCase()})` }}
           >
-            {day.type === "Closed" ? "REST" : day.type} DAY
+            {day.type} DAY
           </h2>
           <div className="flex items-center gap-[7px] text-[11px] text-muted font-mono mt-[8px]">
             <div
@@ -292,39 +307,82 @@ export function ExerciseList({ day }: ExerciseListProps) {
                   {ex.tip && ` · ${ex.tip}`}
                 </div>
 
-                {/* Inline log inputs */}
-                <div className="flex items-center gap-2 mt-2 flex-wrap">
-                  <label className="text-[11px] text-muted">Weight</label>
-                  <input
-                    type="number"
-                    placeholder="kg"
-                    value={entry.weight}
-                    onChange={(e) => updateSet(id, "weight", e.target.value)}
-                    className="w-16 px-2 py-1 text-xs rounded-lg border border-app2 bg-app2 text-app"
-                  />
-                  <label className="text-[11px] text-muted">Reps</label>
-                  <input
-                    type="number"
-                    placeholder={ex.reps.split("–")[0] ?? "10"}
-                    value={entry.reps}
-                    onChange={(e) => updateSet(id, "reps", e.target.value)}
-                    className="w-16 px-2 py-1 text-xs rounded-lg border border-app2 bg-app2 text-app"
-                  />
-                  <button
-                    onClick={() => saveToDb(ex, i, ex.id)}
-                    disabled={isSaving}
-                    className="flex items-center gap-1 px-2 py-1 text-[11px] rounded-lg border border-app text-muted hover:bg-app2 transition-colors cursor-pointer disabled:opacity-50"
-                  >
-                    {isSaving ? "Saving…" : "Log"}
-                  </button>
-                  <button
-                    onClick={() => router.push("/timer")}
-                    className="flex items-center gap-1 px-2 py-1 text-[11px] rounded-lg border border-app text-muted hover:bg-app2 transition-colors cursor-pointer"
-                  >
-                    <Timer size={11} />
-                    Rest
-                  </button>
-                </div>
+                {/* Interesting Sets Card */}
+                {!isDone && (
+                  <div className="mt-4 bg-[#141414] rounded-xl border border-app2 overflow-hidden">
+                    {/* Table-like Header */}
+                    <div className="flex items-center px-4 py-2 border-b border-app2 bg-[#181818]">
+                      <div className="w-8 text-[10px] font-mono text-muted uppercase">Set</div>
+                      <div className="flex-1 text-[10px] font-mono text-muted uppercase">Target</div>
+                      <div className="w-14 text-[10px] font-mono text-muted uppercase text-center">kg</div>
+                      <div className="w-14 text-[10px] font-mono text-muted uppercase text-center ml-2">Reps</div>
+                      <div className="w-12 ml-2"></div>
+                    </div>
+                    
+                    {/* Sets Rows */}
+                    <div className="flex flex-col">
+                      {Array.from({ length: parseInt(ex.sets) || 3 }).map((_, setIdx) => {
+                        const setId = `${id}-${setIdx}`;
+                        const setEntry = sets[setId] ?? { weight: "", reps: "" };
+                        const isSetSaving = saving[setId];
+                        const targetWeight = targetWeights[ex.name] ? `${targetWeights[ex.name]}kg` : '-';
+
+                        return (
+                          <div key={setId} className="flex items-center px-4 py-2.5 border-b border-app2/50 last:border-b-0">
+                            <div className="w-8 text-xs font-mono text-app">{setIdx + 1}</div>
+                            <div className="flex-1 flex flex-col text-[11px] text-muted">
+                              <span>{ex.reps} reps</span>
+                              <span className="text-[9px] text-faint">{targetWeight}</span>
+                            </div>
+                            <div className="w-14">
+                              <input
+                                type="number"
+                                placeholder={targetWeights[ex.name]?.toString() ?? "-"}
+                                value={setEntry.weight}
+                                onChange={(e) => updateSet(setId, "weight", e.target.value)}
+                                className="w-full text-center px-1 py-1.5 text-xs rounded-md border border-app2 bg-[#1a1a1a] text-app focus:outline-none focus:border-accent transition-colors"
+                              />
+                            </div>
+                            <div className="w-14 ml-2">
+                              <input
+                                type="number"
+                                placeholder={ex.reps.split("–")[0] ?? "-"}
+                                value={setEntry.reps}
+                                onChange={(e) => updateSet(setId, "reps", e.target.value)}
+                                className="w-full text-center px-1 py-1.5 text-xs rounded-md border border-app2 bg-[#1a1a1a] text-app focus:outline-none focus:border-accent transition-colors"
+                              />
+                            </div>
+                            <div className="w-12 ml-2 flex justify-end">
+                              <button
+                                onClick={() => saveToDb(ex, i, ex.id, setIdx + 1, setId)}
+                                disabled={isSetSaving}
+                                className={cn(
+                                  "text-[10px] px-2 py-1.5 rounded transition-colors font-medium cursor-pointer w-full text-center disabled:opacity-50",
+                                  isSetSaving 
+                                    ? "bg-app2 text-faint" 
+                                    : "bg-[#222] text-app hover:bg-[#333]"
+                                )}
+                              >
+                                {isSetSaving ? "..." : "Log"}
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    
+                    {/* Rest Timer Button in footer */}
+                    <div className="bg-[#181818] px-4 py-2.5 flex justify-end border-t border-app2">
+                      <button
+                         onClick={() => router.push("/timer")}
+                        className="flex items-center gap-1.5 text-[11px] text-muted hover:text-app transition-colors"
+                      >
+                        <Timer size={12} />
+                        Rest Timer
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           );
