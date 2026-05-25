@@ -8,26 +8,42 @@ interface DayTabsProps {
   onSelect: (key: DayKey) => void
 }
 
+const colorMap: Record<string, string> = {
+  Push: 'var(--color-push)',
+  Pull: 'var(--color-pull)',
+  Legs: 'var(--color-legs)',
+  Upper: 'var(--color-upper)',
+  Lower: 'var(--color-lower)',
+  Rest: 'var(--color-rest)',
+  Closed: 'var(--color-rest)',
+}
+
 export function DayTabs({ activeDay, onSelect }: DayTabsProps) {
   return (
-    <div className="flex gap-1 flex-wrap mb-4">
+    <div className="grid grid-cols-7 gap-[2px] mb-10">
       {PROGRAM.map((day) => {
         const isActive = day.key === activeDay
-        const isRest = day.type === 'Rest' || day.type === 'Closed'
+        const dayColor = colorMap[day.type] || 'var(--color-text-dim)'
+        
         return (
           <button
             key={day.key}
             onClick={() => onSelect(day.key)}
             className={cn(
-              'px-3 py-1 rounded-lg border text-[12px] transition-colors cursor-pointer',
-              isActive
-                ? isRest
-                  ? 'bg-[rgb(var(--amber-bg))] border-[rgb(var(--amber))] text-[rgb(var(--amber))]'
-                  : 'bg-[rgb(var(--blue-bg))] border-[rgb(var(--blue))] text-[rgb(var(--blue))] font-medium'
-                : 'bg-transparent border-[rgb(var(--border))] text-muted hover:bg-app2'
+              'pt-[10px] pb-[10px] px-[4px] text-center cursor-pointer rounded-t-[4px] transition-colors relative',
+              'hover:bg-app3',
+              isActive ? "after:bg-[var(--day-color)] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px]" : "after:bg-transparent after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:transition-colors"
             )}
+            style={{ 
+              '--day-color': dayColor 
+            } as React.CSSProperties}
           >
-            {day.label} · {day.type}
+            <div className={cn("font-mono text-[9px] tracking-[0.12em] uppercase mb-[3px]", isActive ? "text-app" : "text-muted")}>
+              {day.label}
+            </div>
+            <div className="font-bebas text-[clamp(14px,2.5vw,20px)] tracking-[0.04em]" style={{ color: isActive ? 'var(--day-color)' : 'var(--color-text-faint)' }}>
+              {day.type === 'Closed' ? 'Rest' : day.type}
+            </div>
           </button>
         )
       })}

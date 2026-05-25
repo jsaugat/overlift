@@ -18,7 +18,7 @@ export function Nav() {
   return (
     <>
       {/* Desktop: horizontal bar inside the card */}
-      <nav className="hidden sm:flex gap-1 px-3 py-2 bg-app border-b border-[rgb(var(--border))]">
+      <nav className="hidden sm:flex gap-1 px-3 py-2 bg-app border-b border-app">
         {NAV_ITEMS.map(({ href, label, Icon }) => {
           const active = pathname.startsWith(href)
           return (
@@ -28,7 +28,7 @@ export function Nav() {
               className={cn(
                 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] transition-colors',
                 active
-                  ? 'bg-app2 border border-[rgb(var(--border2))] text-app font-medium'
+                  ? 'bg-app2 border border-app2 text-app font-medium'
                   : 'text-muted hover:bg-app2'
               )}
             >
@@ -40,7 +40,7 @@ export function Nav() {
       </nav>
 
       {/* Mobile: fixed bottom tab bar */}
-      <nav className="sm:hidden fixed bottom-0 inset-x-0 bg-app border-t border-[rgb(var(--border))] flex z-50 safe-area-pb">
+      <nav className="sm:hidden fixed bottom-0 inset-x-0 bg-app border-t border-app flex z-50 safe-area-pb">
         {NAV_ITEMS.map(({ href, label, Icon }) => {
           const active = pathname.startsWith(href)
           return (
@@ -49,7 +49,7 @@ export function Nav() {
               href={href}
               className={cn(
                 'flex-1 flex flex-col items-center gap-0.5 py-2.5 text-[10px] transition-colors',
-                active ? 'text-[rgb(var(--blue))]' : 'text-muted'
+                active ? 'text-accent' : 'text-muted'
               )}
             >
               <Icon size={20} strokeWidth={active ? 2.5 : 1.75} />

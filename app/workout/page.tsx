@@ -14,9 +14,9 @@ export default function WorkoutPage() {
   return (
     <>
       <AppHeader />
-      <div className="bg-app border border-[rgb(var(--border))] rounded-xl mt-2 overflow-hidden">
+      <div className="bg-app border border-app rounded-xl mt-2 overflow-hidden mb-12">
         <Nav />
-        <div className="p-4">
+        <div className="p-4 sm:p-6">
           <DayTabs activeDay={activeDay} onSelect={setActiveDay} />
           <ExerciseList day={day} />
         </div>

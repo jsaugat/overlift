@@ -75,7 +75,7 @@ export default function NutritionPage() {
   return (
     <>
       <AppHeader />
-      <div className="bg-app border border-[rgb(var(--border))] rounded-xl mt-2 overflow-hidden">
+      <div className="bg-app border border-app rounded-xl mt-2 overflow-hidden">
         <Nav />
         <div className="p-4 space-y-4">
           <div>
@@ -94,7 +94,7 @@ export default function NutritionPage() {
           </div>
 
           {/* Personalise */}
-          <div className="bg-app border border-[rgb(var(--border))] rounded-xl p-4">
+          <div className="bg-app border border-app rounded-xl p-4">
             <div className="text-sm font-medium text-app mb-3">Personalise your targets</div>
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -102,7 +102,7 @@ export default function NutritionPage() {
                 <select
                   value={activity}
                   onChange={(e) => setActivity(parseFloat(e.target.value) as ActivityLevel)}
-                  className="w-full px-2 py-1.5 text-sm rounded-lg border border-[rgb(var(--border2))] bg-app2 text-app"
+                  className="w-full px-2 py-1.5 text-sm rounded-lg border border-app2 bg-app2 text-app"
                 >
                   {ACTIVITY_OPTIONS.map((o) => (
                     <option key={o.value} value={o.value}>{o.label}</option>
@@ -114,7 +114,7 @@ export default function NutritionPage() {
                 <select
                   value={surplus}
                   onChange={(e) => setSurplus(parseInt(e.target.value))}
-                  className="w-full px-2 py-1.5 text-sm rounded-lg border border-[rgb(var(--border2))] bg-app2 text-app"
+                  className="w-full px-2 py-1.5 text-sm rounded-lg border border-app2 bg-app2 text-app"
                 >
                   {SURPLUS_OPTIONS.map((o) => (
                     <option key={o.value} value={o.value}>{o.label}</option>
@@ -125,16 +125,16 @@ export default function NutritionPage() {
           </div>
 
           {/* Macro bars */}
-          <div className="bg-app border border-[rgb(var(--border))] rounded-xl p-4">
+          <div className="bg-app border border-app rounded-xl p-4">
             <div className="text-sm font-medium text-app mb-3">Macronutrient breakdown</div>
             <MacroBars {...macros} />
           </div>
 
           {/* Log today's nutrition */}
-          <div className="bg-app border border-[rgb(var(--border))] rounded-xl p-4">
+          <div className="bg-app border border-app rounded-xl p-4">
             <div className="text-sm font-medium text-app mb-1">Log today's nutrition</div>
             {todayLog && (
-              <p className="text-xs text-[rgb(var(--green))] mb-3">
+              <p className="text-xs text-pull mb-3">
                 ✓ Logged today — {todayLog.calories} kcal, {todayLog.protein_g}g protein
               </p>
             )}
@@ -147,7 +147,7 @@ export default function NutritionPage() {
                     placeholder={field === 'calories' ? 'kcal' : 'g'}
                     value={logInput[field]}
                     onChange={(e) => setLogInput((p) => ({ ...p, [field]: e.target.value }))}
-                    className="w-full px-2 py-1.5 text-sm rounded-lg border border-[rgb(var(--border2))] bg-app2 text-app"
+                    className="w-full px-2 py-1.5 text-sm rounded-lg border border-app2 bg-app2 text-app"
                   />
                 </div>
               ))}
@@ -155,20 +155,20 @@ export default function NutritionPage() {
             <button
               onClick={saveNutrition}
               disabled={saving}
-              className="px-4 py-1.5 text-sm rounded-lg border border-[rgb(var(--border2))] text-app hover:bg-app2 transition-colors cursor-pointer disabled:opacity-50"
+              className="px-4 py-1.5 text-sm rounded-lg border border-app2 text-app hover:bg-app2 transition-colors cursor-pointer disabled:opacity-50"
             >
               {saving ? 'Saving…' : 'Log nutrition'}
             </button>
           </div>
 
           {/* High-protein foods */}
-          <div className="bg-app border border-[rgb(var(--border))] rounded-xl p-4">
+          <div className="bg-app border border-app rounded-xl p-4">
             <div className="text-sm font-medium text-app mb-3">High-protein foods for Nepal</div>
             <div className="flex flex-wrap gap-2">
               {PROTEIN_FOODS.map((f) => (
                 <span
                   key={f}
-                  className="inline-flex items-center text-[11px] px-2.5 py-1 rounded-full border border-[rgb(var(--border))] bg-app2 text-muted"
+                  className="inline-flex items-center text-[11px] px-2.5 py-1 rounded-full border border-app bg-app2 text-muted"
                 >
                   {f}
                 </span>
@@ -177,8 +177,8 @@ export default function NutritionPage() {
           </div>
 
           {/* Sleep reminder */}
-          <div className="rounded-xl p-4 border-l-[3px] border-[rgb(var(--green))] bg-[rgb(var(--green-bg))]">
-            <div className="flex items-center gap-1.5 text-[rgb(var(--green))] text-xs font-medium mb-1">
+          <div className="rounded-xl p-4 border-l-[3px] border-pull badge-pull">
+            <div className="flex items-center gap-1.5 text-pull text-xs font-medium mb-1">
               <Leaf size={13} /> Sleep reminder
             </div>
             <p className="text-xs text-muted leading-relaxed">

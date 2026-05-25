@@ -193,7 +193,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
         ? "Gym closed on Saturdays. Rest, recover, and hit your protein target."
         : "Rest day — prioritise sleep, light walking, and your protein.";
     return (
-      <div className="bg-app border border-[rgb(var(--border))] rounded-xl p-6 text-center">
+      <div className="bg-app border border-app rounded-xl p-6 text-center">
         <Moon className="mx-auto mb-2 text-muted" size={28} />
         <p className="text-sm text-muted">{msg}</p>
       </div>
@@ -207,32 +207,47 @@ export function ExerciseList({ day }: ExerciseListProps) {
   const pct = total ? Math.round((done / total) * 100) : 0;
 
   return (
-    <div className="bg-app border border-[rgb(var(--border))] rounded-xl overflow-hidden">
+    <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-[rgb(var(--border))]">
-        <span
-          className={cn(
-            "text-[11px] font-medium px-2.5 py-1 rounded-lg",
-            day.badgeClass,
-          )}
-        >
-          {day.type} day
-        </span>
-        <span className="text-xs text-muted">
-          {loadingExercises ? "Loading…" : `${done}/${total} done · ${pct}%`}
-        </span>
+      <div className="flex items-end justify-between mb-6 pb-5 border-b border-app flex-wrap gap-3">
+        <div>
+          <h2
+            className="font-bebas text-[clamp(24px,4vw,32px)] tracking-[0.04em] uppercase"
+            style={{ color: `var(--color-${day.type.toLowerCase()})` }}
+          >
+            {day.type === "Closed" ? "REST" : day.type} DAY
+          </h2>
+          <div className="flex items-center gap-[7px] text-[11px] text-muted font-mono mt-[8px]">
+            <div
+              className="w-[6px] h-[6px] rounded-full shrink-0"
+              style={{
+                backgroundColor: `var(--color-${day.type.toLowerCase()})`,
+              }}
+            ></div>
+            {total} EXERCISES
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="font-bebas text-[24px] text-accent">{pct}%</div>
+          <div className="font-mono text-[10px] text-muted pb-[2px] uppercase">
+            {loadingExercises ? "LOADING..." : "COMPLETED"}
+          </div>
+        </div>
       </div>
 
       {/* Progress bar */}
-      <div className="h-0.5 bg-app3">
+      <div className="h-[2px] bg-app2 -mt-[25px] mb-[24px] relative z-0">
         <div
-          className="h-full bg-[rgb(var(--blue))] transition-all duration-300"
-          style={{ width: `${pct}%` }}
+          className="h-full transition-all duration-300"
+          style={{
+            width: `${pct}%`,
+            backgroundColor: `var(--color-${day.type.toLowerCase()})`,
+          }}
         />
       </div>
 
       {/* Exercises */}
-      <div className="divide-y divide-[rgb(var(--border))]">
+      <div className="flex flex-col gap-4">
         {displayExercises.map((ex, i) => {
           const id = `${day.key}-${i}`;
           const isDone = !!checked[id];
@@ -240,7 +255,10 @@ export function ExerciseList({ day }: ExerciseListProps) {
           const isSaving = saving[id];
 
           return (
-            <div key={id} className="flex gap-3 px-4 py-3 items-start">
+            <div
+              key={id}
+              className="bg-app2 border border-app px-6 py-6 flex gap-5 items-start"
+            >
               {/* Check circle */}
               <button
                 onClick={() => toggleChecked(id)}
@@ -248,17 +266,11 @@ export function ExerciseList({ day }: ExerciseListProps) {
                 role="checkbox"
                 className={cn(
                   "mt-0.5 w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition-colors cursor-pointer",
-                  isDone
-                    ? "bg-[rgb(var(--green-bg))] border-[rgb(var(--green))]"
-                    : "border-[rgb(var(--border2))]",
+                  isDone ? "badge-pull border-pull" : "border-app2",
                 )}
               >
                 {isDone && (
-                  <Check
-                    size={11}
-                    className="text-[rgb(var(--green))]"
-                    strokeWidth={3}
-                  />
+                  <Check size={11} className="text-pull" strokeWidth={3} />
                 )}
               </button>
 
@@ -288,7 +300,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
                     placeholder="kg"
                     value={entry.weight}
                     onChange={(e) => updateSet(id, "weight", e.target.value)}
-                    className="w-16 px-2 py-1 text-xs rounded-lg border border-[rgb(var(--border2))] bg-app2 text-app"
+                    className="w-16 px-2 py-1 text-xs rounded-lg border border-app2 bg-app2 text-app"
                   />
                   <label className="text-[11px] text-muted">Reps</label>
                   <input
@@ -296,18 +308,18 @@ export function ExerciseList({ day }: ExerciseListProps) {
                     placeholder={ex.reps.split("–")[0] ?? "10"}
                     value={entry.reps}
                     onChange={(e) => updateSet(id, "reps", e.target.value)}
-                    className="w-16 px-2 py-1 text-xs rounded-lg border border-[rgb(var(--border2))] bg-app2 text-app"
+                    className="w-16 px-2 py-1 text-xs rounded-lg border border-app2 bg-app2 text-app"
                   />
                   <button
                     onClick={() => saveToDb(ex, i, ex.id)}
                     disabled={isSaving}
-                    className="flex items-center gap-1 px-2 py-1 text-[11px] rounded-lg border border-[rgb(var(--border))] text-muted hover:bg-app2 transition-colors cursor-pointer disabled:opacity-50"
+                    className="flex items-center gap-1 px-2 py-1 text-[11px] rounded-lg border border-app text-muted hover:bg-app2 transition-colors cursor-pointer disabled:opacity-50"
                   >
                     {isSaving ? "Saving…" : "Log"}
                   </button>
                   <button
                     onClick={() => router.push("/timer")}
-                    className="flex items-center gap-1 px-2 py-1 text-[11px] rounded-lg border border-[rgb(var(--border))] text-muted hover:bg-app2 transition-colors cursor-pointer"
+                    className="flex items-center gap-1 px-2 py-1 text-[11px] rounded-lg border border-app text-muted hover:bg-app2 transition-colors cursor-pointer"
                   >
                     <Timer size={11} />
                     Rest

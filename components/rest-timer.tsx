@@ -79,7 +79,7 @@ export function RestTimer() {
   const strokeColor = done ? '#E24B4A' : remaining <= 10 ? '#E24B4A' : '#185FA5'
 
   return (
-    <div className="bg-app border border-[rgb(var(--border))] rounded-xl p-5 text-center">
+    <div className="bg-app border border-app rounded-xl p-5 text-center">
       {/* Presets */}
       <p className="text-xs text-muted mb-3">Presets</p>
       <div className="flex gap-2 justify-center flex-wrap mb-1">
@@ -90,8 +90,8 @@ export function RestTimer() {
             className={cn(
               'px-3.5 py-1.5 rounded-lg border text-[12px] transition-colors cursor-pointer',
               duration === p.secs
-                ? 'bg-[rgb(var(--blue-bg))] border-[rgb(var(--blue))] text-[rgb(var(--blue))]'
-                : 'border-[rgb(var(--border2))] text-muted hover:bg-app2'
+                ? 'badge-push border-accent text-accent'
+                : 'border-app2 text-muted hover:bg-app2'
             )}
           >
             {p.label}
@@ -135,19 +135,19 @@ export function RestTimer() {
       <div className="flex gap-2 justify-center mb-5">
         <button
           onClick={start}
-          className="flex items-center gap-1.5 px-5 py-2 rounded-lg border border-[rgb(var(--border2))] text-sm text-app hover:bg-app2 transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 px-5 py-2 rounded-lg border border-app2 text-sm text-app hover:bg-app2 transition-colors cursor-pointer"
         >
           <Play size={14} /> Start
         </button>
         <button
           onClick={pause}
-          className="flex items-center gap-1.5 px-5 py-2 rounded-lg border border-[rgb(var(--border2))] text-sm text-app hover:bg-app2 transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 px-5 py-2 rounded-lg border border-app2 text-sm text-app hover:bg-app2 transition-colors cursor-pointer"
         >
           <Pause size={14} /> Pause
         </button>
         <button
           onClick={reset}
-          className="flex items-center gap-1.5 px-5 py-2 rounded-lg border border-[rgb(var(--border2))] text-sm text-app hover:bg-app2 transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 px-5 py-2 rounded-lg border border-app2 text-sm text-app hover:bg-app2 transition-colors cursor-pointer"
         >
           <RotateCcw size={14} /> Reset
         </button>
@@ -162,7 +162,7 @@ export function RestTimer() {
           max={10}
           value={customMin}
           onChange={(e) => setCustomMin(e.target.value)}
-          className="w-16 py-1.5 text-center text-sm rounded-lg border border-[rgb(var(--border2))] bg-app2 text-app"
+          className="w-16 py-1.5 text-center text-sm rounded-lg border border-app2 bg-app2 text-app"
         />
         <span className="text-muted text-sm">:</span>
         <input
@@ -172,11 +172,11 @@ export function RestTimer() {
           max={59}
           value={customSec}
           onChange={(e) => setCustomSec(e.target.value)}
-          className="w-16 py-1.5 text-center text-sm rounded-lg border border-[rgb(var(--border2))] bg-app2 text-app"
+          className="w-16 py-1.5 text-center text-sm rounded-lg border border-app2 bg-app2 text-app"
         />
         <button
           onClick={applyCustom}
-          className="px-3 py-1.5 text-sm rounded-lg border border-[rgb(var(--border2))] text-muted hover:bg-app2 transition-colors cursor-pointer"
+          className="px-3 py-1.5 text-sm rounded-lg border border-app2 text-muted hover:bg-app2 transition-colors cursor-pointer"
         >
           Set
         </button>

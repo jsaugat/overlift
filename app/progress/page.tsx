@@ -53,7 +53,7 @@ export default function ProgressPage() {
   return (
     <>
       <AppHeader />
-      <div className="bg-app border border-[rgb(var(--border))] rounded-xl mt-2 overflow-hidden">
+      <div className="bg-app border border-app rounded-xl mt-2 overflow-hidden">
         <Nav />
         <div className="p-4 space-y-4">
           <div>
@@ -76,7 +76,7 @@ export default function ProgressPage() {
           </div>
 
           {/* Log weight */}
-          <div className="bg-app border border-[rgb(var(--border))] rounded-xl p-4">
+          <div className="bg-app border border-app rounded-xl p-4">
             <div className="text-sm font-medium text-app mb-3">Log today's weight</div>
             <div className="flex items-center gap-2">
               <input
@@ -86,13 +86,13 @@ export default function ProgressPage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && logWeight()}
-                className="w-28 px-3 py-1.5 text-sm rounded-lg border border-[rgb(var(--border2))] bg-app2 text-app"
+                className="w-28 px-3 py-1.5 text-sm rounded-lg border border-app2 bg-app2 text-app"
               />
               <span className="text-sm text-muted">kg</span>
               <button
                 onClick={logWeight}
                 disabled={saving}
-                className="px-4 py-1.5 text-sm rounded-lg border border-[rgb(var(--border2))] text-app hover:bg-app2 transition-colors cursor-pointer disabled:opacity-50"
+                className="px-4 py-1.5 text-sm rounded-lg border border-app2 text-app hover:bg-app2 transition-colors cursor-pointer disabled:opacity-50"
               >
                 {saving ? 'Saving…' : 'Log'}
               </button>
@@ -100,7 +100,7 @@ export default function ProgressPage() {
           </div>
 
           {/* Chart */}
-          <div className="bg-app border border-[rgb(var(--border))] rounded-xl p-4">
+          <div className="bg-app border border-app rounded-xl p-4">
             <div className="text-sm font-medium text-app mb-3">Weight history</div>
             {loading ? (
               <div className="h-44 flex items-center justify-center text-sm text-muted">Loading…</div>
@@ -110,12 +110,12 @@ export default function ProgressPage() {
           </div>
 
           {/* Recent logs */}
-          <div className="bg-app border border-[rgb(var(--border))] rounded-xl p-4">
+          <div className="bg-app border border-app rounded-xl p-4">
             <div className="text-sm font-medium text-app mb-3">Recent logs</div>
             {logs.length === 0 ? (
               <p className="text-sm text-muted text-center py-4">No entries yet. Log your first weigh-in above.</p>
             ) : (
-              <div className="divide-y divide-[rgb(var(--border))]">
+              <div className="divide-y divide-app">
                 {[...logs].reverse().slice(0, 8).map((l) => (
                   <div key={l.id} className="flex justify-between py-2 text-sm">
                     <span className="text-muted text-xs">
@@ -129,8 +129,8 @@ export default function ProgressPage() {
           </div>
 
           {/* Lean bulk tip */}
-          <div className="rounded-xl p-4 border-l-[3px] border-[rgb(var(--blue))] bg-[rgb(var(--blue-bg))]">
-            <div className="flex items-center gap-1.5 text-[rgb(var(--blue))] text-xs font-medium mb-1">
+          <div className="rounded-xl p-4 border-l-[3px] border-accent badge-push">
+            <div className="flex items-center gap-1.5 text-accent text-xs font-medium mb-1">
               <Info size={13} /> Lean bulk targets
             </div>
             <p className="text-xs text-muted leading-relaxed">
