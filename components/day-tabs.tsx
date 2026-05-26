@@ -30,10 +30,10 @@ export function DayTabs({ activeDay, onSelect }: DayTabsProps) {
             key={day.key}
             onClick={() => onSelect(day.key)}
             className={cn(
-              "pt-[10px] pb-[10px] px-[4px] text-center cursor-pointer rounded-t-[4px] transition-colors relative",
-              "hover:bg-app3",
+              "pt-[10px] pb-[10px] px-[4px] text-center cursor-pointer md:rounded-t-[4px] transition-colors relative",
+              "active:bg-app3 md:hover:bg-app3",
               isActive
-                ? "after:bg-[var(--day-color)] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px]"
+                ? "bg-app2 after:bg-[var(--day-color)] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px]"
                 : "after:bg-transparent after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:transition-colors",
             )}
             style={
@@ -51,7 +51,7 @@ export function DayTabs({ activeDay, onSelect }: DayTabsProps) {
               {day.label}
             </div>
             <div
-              className="font-bebas text-[clamp(14px,2.5vw,20px)] tracking-[0.04em]"
+              className="font-bebas text-[clamp(18px,4.2vw,20px)] tracking-[0.04em]"
               style={{
                 color: isActive
                   ? "var(--day-color)"
