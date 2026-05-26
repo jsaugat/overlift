@@ -113,7 +113,7 @@ export function RestTimer() {
               key={p.secs}
               onClick={() => pickPreset(p.secs)}
               className={cn(
-                "bg-app2 border outline-none font-mono text-[15px] font-bold tracking-wider py-2 px-2 rounded-lg cursor-pointer transition-all uppercase",
+                "bg-app2 border outline-none font-mono text-[15px] font-bold tracking-wider py-1.5 px-2 rounded-lg cursor-pointer transition-all uppercase",
                 isActive
                   ? "bg-accent/15 border-accent text-accent shadow-[0_0_12px_rgba(202,255,0,0.4)]"
                   : "border-app text-muted hover:border-accent hover:text-accent hover:bg-accent/15",

@@ -338,7 +338,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
                             ? targetWeights[ex.name]
                             : null;
                           const displayWeight =
-                            setEntry.weight || targetWeight || "—";
+                            setEntry.weight || targetWeight || "X";
                           const displayReps =
                             setEntry.reps || ex.reps.split("–")[0] || "—";
 
