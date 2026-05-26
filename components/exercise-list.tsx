@@ -97,7 +97,8 @@ export function ExerciseList({ day }: ExerciseListProps) {
   const updateSet = useCallback(
     (id: string, field: "weight" | "reps", value: string) => {
       setSets((prev) => {
-        const next = { ...prev, [id]: { ...prev[id], [field]: value } };
+        const prevEntry = prev[id] ?? { weight: "", reps: "" };
+        const next = { ...prev, [id]: { ...prevEntry, [field]: value } };
         localStorage.setItem(LS_SETS, JSON.stringify(next));
         return next;
       });
@@ -377,7 +378,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
                                       ex.exercise.name
                                     ]?.toString() ?? "kg"
                                   }
-                                  value={setEntry.weight}
+                                  value={setEntry.weight ?? ""}
                                   onChange={(e) =>
                                     updateSet(setId, "weight", e.target.value)
                                   }
@@ -387,7 +388,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
                                 <input
                                   type="number"
                                   placeholder={repMin ? `${repMin}` : "reps"}
-                                  value={setEntry.reps}
+                                  value={setEntry.reps ?? ""}
                                   onChange={(e) =>
                                     updateSet(setId, "reps", e.target.value)
                                   }

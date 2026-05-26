@@ -254,3 +254,6 @@ CREATE INDEX IF NOT EXISTS idx_user_program_exercises_user_id
 
 CREATE INDEX IF NOT EXISTS idx_exercises_user_id
   ON exercises(user_id);
+
+
+  
