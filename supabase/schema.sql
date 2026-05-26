@@ -1,5 +1,5 @@
 -- ============================================================
---  Overlift — PostgreSQL schema for Supabase
+--  Overlift — PostgreSQL schema for Supabase (auth + RLS)
 --  Run this in Supabase → SQL Editor → New query
 -- ============================================================
 
@@ -19,10 +19,12 @@ CREATE TABLE IF NOT EXISTS exercises (
 
 CREATE TABLE IF NOT EXISTS workout_sessions (
     id           SERIAL PRIMARY KEY,
+    user_id      UUID         NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     session_date DATE         NOT NULL DEFAULT CURRENT_DATE,
     day_type     VARCHAR(20)  NOT NULL,
     notes        TEXT,
-    created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+    created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    UNIQUE (user_id, session_date, day_type)
 );
 
 
@@ -30,6 +32,7 @@ CREATE TABLE IF NOT EXISTS workout_sessions (
 
 CREATE TABLE IF NOT EXISTS set_logs (
     id           SERIAL PRIMARY KEY,
+    user_id      UUID         NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     session_id   INT          NOT NULL REFERENCES workout_sessions(id) ON DELETE CASCADE,
     exercise_id  INT          NOT NULL REFERENCES exercises(id),
     set_number   INT          NOT NULL CHECK (set_number > 0),
@@ -44,10 +47,11 @@ CREATE TABLE IF NOT EXISTS set_logs (
 
 CREATE TABLE IF NOT EXISTS weight_logs (
     id         SERIAL PRIMARY KEY,
+    user_id    UUID         NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     log_date   DATE         NOT NULL DEFAULT CURRENT_DATE,
     weight_kg  NUMERIC(4,1) NOT NULL CHECK (weight_kg > 0),
     notes      TEXT,
-    UNIQUE (log_date)
+    UNIQUE (user_id, log_date)
 );
 
 
@@ -55,26 +59,28 @@ CREATE TABLE IF NOT EXISTS weight_logs (
 
 CREATE TABLE IF NOT EXISTS nutrition_logs (
     id         SERIAL PRIMARY KEY,
+    user_id    UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     log_date   DATE NOT NULL DEFAULT CURRENT_DATE,
     calories   INT  NOT NULL,
     protein_g  INT  NOT NULL,
     carbs_g    INT,
     fat_g      INT,
-    UNIQUE (log_date)
+    UNIQUE (user_id, log_date)
 );
 
 
 -- ── INDEXES ─────────────────────────────────────────────────
 
-CREATE INDEX IF NOT EXISTS idx_set_logs_session  ON set_logs(session_id);
-CREATE INDEX IF NOT EXISTS idx_set_logs_exercise ON set_logs(exercise_id);
-CREATE INDEX IF NOT EXISTS idx_sessions_date     ON workout_sessions(session_date);
-CREATE INDEX IF NOT EXISTS idx_weight_logs_date  ON weight_logs(log_date);
+CREATE INDEX IF NOT EXISTS idx_sessions_user_date  ON workout_sessions(user_id, session_date);
+CREATE INDEX IF NOT EXISTS idx_set_logs_user       ON set_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_set_logs_session    ON set_logs(session_id);
+CREATE INDEX IF NOT EXISTS idx_set_logs_exercise   ON set_logs(exercise_id);
+CREATE INDEX IF NOT EXISTS idx_weight_logs_user    ON weight_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_weight_logs_date    ON weight_logs(log_date);
+CREATE INDEX IF NOT EXISTS idx_nutrition_logs_user ON nutrition_logs(user_id);
 
 
--- ── RLS (Row-Level Security) ─────────────────────────────────
--- For a single-user app, disable RLS so anon key can read/write.
--- When you add auth, replace these with user-scoped policies.
+-- ── RLS (Row-Level Security) ───────────────────────────────
 
 ALTER TABLE exercises        ENABLE ROW LEVEL SECURITY;
 ALTER TABLE workout_sessions ENABLE ROW LEVEL SECURITY;
@@ -82,16 +88,86 @@ ALTER TABLE set_logs         ENABLE ROW LEVEL SECURITY;
 ALTER TABLE weight_logs      ENABLE ROW LEVEL SECURITY;
 ALTER TABLE nutrition_logs   ENABLE ROW LEVEL SECURITY;
 
--- Allow all operations for anon role (single-user, no auth)
-CREATE POLICY "allow_all_exercises"        ON exercises        FOR ALL TO anon USING (true) WITH CHECK (true);
-CREATE POLICY "allow_all_sessions"         ON workout_sessions FOR ALL TO anon USING (true) WITH CHECK (true);
-CREATE POLICY "allow_all_set_logs"         ON set_logs         FOR ALL TO anon USING (true) WITH CHECK (true);
-CREATE POLICY "allow_all_weight_logs"      ON weight_logs      FOR ALL TO anon USING (true) WITH CHECK (true);
-CREATE POLICY "allow_all_nutrition_logs"   ON nutrition_logs   FOR ALL TO anon USING (true) WITH CHECK (true);
+-- Exercises are shared reference data for signed-in users.
+CREATE POLICY "authenticated_read_exercises"
+  ON exercises FOR SELECT TO authenticated
+  USING (true);
+
+-- workout_sessions policies
+CREATE POLICY "owner_select_sessions"
+  ON workout_sessions FOR SELECT TO authenticated
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "owner_insert_sessions"
+  ON workout_sessions FOR INSERT TO authenticated
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "owner_update_sessions"
+  ON workout_sessions FOR UPDATE TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "owner_delete_sessions"
+  ON workout_sessions FOR DELETE TO authenticated
+  USING (auth.uid() = user_id);
+
+-- set_logs policies
+CREATE POLICY "owner_select_set_logs"
+  ON set_logs FOR SELECT TO authenticated
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "owner_insert_set_logs"
+  ON set_logs FOR INSERT TO authenticated
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "owner_update_set_logs"
+  ON set_logs FOR UPDATE TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "owner_delete_set_logs"
+  ON set_logs FOR DELETE TO authenticated
+  USING (auth.uid() = user_id);
+
+-- weight_logs policies
+CREATE POLICY "owner_select_weight_logs"
+  ON weight_logs FOR SELECT TO authenticated
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "owner_insert_weight_logs"
+  ON weight_logs FOR INSERT TO authenticated
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "owner_update_weight_logs"
+  ON weight_logs FOR UPDATE TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "owner_delete_weight_logs"
+  ON weight_logs FOR DELETE TO authenticated
+  USING (auth.uid() = user_id);
+
+-- nutrition_logs policies
+CREATE POLICY "owner_select_nutrition_logs"
+  ON nutrition_logs FOR SELECT TO authenticated
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "owner_insert_nutrition_logs"
+  ON nutrition_logs FOR INSERT TO authenticated
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "owner_update_nutrition_logs"
+  ON nutrition_logs FOR UPDATE TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "owner_delete_nutrition_logs"
+  ON nutrition_logs FOR DELETE TO authenticated
+  USING (auth.uid() = user_id);
 
 
 -- ============================================================
---  SEED DATA — your full program
+--  SEED DATA — workout program reference list
 -- ============================================================
 
 INSERT INTO exercises (name, muscle_group, equipment, day_type) VALUES
@@ -142,6 +218,7 @@ ON CONFLICT (name) DO NOTHING;
 
 CREATE OR REPLACE VIEW v_latest_weights AS
 SELECT
+    sl.user_id,
     e.name          AS exercise,
     e.muscle_group,
     sl.weight_kg,
@@ -150,10 +227,10 @@ SELECT
 FROM set_logs sl
 JOIN exercises e          ON e.id  = sl.exercise_id
 JOIN workout_sessions ws  ON ws.id = sl.session_id
-WHERE (sl.exercise_id, ws.session_date) IN (
-    SELECT sl2.exercise_id, MAX(ws2.session_date)
+WHERE (sl.user_id, sl.exercise_id, ws.session_date) IN (
+    SELECT sl2.user_id, sl2.exercise_id, MAX(ws2.session_date)
     FROM set_logs sl2
     JOIN workout_sessions ws2 ON ws2.id = sl2.session_id
-    GROUP BY sl2.exercise_id
+    GROUP BY sl2.user_id, sl2.exercise_id
 )
 ORDER BY e.muscle_group, e.name;

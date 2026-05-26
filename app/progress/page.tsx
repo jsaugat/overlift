@@ -13,12 +13,23 @@ export default function ProgressPage() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const fetchLogs = useCallback(async () => {
     setLoading(true);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    setUserId(user?.id ?? null);
+    if (!user) {
+      setLogs([]);
+      setLoading(false);
+      return;
+    }
     const { data } = await supabase
       .from("weight_logs")
       .select("*")
+      .eq("user_id", user.id)
       .order("log_date", { ascending: true });
     setLogs(data ?? []);
     setLoading(false);
@@ -30,13 +41,13 @@ export default function ProgressPage() {
 
   const logWeight = async () => {
     const val = parseFloat(input);
-    if (isNaN(val) || val < 30 || val > 200) return;
+    if (isNaN(val) || val < 30 || val > 200 || !userId) return;
     setSaving(true);
     const today = new Date().toISOString().split("T")[0];
     await supabase
       .from("weight_logs")
-      .upsert({ log_date: today, weight_kg: val } as any, {
-        onConflict: "log_date",
+      .upsert({ user_id: userId, log_date: today, weight_kg: val } as any, {
+        onConflict: "user_id,log_date",
       });
     setInput("");
     await fetchLogs();

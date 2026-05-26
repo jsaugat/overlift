@@ -8,6 +8,7 @@ export interface Exercise {
 
 export interface WorkoutSession {
   id: number
+  user_id: string
   session_date: string
   day_type: string
   notes: string | null
@@ -16,6 +17,7 @@ export interface WorkoutSession {
 
 export interface SetLog {
   id: number
+  user_id: string
   session_id: number
   exercise_id: number
   set_number: number
@@ -30,6 +32,7 @@ export interface SetLog {
 
 export interface WeightLog {
   id: number
+  user_id: string
   log_date: string
   weight_kg: number
   notes: string | null
@@ -37,6 +40,7 @@ export interface WeightLog {
 
 export interface NutritionLog {
   id: number
+  user_id: string
   log_date: string
   calories: number
   protein_g: number
@@ -57,6 +61,7 @@ export type Database = {
     Views: {
       v_latest_weights: {
         Row: {
+          user_id: string
           exercise: string
           muscle_group: string
           weight_kg: number

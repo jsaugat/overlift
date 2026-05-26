@@ -1,17 +1,17 @@
-import { createClient } from '@supabase/supabase-js'
-import type { Database } from '@/types/db'
+import { createBrowserClient } from "@supabase/ssr";
+import type { Database } from "@/types/db";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-// Browser-safe singleton
-let client: ReturnType<typeof createClient<Database>> | null = null
+let client: ReturnType<typeof createBrowserClient<Database>> | null = null;
 
 export function getSupabase() {
   if (!client) {
-    client = createClient<Database>(supabaseUrl, supabaseAnonKey)
+    client = createBrowserClient<Database>(supabaseUrl, supabaseAnonKey);
   }
-  return client
+
+  return client;
 }
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
+export const supabase = getSupabase();

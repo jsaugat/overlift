@@ -36,6 +36,7 @@ export default function NutritionPage() {
   const [activity, setActivity] = useState<ActivityLevel>(1.55);
   const [surplus, setSurplus] = useState(250);
   const [todayLog, setTodayLog] = useState<NutritionLog | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const [logInput, setLogInput] = useState({
     calories: "",
     protein: "",
@@ -47,10 +48,19 @@ export default function NutritionPage() {
   const macros = calcMacros(activity, surplus);
 
   const fetchTodayLog = useCallback(async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    setUserId(user?.id ?? null);
+    if (!user) {
+      setTodayLog(null);
+      return;
+    }
     const today = new Date().toISOString().split("T")[0];
     const { data } = await supabase
       .from("nutrition_logs")
       .select("*")
+      .eq("user_id", user.id)
       .eq("log_date", today)
       .maybeSingle();
     setTodayLog(data);
@@ -63,18 +73,19 @@ export default function NutritionPage() {
   const saveNutrition = async () => {
     const cal = parseInt(logInput.calories);
     const prot = parseInt(logInput.protein);
-    if (!cal || !prot) return;
+    if (!cal || !prot || !userId) return;
     setSaving(true);
     const today = new Date().toISOString().split("T")[0];
     await supabase.from("nutrition_logs").upsert(
       {
+        user_id: userId,
         log_date: today,
         calories: cal,
         protein_g: prot,
         carbs_g: parseInt(logInput.carbs) || null,
         fat_g: parseInt(logInput.fat) || null,
       } as any,
-      { onConflict: "log_date" },
+      { onConflict: "user_id,log_date" },
     );
     setLogInput({ calories: "", protein: "", carbs: "", fat: "" });
     await fetchTodayLog();

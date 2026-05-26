@@ -25,10 +25,15 @@ npm install
 ## 2. Supabase setup
 
 1. Go to [supabase.com](https://supabase.com) → New project
-2. In **SQL Editor**, run the contents of `supabase/schema.sql` (the full schema + seed data)
+2. In **SQL Editor**, run the contents of `supabase/schema.sql` (the full schema + seed data + RLS policies)
 3. Copy your project credentials:
    - `NEXT_PUBLIC_SUPABASE_URL` — from **Project Settings → API → Project URL**
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY` — from **Project Settings → API → anon public**
+4. Configure Auth for magic links:
+   - **Authentication → Providers → Email**: enable Email provider and magic links
+   - **Authentication → URL Configuration**:
+     - Site URL: `http://localhost:3000` (for local dev)
+     - Redirect URL: `http://localhost:3000/auth/callback`
 
 Create `.env.local` in the project root:
 
@@ -58,6 +63,8 @@ vercel
 Or push to GitHub and import the repo at [vercel.com/new](https://vercel.com/new).
 
 Add the two env vars (`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`) in **Vercel → Project → Settings → Environment Variables**.
+Also add your production callback URL in Supabase Auth URL Configuration:
+- `https://your-domain.com/auth/callback`
 
 ---
 

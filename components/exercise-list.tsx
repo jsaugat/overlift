@@ -43,6 +43,7 @@ function loadLS<T>(key: string, fallback: T): T {
 
 export function ExerciseList({ day }: ExerciseListProps) {
   const router = useRouter();
+  const [userId, setUserId] = useState<string | null>(null);
   const [checked, setChecked] = useState<CheckedMap>({});
   const [sets, setSets] = useState<SetsMap>({});
   const [saving, setSaving] = useState<Record<string, boolean>>({});
@@ -65,6 +66,10 @@ export function ExerciseList({ day }: ExerciseListProps) {
     async function loadExercises() {
       if (!day.dbDayType) return;
       setLoadingExercises(true);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUserId(user?.id ?? null);
 
       const [exRes, weightRes] = await Promise.all([
         supabase
@@ -72,7 +77,10 @@ export function ExerciseList({ day }: ExerciseListProps) {
           .select("id,name,muscle_group,equipment,day_type")
           .eq("day_type", day.dbDayType)
           .order("name"),
-        supabase.from("v_latest_weights").select("exercise, weight_kg"),
+        supabase
+          .from("v_latest_weights")
+          .select("exercise, weight_kg")
+          .eq("user_id", user?.id ?? ""),
       ]);
 
       if (!isMounted) return;
@@ -138,12 +146,14 @@ export function ExerciseList({ day }: ExerciseListProps) {
 
       setSaving((p) => ({ ...p, [id]: true }));
       try {
+        if (!userId) return;
         const today = new Date().toISOString().split("T")[0];
 
         // 1. Get or create today's session
         let { data: session } = await supabase
           .from("workout_sessions")
           .select("id")
+          .eq("user_id", userId)
           .eq("session_date", today)
           .eq("day_type", day.dbDayType)
           .maybeSingle();
@@ -151,7 +161,11 @@ export function ExerciseList({ day }: ExerciseListProps) {
         if (!session) {
           const { data: newSession, error } = await supabase
             .from("workout_sessions")
-            .insert({ session_date: today, day_type: day.dbDayType } as any)
+            .insert({
+              user_id: userId,
+              session_date: today,
+              day_type: day.dbDayType,
+            } as any)
             .select("id")
             .single();
           if (error) throw error;
@@ -176,6 +190,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
 
         // 3. Insert set
         await supabase.from("set_logs").insert({
+          user_id: userId,
           session_id: (session as any)!.id,
           exercise_id: resolvedExerciseId,
           set_number: setNumber,
@@ -188,7 +203,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
         setSaving((p) => ({ ...p, [id]: false }));
       }
     },
-    [day, sets],
+    [day, sets, userId],
   );
 
   const programByName = useMemo(() => {
