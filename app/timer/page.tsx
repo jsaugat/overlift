@@ -8,7 +8,7 @@ export default function TimerPage() {
       <AppHeader />
       <div className="bg-app border border-app rounded-xl mt-2 overflow-hidden">
         <Nav />
-        <div className="p-4">
+        <div className="p-6 sm:p-4">
           <div className="hidden md:block">
             <h2 className="text-base font-medium text-app mb-1">Rest timer</h2>
             <p className="text-sm text-muted mb-4">

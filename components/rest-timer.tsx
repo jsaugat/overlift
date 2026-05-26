@@ -91,7 +91,7 @@ export function RestTimer() {
   const isDanger = remaining > 0 && remaining <= 10;
 
   return (
-    <div className="w-full max-w-105 mx-auto p-5 sm:p-0">
+    <div className="w-full max-w-105 mx-auto">
       {/* Header */}
       {/* <div className="flex items-center justify-between mb-7">
         <div className="font-mono text-[11px] font-semibold tracking-[0.15em] text-muted uppercase">
@@ -113,7 +113,7 @@ export function RestTimer() {
               key={p.secs}
               onClick={() => pickPreset(p.secs)}
               className={cn(
-                "bg-app2 border outline-none font-mono text-[15px] font-bold tracking-wider py-3 px-2 rounded-lg cursor-pointer transition-all uppercase",
+                "bg-app2 border outline-none font-mono text-[15px] font-bold tracking-wider py-2 px-2 rounded-lg cursor-pointer transition-all uppercase",
                 isActive
                   ? "bg-accent/15 border-accent text-accent shadow-[0_0_12px_rgba(202,255,0,0.4)]"
                   : "border-app text-muted hover:border-accent hover:text-accent hover:bg-accent/15",
@@ -174,7 +174,7 @@ export function RestTimer() {
       </div>
 
       {/* Custom Input */}
-      <div className="flex items-center gap-2 mb-6 bg-app2 border border-app rounded-[10px] py-2.5 px-3.5">
+      <div className="flex items-center gap-2 mb-2 bg-app2 border border-app rounded-[10px] py-2.5 px-3.5">
         <div className="text-[11px] font-semibold tracking-widest text-muted uppercase flex-1">
           Custom
         </div>
@@ -208,11 +208,11 @@ export function RestTimer() {
       </div>
 
       {/* Main Controls */}
-      <div className="grid grid-cols-2 gap-2.5 mb-2.5">
+      <div className="grid grid-cols-2 gap-2.5">
         {!running ? (
           <button
             onClick={start}
-            className="col-span-2 flex items-center justify-center gap-2 bg-accent text-black p-5.5 rounded-xl font-bebas text-[22px] font-extrabold tracking-widest uppercase cursor-pointer border-none transition-all hover:bg-[#d4ff00] hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(202,255,0,0.4)] active:translate-y-0"
+            className="col-span-2 flex items-center justify-center gap-2 bg-accent text-black p-4 rounded-xl font-bebas text-[22px] font-extrabold tracking-widest uppercase cursor-pointer border-none transition-all hover:bg-[#d4ff00] hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(202,255,0,0.4)] active:translate-y-0"
           >
             <Play fill="currentColor" stroke="none" size={20} /> Start
           </button>
@@ -226,13 +226,13 @@ export function RestTimer() {
         )}
         <button
           onClick={reset}
-          className="flex items-center justify-center gap-2 bg-app2 text-muted p-5 rounded-xl border border-app font-bebas text-[18px] font-extrabold tracking-widest uppercase outline-none cursor-pointer transition-all active:border-[#ff4444] active:text-[#ff4444]"
+          className="flex items-center justify-center gap-2 bg-app2 text-muted p-3 rounded-xl border border-app font-bebas text-[18px] font-extrabold tracking-widest uppercase outline-none cursor-pointer transition-all active:border-[#ff4444] active:text-[#ff4444]"
         >
           <RotateCcw strokeWidth={3} size={18} /> Reset
         </button>
         <button
           onClick={() => addTime(15)}
-          className="flex items-center justify-center gap-1 bg-app2 text-muted p-5 rounded-xl border border-app font-bebas text-[18px] font-extrabold tracking-widest uppercase outline-none cursor-pointer transition-all hover:border-accent hover:text-accent"
+          className="flex items-center justify-center gap-1 bg-app2 text-muted p-3 rounded-xl border border-app font-bebas text-[18px] font-extrabold tracking-widest uppercase outline-none cursor-pointer transition-all hover:border-accent hover:text-accent"
         >
           <Plus strokeWidth={4} size={18} /> 15s
         </button>

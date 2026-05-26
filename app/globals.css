@@ -111,7 +111,7 @@
     color: #ff6b35;
   }
   .badge-pull {
-    background: color-mix(in srgb, #00d4ff 15%, transparent);
+    background: color-mix(in srgb, #00d4ff 10%, transparent);
     color: #00d4ff;
   }
   .badge-legs {
