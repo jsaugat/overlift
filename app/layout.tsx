@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Bebas_Neue, DM_Sans, DM_Mono } from "next/font/google";
+import { Bebas_Neue, DM_Sans, DM_Mono, Figtree } from "next/font/google";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+
+const figtree = Figtree({subsets:['latin'],variable:'--font-sans'});
 
 const bebas = Bebas_Neue({
   weight: "400",
@@ -34,10 +37,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${bebas.variable} ${dmSans.variable} ${dmMono.variable}`}
+      className={cn(bebas.variable, dmSans.variable, dmMono.variable, "font-sans", figtree.variable)}
     >
       <body className={`${dmSans.className} font-sans`}>
-        <div className="max-w-[1100px] mx-auto px-5 pt-12 pb-20 relative z-10">
+        <div className="max-w-[1100px] mx-auto px-5 pt-4 pb-20 relative z-10">
           {children}
         </div>
       </body>

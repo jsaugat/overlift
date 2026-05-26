@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Overlift Timer</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --acid: #caff00;
+        --acid-dim: rgba(202, 255, 0, 0.15);
+        --acid-glow: rgba(202, 255, 0, 0.4);
+        --bg: #0a0a0a;
+        --surface: #141414;
+        --surface2: #1c1c1c;
+        --border: #2a2a2a;
+        --text: #ffffff;
+        --muted: #666;
+        --danger: #ff4444;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Barlow", sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 420px;
+      }
+
+      /* Header */
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+      }
+      .header-label {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+      .header-label span {
+        color: var(--acid);
+      }
+      .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--acid);
+        border-radius: 50%;
+        animation: pulse 1.5s ease-in-out infinite;
+        box-shadow: 0 0 8px var(--acid-glow);
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.4;
+          transform: scale(0.8);
+        }
+      }
+
+      /* Presets */
+      .presets {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-bottom: 32px;
+      }
+      .preset-btn {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--muted);
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        padding: 12px 8px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        text-transform: uppercase;
+      }
+      .preset-btn:hover {
+        border-color: var(--acid);
+        color: var(--acid);
+        background: var(--acid-dim);
+      }
+      .preset-btn.active {
+        background: var(--acid-dim);
+        border-color: var(--acid);
+        color: var(--acid);
+        box-shadow: 0 0 12px var(--acid-glow);
+      }
+
+      /* Timer ring */
+      .timer-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 32px;
+      }
+      .ring-svg {
+        width: 260px;
+        height: 260px;
+        transform: rotate(-90deg);
+      }
+      .ring-bg {
+        fill: none;
+        stroke: var(--surface2);
+        stroke-width: 6;
+      }
+      .ring-progress {
+        fill: none;
+        stroke: var(--acid);
+        stroke-width: 6;
+        stroke-linecap: round;
+        stroke-dasharray: 730;
+        stroke-dashoffset: 0;
+        filter: drop-shadow(0 0 6px var(--acid-glow));
+        transition:
+          stroke-dashoffset 1s linear,
+          stroke 0.3s ease;
+      }
+      .ring-progress.danger {
+        stroke: var(--danger);
+        filter: drop-shadow(0 0 6px rgba(255, 68, 68, 0.5));
+      }
+      .timer-center {
+        position: absolute;
+        text-align: center;
+      }
+      .timer-display {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 72px;
+        font-weight: 900;
+        line-height: 1;
+        letter-spacing: -2px;
+        color: var(--text);
+        transition: color 0.3s;
+      }
+      .timer-display.danger {
+        color: var(--danger);
+      }
+      .timer-sub {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        color: var(--muted);
+        text-transform: uppercase;
+        margin-top: 4px;
+      }
+
+      /* Custom input */
+      .custom-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 24px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 14px;
+      }
+      .custom-label {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        text-transform: uppercase;
+        flex: 1;
+      }
+      .custom-inputs {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .time-input {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        width: 52px;
+        text-align: center;
+        padding: 6px 4px;
+        border-radius: 6px;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      .time-input:focus {
+        border-color: var(--acid);
+      }
+      .time-sep {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .set-btn {
+        background: var(--acid);
+        color: #000;
+        border: none;
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        padding: 8px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        text-transform: uppercase;
+        margin-left: 4px;
+        transition: opacity 0.15s;
+      }
+      .set-btn:hover {
+        opacity: 0.85;
+      }
+
+      /* Main buttons */
+      .main-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .btn-main {
+        padding: 20px;
+        border-radius: 12px;
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 18px;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        cursor: pointer;
+        border: none;
+        transition: all 0.15s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .btn-start {
+        background: var(--acid);
+        color: #000;
+        grid-column: span 2;
+        font-size: 22px;
+        padding: 22px;
+      }
+      .btn-start:hover {
+        background: #d4ff00;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px var(--acid-glow);
+      }
+      .btn-start:active {
+        transform: translateY(0);
+      }
+      .btn-pause {
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border);
+        grid-column: span 2;
+        font-size: 22px;
+        padding: 22px;
+        display: none;
+      }
+      .btn-pause:hover {
+        border-color: var(--acid);
+        color: var(--acid);
+      }
+      .btn-reset {
+        background: var(--surface);
+        color: var(--muted);
+        border: 1px solid var(--border);
+      }
+      .btn-reset:hover {
+        border-color: var(--danger);
+        color: var(--danger);
+      }
+      .btn-add {
+        background: var(--surface);
+        color: var(--muted);
+        border: 1px solid var(--border);
+      }
+      .btn-add:hover {
+        border-color: var(--acid);
+        color: var(--acid);
+      }
+
+      /* Status bar */
+      .status-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        margin-top: 10px;
+      }
+      .status-item {
+        text-align: center;
+      }
+      .status-val {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .status-lbl {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+      .status-div {
+        width: 1px;
+        height: 30px;
+        background: var(--border);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div>
+          <div class="header-label">Rest Timer // <span>Overlift</span></div>
+        </div>
+        <div class="pulse-dot" id="pulseDot"></div>
+      </div>
+
+      <!-- Presets -->
+      <div class="presets">
+        <button class="preset-btn" onclick="setPreset(60, this)">60s</button>
+        <button class="preset-btn active" onclick="setPreset(90, this)">
+          90s
+        </button>
+        <button class="preset-btn" onclick="setPreset(120, this)">2min</button>
+        <button class="preset-btn" onclick="setPreset(180, this)">3min</button>
+      </div>
+
+      <!-- Ring -->
+      <div class="timer-wrap">
+        <svg class="ring-svg" viewBox="0 0 260 260">
+          <circle class="ring-bg" cx="130" cy="130" r="116" />
+          <circle class="ring-progress" id="ring" cx="130" cy="130" r="116" />
+        </svg>
+        <div class="timer-center">
+          <div class="timer-display" id="display">1:30</div>
+          <div class="timer-sub" id="subLabel">Ready</div>
+        </div>
+      </div>
+
+      <!-- Custom input -->
+      <div class="custom-row">
+        <div class="custom-label">Custom</div>
+        <div class="custom-inputs">
+          <input
+            class="time-input"
+            id="minInput"
+            type="number"
+            value="1"
+            min="0"
+            max="99"
+            placeholder="mm"
+          />
+          <span class="time-sep">:</span>
+          <input
+            class="time-input"
+            id="secInput"
+            type="number"
+            value="30"
+            min="0"
+            max="59"
+            placeholder="ss"
+          />
+          <button class="set-btn" onclick="setCustom()">Set</button>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="main-controls">
+        <button class="btn-main btn-start" id="startBtn" onclick="startTimer()">
+          ▶ &nbsp;Start
+        </button>
+        <button class="btn-main btn-pause" id="pauseBtn" onclick="pauseTimer()">
+          ⏸ &nbsp;Pause
+        </button>
+        <button class="btn-main btn-reset" onclick="resetTimer()">
+          ↺ &nbsp;Reset
+        </button>
+        <button class="btn-main btn-add" onclick="addTime(15)">+15s</button>
+      </div>
+    </div>
+
+    <script>
+      const CIRCUMFERENCE = 2 * Math.PI * 116; // ~729
+      let totalSeconds = 90;
+      let remaining = 90;
+      let running = false;
+      let interval = null;
+      let setsRested = 0;
+      let totalRestTime = 0;
+
+      const ring = document.getElementById("ring");
+      const display = document.getElementById("display");
+      const subLabel = document.getElementById("subLabel");
+      const startBtn = document.getElementById("startBtn");
+      const pauseBtn = document.getElementById("pauseBtn");
+      ring.style.strokeDasharray = CIRCUMFERENCE;
+      ring.style.strokeDashoffset = 0;
+
+      function fmt(s) {
+        const m = Math.floor(s / 60);
+        const sec = s % 60;
+        return m + ":" + String(sec).padStart(2, "0");
+      }
+
+      function updateRing() {
+        const progress = remaining / totalSeconds;
+        const offset = CIRCUMFERENCE * (1 - progress);
+        ring.style.strokeDashoffset = offset;
+        if (remaining <= 10) {
+          ring.classList.add("danger");
+          display.classList.add("danger");
+        } else {
+          ring.classList.remove("danger");
+          display.classList.remove("danger");
+        }
+      }
+
+      function setPreset(s, btn) {
+        document
+          .querySelectorAll(".preset-btn")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        totalSeconds = s;
+        remaining = s;
+        resetTimer(true);
+        display.textContent = fmt(s);
+        subLabel.textContent = "Ready";
+      }
+
+      function setCustom() {
+        const m = parseInt(document.getElementById("minInput").value) || 0;
+        const s = parseInt(document.getElementById("secInput").value) || 0;
+        totalSeconds = m * 60 + s;
+        remaining = totalSeconds;
+        document
+          .querySelectorAll(".preset-btn")
+          .forEach((b) => b.classList.remove("active"));
+        resetTimer(true);
+        display.textContent = fmt(remaining);
+        subLabel.textContent = "Ready";
+      }
+
+      function startTimer() {
+        if (running) return;
+        running = true;
+        startBtn.style.display = "none";
+        pauseBtn.style.display = "flex";
+        subLabel.textContent = "Resting...";
+        document.getElementById("pulseDot").style.animation =
+          "pulse 0.6s ease-in-out infinite";
+        interval = setInterval(() => {
+          remaining--;
+          display.textContent = fmt(remaining);
+          updateRing();
+          if (remaining <= 0) {
+            clearInterval(interval);
+            running = false;
+            setsRested++;
+            totalRestTime += totalSeconds;
+            document.getElementById("setsRested").textContent = setsRested;
+            document.getElementById("totalRest").textContent =
+              totalRestTime + "s";
+            document.getElementById("avgRest").textContent =
+              Math.round(totalRestTime / setsRested) + "s";
+            subLabel.textContent = "Done! 💪";
+            display.textContent = "0:00";
+            pauseBtn.style.display = "none";
+            startBtn.style.display = "flex";
+            document.getElementById("pulseDot").style.animation =
+              "pulse 1.5s ease-in-out infinite";
+            // reset for next
+            setTimeout(() => {
+              remaining = totalSeconds;
+              display.textContent = fmt(remaining);
+              updateRing();
+              subLabel.textContent = "Ready";
+            }, 2000);
+          }
+        }, 1000);
+      }
+
+      function pauseTimer() {
+        clearInterval(interval);
+        running = false;
+        pauseBtn.style.display = "none";
+        startBtn.style.display = "flex";
+        subLabel.textContent = "Paused";
+      }
+
+      function resetTimer(silent) {
+        clearInterval(interval);
+        running = false;
+        remaining = totalSeconds;
+        ring.style.strokeDashoffset = 0;
+        ring.classList.remove("danger");
+        display.classList.remove("danger");
+        display.textContent = fmt(remaining);
+        pauseBtn.style.display = "none";
+        startBtn.style.display = "flex";
+        if (!silent) subLabel.textContent = "Ready";
+      }
+
+      function addTime(s) {
+        remaining = Math.min(remaining + s, 599);
+        totalSeconds = Math.max(totalSeconds, remaining);
+        display.textContent = fmt(remaining);
+        updateRing();
+      }
+    </script>
+  </body>
+</html>

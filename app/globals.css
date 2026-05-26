@@ -53,47 +53,86 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
-  
+
   body::before {
-    content: '';
+    content: "";
     position: fixed;
     inset: 0;
     background-image:
-      linear-gradient(rgba(200,255,0,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(200,255,0,0.025) 1px, transparent 1px);
+      linear-gradient(rgba(200, 255, 0, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200, 255, 0, 0.025) 1px, transparent 1px);
     background-size: 60px 60px;
     pointer-events: none;
     z-index: 0;
   }
 
-  input[type='number'] {
+  input[type="number"] {
+    appearance: textfield;
     -moz-appearance: textfield;
   }
-  input[type='number']::-webkit-outer-spin-button,
-  input[type='number']::-webkit-inner-spin-button {
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
   }
 }
 
 @layer utilities {
-  .text-app { color: var(--text); }
-  .text-muted { color: var(--text-muted); }
-  .text-faint { color: var(--text-dim); }
+  .text-app {
+    color: var(--text);
+  }
+  .text-muted {
+    color: var(--text-muted);
+  }
+  .text-faint {
+    color: var(--text-dim);
+  }
 
-  .bg-app { background: var(--bg); }
-  .bg-app2 { background: var(--surface); }
-  .bg-app3 { background: var(--surface2); }
+  .bg-app {
+    background: var(--bg);
+  }
+  .bg-app2 {
+    background: var(--surface);
+  }
+  .bg-app3 {
+    background: var(--surface2);
+  }
 
   /* Map the borders */
-  .border-app { border-color: var(--border); }
-  .border-app2 { border-color: #333333; }
+  .border-app {
+    border-color: var(--border);
+  }
+  .border-app2 {
+    border-color: #333333;
+  }
 
   /* Using color-mix to simulate var(--blue-bg) and others that components expect */
-  .badge-push  { background: color-mix(in srgb, #ff6b35 15%, transparent); color: #ff6b35; }
-  .badge-pull  { background: color-mix(in srgb, #00d4ff 15%, transparent); color: #00d4ff; }
-  .badge-legs  { background: color-mix(in srgb, #c8ff00 15%, transparent); color: #c8ff00; }
-  .badge-upper { background: color-mix(in srgb, #b388ff 15%, transparent); color: #b388ff; }
-  .badge-lower { background: color-mix(in srgb, #ff8fab 15%, transparent); color: #ff8fab; }
-  .badge-rest  { background: #111111; color: var(--text-muted); border: 1px solid var(--border); }
+  .badge-push {
+    background: color-mix(in srgb, #ff6b35 15%, transparent);
+    color: #ff6b35;
+  }
+  .badge-pull {
+    background: color-mix(in srgb, #00d4ff 15%, transparent);
+    color: #00d4ff;
+  }
+  .badge-legs {
+    background: color-mix(in srgb, #c8ff00 15%, transparent);
+    color: #c8ff00;
+  }
+  .badge-upper {
+    background: color-mix(in srgb, #b388ff 15%, transparent);
+    color: #b388ff;
+  }
+  .badge-lower {
+    background: color-mix(in srgb, #ff8fab 15%, transparent);
+    color: #ff8fab;
+  }
+  .badge-rest {
+    background: #111111;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
 }
-  .divide-app > :not([hidden]) ~ :not([hidden]) { border-color: var(--border); }
+
+.divide-app > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--border);
+}
