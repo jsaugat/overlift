@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getDayName, getTodayKey, getProgramDay } from "@/lib/program";
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
 import { getSupabase } from "@/lib/supabase";
@@ -13,10 +12,23 @@ const grindQuotes = [
   ["PROGRESSIVE", "OVERLOAD"],
 ];
 
-export function AppHeader() {
-  const todayKey = getTodayKey();
-  const day = getProgramDay(todayKey);
-  const dayName = getDayName();
+interface AppHeaderProps {
+  dayType?: string;
+}
+
+const DAY_NAMES = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
+
+export function AppHeader({ dayType }: AppHeaderProps) {
+  const dayName = DAY_NAMES[new Date().getDay()];
+  const dayTypeLabel = (dayType ?? "rest").toUpperCase();
   const pathname = usePathname();
   const router = useRouter();
   const [randomQuote, setRandomQuote] = useState(grindQuotes[0]);
@@ -71,7 +83,9 @@ export function AppHeader() {
 
         {email && (
           <div className="text-right pt-1">
-            <div className="text-[10px] text-muted font-mono truncate max-w-40">{email}</div>
+            <div className="text-[10px] text-muted font-mono truncate max-w-40">
+              {email}
+            </div>
             <button
               onClick={handleSignOut}
               disabled={signingOut}
@@ -90,7 +104,7 @@ export function AppHeader() {
         </div>
         <div className="flex items-center gap-1.75 text-[11px] text-muted font-mono">
           <div className="w-1.5 h-1.5 rounded-full bg-accent shrink-0"></div>
-          {day.type.toUpperCase()}
+          {dayTypeLabel}
         </div>
       </div>
     </div>

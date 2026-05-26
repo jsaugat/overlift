@@ -1,11 +1,12 @@
 "use client";
 
-import { PROGRAM, type DayKey } from "@/lib/program";
+import type { ProgramDay } from "@/lib/program";
 import { cn } from "@/lib/utils";
 
 interface DayTabsProps {
-  activeDay: DayKey;
-  onSelect: (key: DayKey) => void;
+  days: ProgramDay[];
+  activeDay: string;
+  onSelect: (dayType: string) => void;
 }
 
 const colorMap: Record<string, string> = {
@@ -18,20 +19,39 @@ const colorMap: Record<string, string> = {
   Closed: "var(--color-rest)",
 };
 
-export function DayTabs({ activeDay, onSelect }: DayTabsProps) {
+function toTitleCase(value: string) {
+  if (!value) return value;
+  return value[0].toUpperCase() + value.slice(1);
+}
+
+function getDayLabel(day: ProgramDay) {
+  if (day.name) {
+    const [prefix] = day.name.split("—");
+    const trimmed = prefix.trim();
+    if (trimmed) return trimmed.slice(0, 3);
+  }
+
+  return toTitleCase(day.day_type).slice(0, 3);
+}
+
+export function DayTabs({ days, activeDay, onSelect }: DayTabsProps) {
   return (
     <div className="grid grid-cols-4 gap-[2px] mb-10">
-      {PROGRAM.map((day) => {
-        const isActive = day.key === activeDay;
-        const dayColor = colorMap[day.type] || "var(--color-text-dim)";
+      {days.map((day) => {
+        const isActive = day.day_type === activeDay;
+        const dayTypeLabel = toTitleCase(day.day_type);
+        const dayColor = colorMap[dayTypeLabel] || "var(--color-text-dim)";
+        const isRest = day.day_type === "rest";
+        const dayLabel = getDayLabel(day);
 
         return (
           <button
-            key={day.key}
-            onClick={() => onSelect(day.key)}
+            key={`${day.day_type}-${day.id}`}
+            onClick={() => onSelect(day.day_type)}
             className={cn(
               "pt-[10px] pb-[10px] px-[4px] text-center cursor-pointer md:rounded-t-[4px] transition-colors relative",
               "active:bg-app3 md:hover:bg-app3",
+              isRest ? "opacity-60" : "",
               isActive
                 ? "bg-app2 after:bg-[var(--day-color)] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px]"
                 : "after:bg-transparent after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:transition-colors",
@@ -48,7 +68,7 @@ export function DayTabs({ activeDay, onSelect }: DayTabsProps) {
                 isActive ? "text-app" : "text-muted",
               )}
             >
-              {day.label}
+              {dayLabel}
             </div>
             <div
               className="font-bebas text-[clamp(18px,4.2vw,20px)] tracking-[0.04em]"
@@ -58,7 +78,7 @@ export function DayTabs({ activeDay, onSelect }: DayTabsProps) {
                   : "var(--color-text-faint)",
               }}
             >
-              {day.type === "Closed" ? "Rest" : day.type}
+              {dayTypeLabel}
             </div>
           </button>
         );
