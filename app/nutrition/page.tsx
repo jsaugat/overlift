@@ -226,7 +226,7 @@ export default function NutritionPage() {
           </div>
 
           {/* Sleep reminder */}
-          <div className="rounded-xl p-4 border-l-[3px] border-pull badge-pull">
+          <div className="rounded-xl p-4 border-l-[2px] border-pull bg-pull/4">
             <div className="flex items-center gap-1.5 text-pull text-xs font-medium mb-1">
               <Leaf size={13} /> Sleep reminder
             </div>

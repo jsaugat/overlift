@@ -156,7 +156,7 @@ export default function ProgressPage() {
           </div>
 
           {/* Lean bulk tip */}
-          <div className="rounded-xl p-4 border-l-[3px] border-accent bg-accent/10">
+          <div className="rounded-xl p-4 border-l-2 border-accent bg-accent/4">
             <div className="flex items-center gap-1.5 text-accent text-xs font-medium mb-1">
               <Info size={13} /> Lean bulk targets
             </div>

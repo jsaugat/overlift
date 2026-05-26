@@ -19,7 +19,7 @@ export default function WorkoutPage() {
         <div className="p-4 sm:p-6">
           <DayTabs activeDay={activeDay} onSelect={setActiveDay} />
           <ExerciseList day={day} />
-          <div className="mt-6 rounded-2xl border border-[#5a3900] border-l-[3px] border-l-[#f59e0b] bg-[#3d2400] px-4 py-3 text-sm leading-6 text-[#f2d6a0] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
+          <div className="mt-6 rounded-2xl border-0 border-[#5a3900] border-l-[2px] border-l-[#f59e0b] bg-[#3d240050] px-4 py-3 text-sm leading-6 text-[#f2d6a0] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
             <div className="mb-1 text-[14px] font-medium text-[#f0a500]">
               Progressive overload reminder
             </div>

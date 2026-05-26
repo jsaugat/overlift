@@ -281,7 +281,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
           return (
             <div
               key={id}
-              className="bg-app2 border border-app px-4 py-4 sm:px-6 sm:py-6 flex gap-3 sm:gap-5 items-start rounded-lg"
+              className="bg-neutral-900/70 border border-app px-4 py-4 sm:px-6 sm:py-6 flex gap-3 sm:gap-5 items-start rounded-[0.56rem]"
             >
               {/* Check circle */}
               <button
@@ -385,7 +385,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
                                 <div className="flex flex-col items-center">
                                   <div className="text-xl font-black leading-none mb-0.5 text-app">
                                     {displayWeight}
-                                    <span className="text-[10px] text-muted font-normal ml-0.5">
+                                    <span className="text-sm text-muted font-normal ml-1">
                                       kg
                                     </span>
                                   </div>
