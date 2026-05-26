@@ -281,7 +281,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
           return (
             <div
               key={id}
-              className="bg-app2 border border-app px-6 py-6 flex gap-5 items-start"
+              className="bg-app2 border border-app px-4 py-4 sm:px-6 sm:py-6 flex gap-3 sm:gap-5 items-start rounded-lg"
             >
               {/* Check circle */}
               <button
@@ -302,7 +302,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
               <div className="flex-1 min-w-0">
                 <div
                   className={cn(
-                    "text-sm font-medium text-app",
+                    "text-base font-medium uppercase text-app",
                     isDone && "line-through text-faint",
                   )}
                 >
@@ -318,8 +318,8 @@ export function ExerciseList({ day }: ExerciseListProps) {
 
                 {/* Interesting Sets Card */}
                 {!isDone && (
-                  <div className="mt-5">
-                    <div className="grid grid-cols-3 gap-3">
+                  <div className="mt-4 sm:mt-5">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
                       {Array.from({ length: parseInt(ex.sets) || 3 }).map(
                         (_, setIdx) => {
                           const setId = `${id}-${setIdx}`;
@@ -349,10 +349,10 @@ export function ExerciseList({ day }: ExerciseListProps) {
                               className={cn(
                                 "relative flex flex-col justify-center min-h-[90px] p-2 text-center border rounded-xl transition-all duration-200 cursor-pointer overflow-hidden",
                                 isEditing
-                                  ? "bg-[#181822] border-[#00bfff] shadow-[0_0_0_1px_rgba(0,191,255,0.2)] cursor-default"
+                                  ? "bg-neutral-900 border-[#00bfff] shadow-[0_0_0_1px_rgba(0,191,255,0.2)] cursor-default"
                                   : hasData
                                     ? "bg-[rgba(204,255,0,0.02)] border-[rgba(204,255,0,0.3)] hover:translate-y-[-2px]"
-                                    : "bg-[#1c1c24] border-app2 hover:border-muted hover:translate-y-[-2px]",
+                                    : "bg-neutral-900/40 border-app2 hover:border-muted hover:translate-y-[-2px]",
                               )}
                               style={isEditing ? { gridColumn: "span 1" } : {}}
                             >
@@ -364,7 +364,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
                                     ? "bg-[#00bfff] shadow-[0_0_8px_#00bfff]"
                                     : hasData
                                       ? "bg-[#ccff00] shadow-[0_0_8px_#ccff00]"
-                                      : "bg-[#27272a]",
+                                      : "bg-neutral-700",
                                 )}
                               />
 
@@ -412,7 +412,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
                                     onChange={(e) =>
                                       updateSet(setId, "weight", e.target.value)
                                     }
-                                    className="w-[85%] bg-[#0a0a0c] border border-app2 rounded-md text-app px-1 py-1 text-center font-bold text-sm focus:outline-none focus:border-[#00bfff]"
+                                    className="w-[85%] bg-neutral-950 border border-neutral-800 rounded-md text-app px-1 py-1 text-center font-bold text-sm focus:outline-none focus:border-[#00bfff]"
                                     autoFocus
                                   />
                                   <input
@@ -424,7 +424,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
                                     onChange={(e) =>
                                       updateSet(setId, "reps", e.target.value)
                                     }
-                                    className="w-[85%] bg-[#0a0a0c] border border-app2 rounded-md text-app px-1 py-1 text-center font-bold text-sm focus:outline-none focus:border-[#00bfff]"
+                                    className="w-[85%] bg-neutral-950 border border-neutral-800 rounded-md text-app px-1 py-1 text-center font-bold text-sm focus:outline-none focus:border-[#00bfff]"
                                   />
                                   <button
                                     onClick={async () => {
