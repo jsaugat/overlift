@@ -5,6 +5,10 @@ import {
   seedExerciseLibrary,
 } from "@/lib/actions/exercise-library";
 
+/**
+ * Seed the shared ExerciseDB catalog into the exercises table.
+ * Requires an authenticated user session and is safe to call multiple times.
+ */
 export async function GET() {
   try {
     const supabase = await createSupabaseServerClient();

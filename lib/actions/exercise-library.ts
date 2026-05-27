@@ -28,6 +28,9 @@ type ExerciseInsert = {
   safety_info: string | null;
 };
 
+/**
+ * Split an array into fixed-size chunks to keep insert payloads small.
+ */
 function chunkArray<T>(items: T[], size: number): T[][] {
   const chunks: T[][] = [];
   for (let i = 0; i < items.length; i += size) {
@@ -36,6 +39,9 @@ function chunkArray<T>(items: T[], size: number): T[][] {
   return chunks;
 }
 
+/**
+ * Map ExerciseDB payload fields into the local exercises schema shape.
+ */
 function toExerciseInsert(item: ExerciseDbItem): ExerciseInsert {
   const name = item.name.trim().toLowerCase();
   const muscle = item.targetMuscles?.[0] ?? item.bodyParts?.[0] ?? null;
@@ -55,6 +61,10 @@ function toExerciseInsert(item: ExerciseDbItem): ExerciseInsert {
   };
 }
 
+/**
+ * Fetch the ExerciseDB catalog and upsert it into the shared exercises table.
+ * Uses name as a unique key and ignores duplicates on conflict.
+ */
 export async function seedExerciseLibrary(): Promise<{
   inserted: number;
   skipped: number;
@@ -90,6 +100,9 @@ export async function seedExerciseLibrary(): Promise<{
   return { inserted, skipped: rows.length - inserted };
 }
 
+/**
+ * Check if any ExerciseDB records exist in the exercises table.
+ */
 export async function isExerciseLibrarySeeded(): Promise<boolean> {
   const supabase = await createSupabaseServerClient();
   const { count, error } = await supabase
@@ -104,6 +117,10 @@ export async function isExerciseLibrarySeeded(): Promise<boolean> {
   return (count ?? 0) > 0;
 }
 
+/**
+ * Search exercises by name or muscle group, scoping results to
+ * shared rows or the current user when authenticated.
+ */
 export async function searchExercises(query: string): Promise<
   {
     id: number;
