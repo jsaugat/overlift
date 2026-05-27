@@ -37,6 +37,27 @@ export interface ActiveProgram {
   days: ProgramDay[];
 }
 
+export interface UserProgramDaySummary {
+  id: number;
+  day_order: number;
+  day_type: string;
+  name: string | null;
+}
+
+export interface UserProgramSummary {
+  id: number;
+  name: string;
+  is_active: boolean;
+  created_at: string;
+  days: UserProgramDaySummary[];
+}
+
+interface NewProgramDayInput {
+  day_order: number;
+  day_type: string;
+  name: string;
+}
+
 interface TemplateExerciseRow {
   exercise_id: number;
   position: number;
@@ -58,6 +79,45 @@ interface TemplateRow {
   name: string;
   description: string | null;
   template_days: TemplateDayRow[] | null;
+}
+
+interface ActiveProgramQueryExercise {
+  id: number;
+  exercise_id: number;
+  position: number;
+  sets: number | null;
+  rep_min: number | null;
+  rep_max: number | null;
+  exercises: {
+    id: number;
+    name: string;
+    muscle_group: string;
+    equipment: string | null;
+  } | null;
+}
+
+interface ActiveProgramQueryDay {
+  id: number;
+  day_order: number;
+  day_type: string;
+  name: string | null;
+  user_program_exercises: ActiveProgramQueryExercise[] | null;
+}
+
+interface ActiveProgramQueryRow {
+  id: number;
+  name: string;
+  is_active: boolean;
+  created_at: string;
+  user_program_days: ActiveProgramQueryDay[] | null;
+}
+
+interface UserProgramListQueryRow {
+  id: number;
+  name: string;
+  is_active: boolean;
+  created_at: string;
+  user_program_days: UserProgramDaySummary[] | null;
 }
 
 export async function importTemplateForUser(
@@ -109,11 +169,13 @@ export async function importTemplateForUser(
         user_id: userId,
         name: templateData.name,
         is_active: true,
-      })
+      } as any)
       .select("id")
       .single();
 
-    if (programError || !userProgram) {
+    const createdProgram = userProgram as unknown as { id: number } | null;
+
+    if (programError || !createdProgram) {
       console.error("Failed to create user program", programError);
       return null;
     }
@@ -122,16 +184,18 @@ export async function importTemplateForUser(
       const { data: userDay, error: dayError } = await supabase
         .from("user_program_days")
         .insert({
-          user_program_id: userProgram.id,
+          user_program_id: createdProgram.id,
           user_id: userId,
           day_order: day.day_order,
           day_type: day.day_type,
           name: day.name,
-        })
+        } as any)
         .select("id")
         .single();
 
-      if (dayError || !userDay) {
+      const createdDay = userDay as unknown as { id: number } | null;
+
+      if (dayError || !createdDay) {
         console.error("Failed to create program day", dayError);
         return null;
       }
@@ -144,14 +208,14 @@ export async function importTemplateForUser(
         const { error: exerciseError } = await supabase
           .from("user_program_exercises")
           .insert({
-            user_program_day_id: userDay.id,
+            user_program_day_id: createdDay.id,
             user_id: userId,
             exercise_id: exercise.exercise_id,
             position: exercise.position,
             sets: exercise.sets,
             rep_min: exercise.rep_min,
             rep_max: exercise.rep_max,
-          });
+          } as any);
 
         if (exerciseError) {
           console.error("Failed to create program exercise", exerciseError);
@@ -160,7 +224,7 @@ export async function importTemplateForUser(
       }
     }
 
-    return userProgram.id;
+    return createdProgram.id;
   } catch (error) {
     console.error("Unexpected error importing template", error);
     return null;
@@ -187,11 +251,15 @@ export async function getActiveProgram(
       return null;
     }
 
-    if (!data) {
+    const programData = data as unknown as ActiveProgramQueryRow | null;
+
+    if (!programData) {
       return null;
     }
 
-    const orderedDays = (data.user_program_days ?? []).slice().sort((a, b) => {
+    const orderedDays = (programData.user_program_days ?? [])
+      .slice()
+      .sort((a, b) => {
       return a.day_order - b.day_order;
     });
 
@@ -227,10 +295,10 @@ export async function getActiveProgram(
     });
 
     return {
-      id: data.id,
-      name: data.name,
-      is_active: data.is_active,
-      created_at: data.created_at,
+      id: programData.id,
+      name: programData.name,
+      is_active: programData.is_active,
+      created_at: programData.created_at,
       days,
     };
   } catch (error) {
@@ -255,4 +323,170 @@ export async function ensureUserHasProgram(
   }
 
   return await getActiveProgram(userId);
+}
+
+export async function getUserPrograms(
+  userId: string,
+): Promise<UserProgramSummary[]> {
+  const supabase = await createSupabaseServerClient();
+
+  const { data, error } = await supabase
+    .from("user_programs")
+    .select(
+      "id, name, is_active, created_at, user_program_days ( id, day_order, day_type, name )",
+    )
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw error;
+  }
+
+  const programRows = (data ?? []) as unknown as UserProgramListQueryRow[];
+
+  return programRows.map((program) => {
+    const days = (program.user_program_days ?? [])
+      .slice()
+      .sort((a, b) => a.day_order - b.day_order)
+      .map((day) => ({
+        id: day.id,
+        day_order: day.day_order,
+        day_type: day.day_type,
+        name: day.name,
+      }));
+
+    return {
+      id: program.id,
+      name: program.name,
+      is_active: program.is_active,
+      created_at: program.created_at,
+      days,
+    };
+  });
+}
+
+export async function setActiveProgram(
+  userId: string,
+  programId: number,
+): Promise<boolean> {
+  const supabase = await createSupabaseServerClient();
+
+  const { error: resetError } = await (supabase.from("user_programs") as any)
+    .update({ is_active: false })
+    .eq("user_id", userId);
+
+  if (resetError) {
+    throw resetError;
+  }
+
+  const { data, error: activateError } = await (supabase.from(
+    "user_programs",
+  ) as any)
+    .update({ is_active: true })
+    .eq("user_id", userId)
+    .eq("id", programId)
+    .select("id")
+    .maybeSingle();
+
+  if (activateError) {
+    throw activateError;
+  }
+
+  return !!data;
+}
+
+export async function createUserProgram(
+  userId: string,
+  name: string,
+  days: NewProgramDayInput[],
+): Promise<number> {
+  const supabase = await createSupabaseServerClient();
+
+  const trimmedName = name.trim();
+  if (!trimmedName) {
+    throw new Error("Program name is required");
+  }
+
+  if (!days.length) {
+    throw new Error("At least one day is required");
+  }
+
+  const { data: program, error: programError } = await supabase
+    .from("user_programs")
+    .insert({
+      user_id: userId,
+      name: trimmedName,
+      is_active: false,
+    } as any)
+    .select("id")
+    .single();
+
+  const createdProgram = program as unknown as { id: number } | null;
+
+  if (programError || !createdProgram) {
+    throw programError ?? new Error("Failed to create program");
+  }
+
+  const dayRows = days.map((day) => ({
+    user_program_id: createdProgram.id,
+    user_id: userId,
+    day_order: day.day_order,
+    day_type: day.day_type,
+    name: day.name,
+  }));
+
+  const { error: dayError } = await supabase
+    .from("user_program_days")
+    .insert(dayRows as any);
+
+  if (dayError) {
+    throw dayError;
+  }
+
+  return createdProgram.id;
+}
+
+export async function deleteUserProgram(
+  userId: string,
+  programId: number,
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createSupabaseServerClient();
+
+  const { data: programs, error: listError } = await supabase
+    .from("user_programs")
+    .select("id, is_active")
+    .eq("user_id", userId);
+
+  if (listError) {
+    return { success: false, error: "Failed to check programs" };
+  }
+
+  const userPrograms = (programs ?? []) as Array<{
+    id: number;
+    is_active: boolean;
+  }>;
+  if (userPrograms.length <= 1) {
+    return { success: false, error: "Cannot delete your only program" };
+  }
+
+  const target = userPrograms.find((program) => program.id === programId);
+  if (!target) {
+    return { success: false, error: "Program not found" };
+  }
+
+  if (target.is_active) {
+    return { success: false, error: "Cannot delete active program" };
+  }
+
+  const { error: deleteError } = await supabase
+    .from("user_programs")
+    .delete()
+    .eq("user_id", userId)
+    .eq("id", programId);
+
+  if (deleteError) {
+    return { success: false, error: "Failed to delete program" };
+  }
+
+  return { success: true };
 }

@@ -2,18 +2,17 @@
 
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 
-const EXERCISE_DB_URL = "https://oss.exercisedb.dev/api/v1/exercises";
 const BATCH_SIZE = 100;
 
 type ExerciseDbItem = {
-  exerciseId: string;
+  id: string;
   name: string;
-  gifUrl: string;
-  targetMuscles: string[];
-  bodyParts: string[];
-  equipments: string[];
+  level: string | null;
+  equipment: string | null;
+  primaryMuscles: string[];
   secondaryMuscles: string[];
   instructions: string[];
+  category: string | null;
 };
 
 type ExerciseInsert = {
@@ -43,22 +42,31 @@ function chunkArray<T>(items: T[], size: number): T[][] {
  * Map ExerciseDB payload fields into the local exercises schema shape.
  */
 function toExerciseInsert(item: ExerciseDbItem): ExerciseInsert {
-  const name = item.name.trim().toLowerCase();
-  const muscle = item.targetMuscles?.[0] ?? item.bodyParts?.[0] ?? null;
-  const equipment = item.equipments?.[0] ?? "bodyweight";
-  const instructions = (item.instructions ?? []).join(" ").trim();
-
   return {
-    name,
-    muscle_group: muscle,
-    equipment,
+    name: item.name.trim().toLowerCase(),
+    muscle_group: item.primaryMuscles?.[0] ?? null,
+    equipment: item.equipment ?? "bodyweight",
     day_type: null,
     source: "exercisedb",
     user_id: null,
-    instructions,
-    difficulty: null,
+    instructions: (item.instructions ?? []).join(" ").trim(),
+    difficulty: item.level ?? null,
     safety_info: null,
   };
+}
+
+/**
+ * Fetch all exercises from ExerciseDB, following cursor pagination if present.
+ */
+async function fetchAllExerciseDbItems(): Promise<ExerciseDbItem[]> {
+  const response = await fetch(
+    "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/dist/exercises.json",
+    { cache: "no-store" },
+  );
+  if (!response.ok) {
+    throw new Error(`Failed to fetch exercises: ${response.status}`);
+  }
+  return (await response.json()) as ExerciseDbItem[];
 }
 
 /**
@@ -69,12 +77,7 @@ export async function seedExerciseLibrary(): Promise<{
   inserted: number;
   skipped: number;
 }> {
-  const response = await fetch(EXERCISE_DB_URL, { cache: "no-store" });
-  if (!response.ok) {
-    throw new Error(`Failed to fetch exercises: ${response.status}`);
-  }
-
-  const payload = (await response.json()) as ExerciseDbItem[];
+  const payload = await fetchAllExerciseDbItems();
   const rows = payload.map(toExerciseInsert);
   const chunks = chunkArray(rows, BATCH_SIZE);
 
