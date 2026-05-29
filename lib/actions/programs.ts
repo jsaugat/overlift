@@ -260,8 +260,8 @@ export async function getActiveProgram(
     const orderedDays = (programData.user_program_days ?? [])
       .slice()
       .sort((a, b) => {
-      return a.day_order - b.day_order;
-    });
+        return a.day_order - b.day_order;
+      });
 
     const days: ProgramDay[] = orderedDays.map((day) => {
       const orderedExercises = (day.user_program_exercises ?? [])
@@ -379,9 +379,9 @@ export async function setActiveProgram(
     throw resetError;
   }
 
-  const { data, error: activateError } = await (supabase.from(
-    "user_programs",
-  ) as any)
+  const { data, error: activateError } = await (
+    supabase.from("user_programs") as any
+  )
     .update({ is_active: true })
     .eq("user_id", userId)
     .eq("id", programId)
