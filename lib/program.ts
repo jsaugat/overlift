@@ -18,7 +18,14 @@ const DOW_DAY_TYPE_MAP: string[] = [
   "lower", // 5 = Friday
   "rest", // 6 = Saturday
 ];
-export function getTodayKey(): string {
+export function getTodayKey(program?: ActiveProgram): string {
+  // If a program is provided, derive today's key from the program's day_order.
+  if (program && program.days && program.days.length) {
+    const todayOrder = new Date().getDay() + 1; // DB day_order uses 1 = Sunday
+    const day = program.days.find((d) => d.day_order === todayOrder);
+    return day?.day_type ?? "rest";
+  }
+
   return DOW_DAY_TYPE_MAP[new Date().getDay()] ?? "rest";
 }
 

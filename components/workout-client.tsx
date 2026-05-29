@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { act, useState } from "react";
 import { AppHeader } from "@/components/app-header";
 import { Nav } from "@/components/nav";
 import { DayTabs } from "@/components/day-tabs";

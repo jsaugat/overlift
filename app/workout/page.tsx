@@ -14,11 +14,17 @@ export default async function WorkoutPage() {
     redirect("/auth");
   }
 
-  const program = await ensureUserHasProgram(user.id);
+  const activeProgram = await ensureUserHasProgram(user.id);
+  console.log(activeProgram, "thisprogram");
 
-  if (!program) {
+  if (!activeProgram) {
     return null;
   }
 
-  return <WorkoutClient program={program} defaultDay={getTodayKey()} />;
+  return (
+    <WorkoutClient
+      program={activeProgram}
+      defaultDay={getTodayKey(activeProgram)}
+    />
+  );
 }

@@ -7,10 +7,10 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { href: "/workout", label: "Workout", Icon: ListChecks },
-  { href: "/programs", label: "Programs", Icon: Dumbbell },
-  { href: "/progress", label: "Progress", Icon: TrendingUp },
-  { href: "/nutrition", label: "Nutrition", Icon: Salad },
   { href: "/timer", label: "Rest timer", Icon: Timer },
+  { href: "/programs", label: "Programs", Icon: Dumbbell },
+  // { href: "/progress", label: "Progress", Icon: TrendingUp },
+  // { href: "/nutrition", label: "Nutrition", Icon: Salad },
 ];
 
 export function Nav() {
