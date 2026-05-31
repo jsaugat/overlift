@@ -25,13 +25,13 @@ selected_template AS (
 ),
 seed_days AS (
   SELECT * FROM (VALUES
-    (1, 'push',  'Sunday — Push'),
-    (2, 'pull',  'Monday — Pull'),
-    (3, 'legs',  'Tuesday — Legs'),
-    (4, 'rest',  'Wednesday — Rest'),
-    (5, 'upper', 'Thursday — Upper'),
-    (6, 'lower', 'Friday — Lower'),
-    (7, 'rest',  'Saturday — Rest')
+    (1, 'push',  'Push'),
+    (2, 'pull',  'Pull'),
+    (3, 'legs',  'Legs'),
+    (4, 'rest',  'Rest'),
+    (5, 'upper', 'Upper'),
+    (6, 'lower', 'Lower'),
+    (7, 'rest',  'Rest')
   ) AS v(day_order, day_type, name)
 ),
 inserted_days AS (

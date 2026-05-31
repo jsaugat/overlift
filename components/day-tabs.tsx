@@ -25,10 +25,8 @@ function toTitleCase(value: string) {
 }
 
 function getDayLabel(day: ProgramDay) {
-  if (day.name) {
-    const [prefix] = day.name.split("—");
-    const trimmed = prefix.trim();
-    if (trimmed) return trimmed.slice(0, 3);
+  if (Number.isInteger(day.day_order)) {
+    return `D${day.day_order}`;
   }
 
   return toTitleCase(day.day_type).slice(0, 3);

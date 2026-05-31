@@ -171,7 +171,7 @@ CREATE POLICY "owner_delete_nutrition_logs"
 -- ============================================================
 
 INSERT INTO exercises (name, muscle_group, equipment, day_type) VALUES
-  -- Push (Monday)
+  -- Push
   ('Smith machine incline press',    'chest',     'smith machine', 'push'),
   ('Iso-lateral incline chest press','chest',     'machine',       'push'),
   ('Pec deck fly',                   'chest',     'machine',       'push'),
@@ -181,7 +181,7 @@ INSERT INTO exercises (name, muscle_group, equipment, day_type) VALUES
   ('Cable tricep pushdown',          'triceps',   'cable',         'push'),
   ('Overhead dumbbell extension',    'triceps',   'dumbbell',      'push'),
 
-  -- Pull (Tuesday)
+  -- Pull
   ('Lat pulldown wide grip',         'back',      'machine',       'pull'),
   ('Lat pulldown close grip',        'back',      'machine',       'pull'),
   ('Machine row',                    'back',      'machine',       'pull'),
@@ -190,7 +190,7 @@ INSERT INTO exercises (name, muscle_group, equipment, day_type) VALUES
   ('Dumbbell bicep curl',            'biceps',    'dumbbell',      'pull'),
   ('Hammer curl',                    'biceps',    'dumbbell',      'pull'),
 
-  -- Legs (Wednesday)
+  -- Legs
   ('Leg press',                      'quads',     'machine',       'legs'),
   ('Smith machine squat',            'quads',     'smith machine', 'legs'),
   ('Leg extension',                  'quads',     'machine',       'legs'),
@@ -200,12 +200,12 @@ INSERT INTO exercises (name, muscle_group, equipment, day_type) VALUES
   ('Calf raise machine',             'calves',    'machine',       'legs'),
   ('Incline sit-up',                 'core',      'machine',       'legs'),
 
-  -- Upper (Friday)
+  -- Upper
   ('Smith machine flat bench press', 'chest',     'smith machine', 'upper'),
   ('Incline dumbbell press',         'chest',     'dumbbell',      'upper'),
   ('Rear delt fly',                  'shoulders', 'cable',         'upper'),
 
-  -- Lower (Sunday)
+  -- Lower
   ('Romanian deadlift DB',           'hamstrings','dumbbell',      'lower'),
   ('Cable crunch',                   'core',      'cable',         'lower')
 

@@ -16,7 +16,6 @@ type DayType = "push" | "pull" | "legs" | "upper" | "lower" | "rest";
 interface DayBuilderItem {
   name: string;
   day_type: DayType;
-  weekday: string;
 }
 
 interface ProgramsClientProps {
@@ -33,18 +32,8 @@ const DAY_TYPE_OPTIONS: DayType[] = [
   "rest",
 ];
 
-const WEEKDAY_OPTIONS = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
-
-function buildDayName(weekday: string, dayType: string): string {
-  return `${weekday} — ${dayType.charAt(0).toUpperCase() + dayType.slice(1)}`;
+function buildDayName(dayType: string): string {
+  return dayType.charAt(0).toUpperCase() + dayType.slice(1);
 }
 
 export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
@@ -55,7 +44,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
   const [showForm, setShowForm] = useState(false);
   const [programName, setProgramName] = useState("");
   const [days, setDays] = useState<DayBuilderItem[]>([
-    { name: "Monday — Push", day_type: "push", weekday: "Monday" },
+    { name: buildDayName("push"), day_type: "push" },
   ]);
 
   const onlyOneProgram = programs.length === 1;
@@ -65,13 +54,11 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
 
   const addDay = () => {
     if (days.length >= 7) return;
-    const nextWeekday = WEEKDAY_OPTIONS[days.length] ?? "Sunday";
     setDays((prev) => [
       ...prev,
       {
-        weekday: nextWeekday,
         day_type: "push",
-        name: buildDayName(nextWeekday, "push"),
+        name: buildDayName("push"),
       },
     ]);
   };
@@ -92,11 +79,8 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
 
         const updated = { ...day, [field]: value };
 
-        if (field === "weekday" || field === "day_type") {
-          updated.name = buildDayName(
-            field === "weekday" ? value : day.weekday,
-            field === "day_type" ? value : day.day_type,
-          );
+        if (field === "day_type") {
+          updated.name = buildDayName(value);
         }
 
         return updated;
@@ -150,12 +134,12 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
         days.map((day, index) => ({
           day_order: index + 1,
           day_type: day.day_type,
-          name: buildDayName(day.weekday, day.day_type),
+          name: buildDayName(day.day_type),
         })),
       );
       setShowForm(false);
       setProgramName("");
-      setDays([{ name: "Monday — Push", day_type: "push", weekday: "Monday" }]);
+      setDays([{ name: buildDayName("push"), day_type: "push" }]);
       refreshAfterAction();
     } catch {
       setError("Could not create program. Please try again.");
@@ -219,22 +203,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                 key={index}
                 className="flex flex-col gap-2 sm:grid sm:grid-cols-12 sm:items-center"
               >
-                <div className="sm:col-span-4">
-                  <select
-                    value={day.weekday}
-                    onChange={(e) =>
-                      updateDay(index, "weekday", e.target.value)
-                    }
-                    className="w-full px-2 py-1.5 text-sm rounded-lg border border-app2 bg-app2 text-app"
-                  >
-                    {WEEKDAY_OPTIONS.map((w) => (
-                      <option key={w} value={w}>
-                        {w}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="sm:col-span-3">
+                <div className="sm:col-span-5">
                   <select
                     value={day.day_type}
                     onChange={(e) =>
@@ -249,7 +218,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                     ))}
                   </select>
                 </div>
-                <div className="sm:col-span-3 px-2 py-1.5 text-sm rounded-lg border border-app2 bg-app2 text-muted">
+                <div className="sm:col-span-5 px-2 py-1.5 text-sm rounded-lg border border-app2 bg-app2 text-muted">
                   {day.name}
                 </div>
                 <div className="sm:col-span-2 flex justify-end">

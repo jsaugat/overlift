@@ -9,24 +9,16 @@ import type {
   ProgramExercise,
 } from "@/lib/actions/programs";
 
-const DOW_DAY_TYPE_MAP: string[] = [
-  "push", // 0 = Sunday
-  "pull", // 1 = Monday
-  "legs", // 2 = Tuesday
-  "rest", // 3 = Wednesday
-  "upper", // 4 = Thursday
-  "lower", // 5 = Friday
-  "rest", // 6 = Saturday
-];
 export function getTodayKey(program?: ActiveProgram): string {
-  // If a program is provided, derive today's key from the program's day_order.
   if (program && program.days && program.days.length) {
-    const todayOrder = new Date().getDay() + 1; // DB day_order uses 1 = Sunday
-    const day = program.days.find((d) => d.day_order === todayOrder);
-    return day?.day_type ?? "rest";
+    const orderedDays = program.days
+      .slice()
+      .sort((a, b) => a.day_order - b.day_order);
+
+    return orderedDays[0]?.day_type ?? "rest";
   }
 
-  return DOW_DAY_TYPE_MAP[new Date().getDay()] ?? "rest";
+  return "rest";
 }
 
 export function getProgramDay(
