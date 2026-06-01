@@ -6,11 +6,20 @@ import { usePathname, useRouter } from "next/navigation";
 import { getSupabase } from "@/lib/supabase";
 
 const grindQuotes = [
-  ["JUST FUCKING", "LIFT"],
-  ["BREAK THE", "LIMITS"],
-  ["FUCK THE", "RECORDS"],
-  ["PROGRESSIVE", "OVERLOAD"],
+  ["STOP SWITCHING", "TOO SOON"],
+  ["PROGRESSIVE OVERLOAD", "IS KING"],
+  ["INTENSITY OVER", "PERFECTION"],
+  ["TRAIN THE MUSCLE", "NOT THE MOVEMENT"],
+  ["CHECK YOUR", "EGO"],
+  ["LESS CAN BE", "MORE"],
+  ["RECOVERY IS", "GROWTH"],
+  ["SUPPLEMENTS ARE", "OVERRATED"],
+  ["YOU'RE CAPABLE OF", "MORE THAN YOU THINK"],
+  ["TRACK", "EVERYTHING"],
 ];
+
+const initialQuote =
+  grindQuotes[Math.floor(Math.random() * grindQuotes.length)];
 
 interface AppHeaderProps {
   dayType?: string;
@@ -31,14 +40,11 @@ export function AppHeader({ dayType }: AppHeaderProps) {
   const dayTypeLabel = (dayType ?? "rest").toUpperCase();
   const pathname = usePathname();
   const router = useRouter();
-  const [randomQuote, setRandomQuote] = useState(grindQuotes[0]);
+  const randomQuote = initialQuote;
   const [email, setEmail] = useState<string | null>(null);
   const [signingOut, setSigningOut] = useState(false);
 
   useEffect(() => {
-    const picked = grindQuotes[Math.floor(Math.random() * grindQuotes.length)];
-    setRandomQuote(picked);
-
     const supabase = getSupabase();
 
     supabase.auth.getUser().then(({ data }) => {
