@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 interface DayTabsProps {
   days: ProgramDay[];
   activeDay: string;
-  onSelect: (dayType: string) => void;
+  onSelect: (dayName: string) => void;
 }
 
 const colorMap: Record<string, string> = {
@@ -29,23 +29,23 @@ function getDayLabel(day: ProgramDay) {
     return `D${day.day_order}`;
   }
 
-  return toTitleCase(day.day_type).slice(0, 3);
+  return toTitleCase(day.name).slice(0, 3);
 }
 
 export function DayTabs({ days, activeDay, onSelect }: DayTabsProps) {
   return (
     <div className="grid grid-cols-4 gap-[2px] mb-10">
       {days.map((day) => {
-        const isActive = day.day_type === activeDay;
-        const dayTypeLabel = toTitleCase(day.day_type);
-        const dayColor = colorMap[dayTypeLabel] || "var(--color-text-dim)";
-        const isRest = day.day_type === "rest";
-        const dayLabel = getDayLabel(day);
+        const isActive = day.name === activeDay;
+        const dayLabel = toTitleCase(day.name);
+        const dayColor = colorMap[dayLabel] || "var(--color-text-dim)";
+        const isRest = day.name.toLowerCase() === "rest";
+        const shortLabel = getDayLabel(day);
 
         return (
           <button
-            key={`${day.day_type}-${day.id}`}
-            onClick={() => onSelect(day.day_type)}
+            key={`${day.name}-${day.id}`}
+            onClick={() => onSelect(day.name)}
             className={cn(
               "pt-[10px] pb-[10px] px-[4px] text-center cursor-pointer md:rounded-t-[4px] transition-colors relative",
               "active:bg-app3 md:hover:bg-app3",
@@ -66,7 +66,7 @@ export function DayTabs({ days, activeDay, onSelect }: DayTabsProps) {
                 isActive ? "text-app" : "text-muted",
               )}
             >
-              {dayLabel}
+              {shortLabel}
             </div>
             <div
               className="font-bebas text-[clamp(18px,4.2vw,20px)] tracking-[0.04em]"
@@ -76,7 +76,7 @@ export function DayTabs({ days, activeDay, onSelect }: DayTabsProps) {
                   : "var(--color-text-faint)",
               }}
             >
-              {dayTypeLabel}
+              {dayLabel}
             </div>
           </button>
         );

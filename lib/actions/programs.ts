@@ -24,8 +24,7 @@ export interface ProgramExercise {
 export interface ProgramDay {
   id: number;
   day_order: number;
-  day_type: string;
-  name: string | null;
+  name: string;
   exercises: ProgramExercise[];
 }
 
@@ -40,8 +39,7 @@ export interface ActiveProgram {
 export interface UserProgramDaySummary {
   id: number;
   day_order: number;
-  day_type: string;
-  name: string | null;
+  name: string;
 }
 
 export interface UserProgramSummary {
@@ -54,7 +52,6 @@ export interface UserProgramSummary {
 
 interface NewProgramDayInput {
   day_order: number;
-  day_type: string;
   name: string;
 }
 
@@ -69,8 +66,7 @@ interface TemplateExerciseRow {
 interface TemplateDayRow {
   id: number;
   day_order: number;
-  day_type: string;
-  name: string | null;
+  name: string;
   template_exercises: TemplateExerciseRow[] | null;
 }
 
@@ -99,8 +95,7 @@ interface ActiveProgramQueryExercise {
 interface ActiveProgramQueryDay {
   id: number;
   day_order: number;
-  day_type: string;
-  name: string | null;
+  name: string;
   user_program_exercises: ActiveProgramQueryExercise[] | null;
 }
 
@@ -146,7 +141,7 @@ export async function importTemplateForUser(
     const { data: template, error: templateError } = await supabase
       .from("program_templates")
       .select(
-        "id, name, description, template_days ( id, day_order, day_type, name, template_exercises ( exercise_id, position, sets, rep_min, rep_max ) )",
+        "id, name, description, template_days ( id, day_order, name, template_exercises ( exercise_id, position, sets, rep_min, rep_max ) )",
       )
       .eq("name", templateName)
       .maybeSingle();
@@ -187,7 +182,6 @@ export async function importTemplateForUser(
           user_program_id: createdProgram.id,
           user_id: userId,
           day_order: day.day_order,
-          day_type: day.day_type,
           name: day.name,
         } as any)
         .select("id")
@@ -240,7 +234,7 @@ export async function getActiveProgram(
     const { data, error } = await supabase
       .from("user_programs")
       .select(
-        "id, name, is_active, created_at, user_program_days ( id, day_order, day_type, name, user_program_exercises ( id, exercise_id, position, sets, rep_min, rep_max, exercises ( id, name, muscle_group, equipment ) ) )",
+        "id, name, is_active, created_at, user_program_days ( id, day_order, name, user_program_exercises ( id, exercise_id, position, sets, rep_min, rep_max, exercises ( id, name, muscle_group, equipment ) ) )",
       )
       .eq("user_id", userId)
       .eq("is_active", true)
@@ -288,7 +282,6 @@ export async function getActiveProgram(
       return {
         id: day.id,
         day_order: day.day_order,
-        day_type: day.day_type,
         name: day.name,
         exercises,
       };
@@ -333,7 +326,7 @@ export async function getUserPrograms(
   const { data, error } = await supabase
     .from("user_programs")
     .select(
-      "id, name, is_active, created_at, user_program_days ( id, day_order, day_type, name )",
+      "id, name, is_active, created_at, user_program_days ( id, day_order, name )",
     )
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
@@ -351,7 +344,6 @@ export async function getUserPrograms(
       .map((day) => ({
         id: day.id,
         day_order: day.day_order,
-        day_type: day.day_type,
         name: day.name,
       }));
 
@@ -431,7 +423,6 @@ export async function createUserProgram(
     user_program_id: createdProgram.id,
     user_id: userId,
     day_order: day.day_order,
-    day_type: day.day_type,
     name: day.name,
   }));
 

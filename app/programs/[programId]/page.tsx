@@ -72,7 +72,7 @@ export default async function ProgramDetailPage({
                   <p className="text-sm text-app">
                     {day.name ?? `Day ${day.day_order}`}
                   </p>
-                  <p className="text-xs text-muted uppercase">{day.day_type}</p>
+                  <p className="text-xs text-muted uppercase">Day {day.day_order}</p>
                 </div>
               ))
             )}

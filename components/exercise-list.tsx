@@ -132,7 +132,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
           .select("id")
           .eq("user_id", userId)
           .eq("session_date", today)
-          .eq("day_type", day.day_type)
+          .eq("day_name", day.name)
           .maybeSingle();
 
         if (!session) {
@@ -141,7 +141,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
             .insert({
               user_id: userId,
               session_date: today,
-              day_type: day.day_type,
+              day_name: day.name,
             } as any)
             .select("id")
             .single();
@@ -171,11 +171,11 @@ export function ExerciseList({ day }: ExerciseListProps) {
     return day.exercises.slice().sort((a, b) => a.position - b.position);
   }, [day.exercises]);
 
-  const dayTypeLabel = day.day_type
-    ? day.day_type[0].toUpperCase() + day.day_type.slice(1)
+  const dayTypeLabel = day.name
+    ? day.name[0].toUpperCase() + day.name.slice(1)
     : "Rest";
   const dayTypeColor = dayTypeLabel.toLowerCase();
-  const isRestDay = day.day_type === "rest";
+  const isRestDay = day.name.toLowerCase() === "rest";
   const isClosed = day.name?.toLowerCase().includes("closed") ?? false;
 
   if (isRestDay) {

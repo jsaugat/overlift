@@ -10,7 +10,7 @@ export interface WorkoutSession {
   id: number
   user_id: string
   session_date: string
-  day_type: string
+  day_name: string
   notes: string | null
   created_at: string
 }

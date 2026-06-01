@@ -21,10 +21,10 @@ CREATE TABLE IF NOT EXISTS workout_sessions (
     id           SERIAL PRIMARY KEY,
     user_id      UUID         NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     session_date DATE         NOT NULL DEFAULT CURRENT_DATE,
-    day_type     VARCHAR(20)  NOT NULL,
+    day_name     VARCHAR(100) NOT NULL,
     notes        TEXT,
     created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    UNIQUE (user_id, session_date, day_type)
+    UNIQUE (user_id, session_date, day_name)
 );
 
 

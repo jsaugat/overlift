@@ -23,8 +23,7 @@ CREATE TABLE IF NOT EXISTS template_days (
   id           SERIAL PRIMARY KEY,
   template_id  INT NOT NULL REFERENCES program_templates(id) ON DELETE CASCADE,
   day_order    INT NOT NULL,
-  day_type     VARCHAR(20) NOT NULL,
-  name         VARCHAR(100)
+  name         VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS template_exercises (
@@ -50,8 +49,7 @@ CREATE TABLE IF NOT EXISTS user_program_days (
   user_program_id  INT NOT NULL REFERENCES user_programs(id) ON DELETE CASCADE,
   user_id          UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   day_order        INT NOT NULL,
-  day_type         VARCHAR(20) NOT NULL,
-  name             VARCHAR(100)
+  name             VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS user_program_exercises (

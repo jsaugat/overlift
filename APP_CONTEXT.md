@@ -54,9 +54,9 @@ The workout flow is roughly:
 
 `lib/program.ts` provides helpers like:
 
-- `getTodayKey()` → gets the current day type
-- `getProgramDay(program, dayType)` → finds the matching program day
-- `getExercisesForDay(program, dayType)` → returns exercises for that day sorted by position
+- `getTodayKey()` → gets the current day name
+- `getProgramDay(program, dayName)` → finds the matching program day
+- `getExercisesForDay(program, dayName)` → returns exercises for that day sorted by position
 
 ## Database tables
 
@@ -86,14 +86,14 @@ Used by:
 
 ### `workout_sessions`
 
-One workout session per user per day/day type.
+One workout session per user per day/day name.
 
 Columns:
 
 - `id`
 - `user_id`
 - `session_date`
-- `day_type`
+- `day_name`
 - `notes`
 - `created_at`
 
@@ -185,7 +185,6 @@ Columns:
 - `id`
 - `template_id`
 - `day_order`
-- `day_type`
 - `name`
 
 Used by:
@@ -221,6 +220,7 @@ Columns:
 - `name`
 - `is_active`
 - `created_at`
+- `starting_day`
 
 Important:
 
@@ -241,7 +241,6 @@ Columns:
 - `user_program_id`
 - `user_id`
 - `day_order`
-- `day_type`
 - `name`
 
 Used by:

@@ -22,7 +22,7 @@ const initialQuote =
   grindQuotes[Math.floor(Math.random() * grindQuotes.length)];
 
 interface AppHeaderProps {
-  dayType?: string;
+  dayName?: string;
 }
 
 const DAY_NAMES = [
@@ -35,9 +35,9 @@ const DAY_NAMES = [
   "Saturday",
 ];
 
-export function AppHeader({ dayType }: AppHeaderProps) {
-  const dayName = DAY_NAMES[new Date().getDay()];
-  const dayTypeLabel = (dayType ?? "rest").toUpperCase();
+export function AppHeader({ dayName }: AppHeaderProps) {
+  const dayNameStr = DAY_NAMES[new Date().getDay()];
+  const dayNameLabel = (dayName ?? "Rest").toUpperCase();
   const pathname = usePathname();
   const router = useRouter();
   const randomQuote = initialQuote;
@@ -106,11 +106,11 @@ export function AppHeader({ dayType }: AppHeaderProps) {
       <div className="flex gap-5 mt-5 flex-wrap">
         <div className="flex items-center gap-1.75 text-[11px] text-muted font-mono">
           <div className="w-1.5 h-1.5 rounded-full bg-accent shrink-0"></div>
-          {dayName.toUpperCase()}
+          {dayNameStr.toUpperCase()}
         </div>
         <div className="flex items-center gap-1.75 text-[11px] text-muted font-mono">
           <div className="w-1.5 h-1.5 rounded-full bg-accent shrink-0"></div>
-          {dayTypeLabel}
+          {dayNameLabel}
         </div>
       </div>
     </div>

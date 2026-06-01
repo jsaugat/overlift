@@ -15,24 +15,24 @@ export function getTodayKey(program?: ActiveProgram): string {
       .slice()
       .sort((a, b) => a.day_order - b.day_order);
 
-    return orderedDays[0]?.day_type ?? "rest";
+    return orderedDays[0]?.name ?? "Rest";
   }
 
-  return "rest";
+  return "Rest";
 }
 
 export function getProgramDay(
   program: ActiveProgram,
-  dayType: string,
+  dayName: string,
 ): ProgramDay | null {
-  return program.days.find((day) => day.day_type === dayType) ?? null;
+  return program.days.find((day) => day.name === dayName) ?? null;
 }
 
 export function getExercisesForDay(
   program: ActiveProgram,
-  dayType: string,
+  dayName: string,
 ): ProgramExercise[] {
-  const day = getProgramDay(program, dayType);
+  const day = getProgramDay(program, dayName);
 
   if (!day) {
     return [];

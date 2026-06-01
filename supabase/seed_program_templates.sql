@@ -25,18 +25,18 @@ selected_template AS (
 ),
 seed_days AS (
   SELECT * FROM (VALUES
-    (1, 'push',  'Push'),
-    (2, 'pull',  'Pull'),
-    (3, 'legs',  'Legs'),
-    (4, 'rest',  'Rest'),
-    (5, 'upper', 'Upper'),
-    (6, 'lower', 'Lower'),
-    (7, 'rest',  'Rest')
-  ) AS v(day_order, day_type, name)
+    (1, 'Push'),
+    (2, 'Pull'),
+    (3, 'Legs'),
+    (4, 'Rest'),
+    (5, 'Upper'),
+    (6, 'Lower'),
+    (7, 'Rest')
+  ) AS v(day_order, name)
 ),
 inserted_days AS (
-  INSERT INTO template_days (template_id, day_order, day_type, name)
-  SELECT t.id, d.day_order, d.day_type, d.name
+  INSERT INTO template_days (template_id, day_order, name)
+  SELECT t.id, d.day_order, d.name
   FROM selected_template t
   CROSS JOIN seed_days d
   WHERE NOT EXISTS (

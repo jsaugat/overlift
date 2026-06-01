@@ -117,33 +117,14 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
     }
 
     try {
-      const generatedTypes = new Set<string>();
-
       await createUserProgram(
         userId,
         trimmedName,
         days.map((day, index) => {
           const finalName = day.name.trim() || `Day ${index + 1}`;
 
-          let baseType = finalName
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/^-|-$/g, "")
-            .substring(0, 15);
-
-          if (!baseType) baseType = `day-${index + 1}`;
-
-          let dayType = baseType;
-          let counter = 1;
-          while (generatedTypes.has(dayType)) {
-            dayType = `${baseType}-${counter}`.substring(0, 20);
-            counter++;
-          }
-          generatedTypes.add(dayType);
-
           return {
             day_order: index + 1,
-            day_type: dayType,
             name: finalName,
           };
         }),
@@ -164,7 +145,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
           <h2 className="text-xl font-medium tracking-[0.04em] uppercase text-app">
             Programs
           </h2>
-          <p className="text-sm text-muted mb-4">
+          <p className="text-muted mb-4">
             Create and manage your training programs.
           </p>
         </div>
@@ -235,7 +216,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                           key={suggestion}
                           type="button"
                           onClick={() => updateDay(index, suggestion)}
-                          className="px-2 py-0.5 text-[10px] rounded-full border border-app2 text-muted hover:text-app hover:bg-app2 transition-colors cursor-pointer"
+                          className="px-2 py-0.5 text-xs rounded-full border border-app2 text-muted hover:text-white hover:bg-app2 transition-colors cursor-pointer"
                         >
                           {suggestion}
                         </button>
@@ -257,19 +238,19 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
             ))}
           </div>
 
-          <div className="flex items-center gap-2 pt-1">
+          <div className="flex items-center gap-2 pt-1 ml-auto w-fit">
+            <button
+              onClick={() => setShowForm(false)}
+              className="px-4 py-1.5 text-sm rounded-lg border border-app2 text-muted hover:bg-app2 transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
             <button
               onClick={handleCreateProgram}
               disabled={isPending}
               className="px-4 py-1.5 text-sm font-medium rounded-lg bg-accent text-[#0a0a0a] hover:bg-accent/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {isPending ? "Saving..." : "Create Program"}
-            </button>
-            <button
-              onClick={() => setShowForm(false)}
-              className="px-4 py-1.5 text-sm rounded-lg border border-app2 text-muted hover:text-app hover:bg-app2 transition-colors cursor-pointer"
-            >
-              Cancel
             </button>
           </div>
         </div>
@@ -286,17 +267,15 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                 "group relative border rounded-xl p-4 transition-all duration-300 overflow-hidden",
                 isActive
                   ? "bg-accent/5 border-accent/40 shadow-[0_0_20px_-5px_rgba(200,255,0,0.1)]"
-                  : "bg-app border-app hover:border-app2",
+                  : "bg-app border-app",
               )}
             >
               {/* {isActive && (
                 <div className="absolute top-0 left-0 w-1 h-full bg-accent" />
               )} */}
               <div className="flex items-start justify-between gap-3 mb-2 sm:mb-3">
-                <div className={cn("flex-1", isActive ? "pl-2" : "")}>
-                  <h3
-                    className={`text-xl sm:text-2xl font-medium text-app font-bebas leading-tight`}
-                  >
+                <div className={cn("flex-1", isActive ? "" : "")}>
+                  <h3 className={`text-xl font-medium text-app leading-tight`}>
                     {program.name}
                   </h3>
                   <p className="text-xs text-muted mt-1">
@@ -305,20 +284,18 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                   </p>
                 </div>
                 {program.is_active && (
-                  <span className="shrink-0 mt-1 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md border border-accent/20 bg-accent/10 text-accent">
+                  <span className="shrink-0 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md border border-accent/20 bg-accent/10 text-accent">
                     Active
                   </span>
                 )}
               </div>
 
-              <div
-                className={cn("flex flex-wrap gap-2", isActive ? "pl-2" : "")}
-              >
+              <div className={cn("flex flex-wrap gap-2", isActive ? "" : "")}>
                 {!program.is_active && (
                   <button
                     onClick={() => handleSetActive(program.id)}
                     disabled={isPending}
-                    className="px-3 py-1.5 text-xs font-medium rounded-lg text-muted hover:text-accent hover:bg-accent/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    className="px-3 py-1.5 text-xs rounded-lg border border-app2 text-accent hover:bg-app2 transition-colors cursor-pointer"
                   >
                     Set Active
                   </button>
@@ -335,8 +312,9 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                   <button
                     onClick={() => handleDelete(program.id)}
                     disabled={isPending}
-                    className="px-3 py-1.5 text-xs rounded-lg border border-app2 text-muted hover:text-app hover:bg-app2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    className="flex items-center gap-1.5 px-2 py-1 text-[11px] border border-red-900/30 text-red-500/80 hover:text-red-500 hover:bg-red-500/10 hover:border-red-900/50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   >
+                    <Trash2 className="w-3 h-3" />
                     Delete
                   </button>
                 )}
