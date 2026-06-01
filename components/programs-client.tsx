@@ -148,16 +148,21 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="font-bebas text-[28px] tracking-[0.04em] uppercase text-app">
-          Programs
-        </h2>
+      <div className="sm:flex items-center justify-between gap-3">
+        <div>
+          <h2 className="text-xl font-medium tracking-[0.04em] uppercase text-app">
+            Programs
+          </h2>
+          <p className="text-sm text-muted mb-4">
+            Create and manage your training programs.
+          </p>
+        </div>
         <button
           onClick={() => {
             setError(null);
             setShowForm((prev) => !prev);
           }}
-          className="px-3 py-1.5 text-xs rounded-lg border border-app2 text-app hover:bg-app2 transition-colors cursor-pointer"
+          className="w-full md:w-fit px-3 py-1.5 rounded-lg border border-app2 text-app hover:bg-app2 transition-colors cursor-pointer"
         >
           + New Program
         </button>

@@ -22,7 +22,7 @@ export default async function ProgramsPage() {
       <AppHeader />
       <div className="bg-app border border-app rounded-xl mt-2 overflow-hidden mb-12">
         <Nav />
-        <div className="p-4 sm:p-6">
+        <div className="p-4">
           <ProgramsClient userId={user.id} programs={programs} />
         </div>
       </div>
