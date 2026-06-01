@@ -218,7 +218,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
             {days.map((day, index) => (
               <div
                 key={day.id}
-                className="flex flex-col gap-2 sm:flex-row sm:items-center"
+                className="flex flex-col gap-2 sm:flex-row sm:items-start"
               >
                 <div className="flex-1 flex flex-col gap-1.5">
                   <input
@@ -228,27 +228,29 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                     placeholder="Day Name (e.g. Chest + Triceps)"
                     className="w-full px-3 py-1.5 text-sm rounded-lg border border-app2 bg-app2 text-app"
                   />
-                  <div className="flex flex-wrap gap-1.5">
-                    {SUGGESTIONS.map((suggestion) => (
-                      <button
-                        key={suggestion}
-                        type="button"
-                        onClick={() => updateDay(index, suggestion)}
-                        className="px-2 py-0.5 text-[10px] rounded-full border border-app2 text-muted hover:text-app hover:bg-app2 transition-colors"
-                      >
-                        {suggestion}
-                      </button>
-                    ))}
-                  </div>
+                  {!day.name.trim() && (
+                    <div className="flex flex-wrap gap-1.5 mt-0.5">
+                      {SUGGESTIONS.map((suggestion) => (
+                        <button
+                          key={suggestion}
+                          type="button"
+                          onClick={() => updateDay(index, suggestion)}
+                          className="px-2 py-0.5 text-[10px] rounded-full border border-app2 text-muted hover:text-app hover:bg-app2 transition-colors cursor-pointer"
+                        >
+                          {suggestion}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <div className="flex justify-end sm:self-start sm:mt-1">
+                <div className="flex justify-end sm:mt-1">
                   <button
                     onClick={() => removeDay(index)}
                     disabled={days.length <= 1}
-                    className="flex items-center gap-1.5 px-2 py-1 text-[11px] border border-red-900/30 text-red-500/80 hover:text-red-500 hover:bg-red-500/10 hover:border-red-900/50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    className="flex items-center gap-1.5 px-2 py-1 text-[11px] border border-neutral-900/30 text-neutral-500/80 hover:text-neutral-500 hover:bg-neutral-500/10 hover:border-neutral-900/50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   >
                     <Trash2 className="w-3 h-3" />
-                    Remove
+                    Remove Day
                   </button>
                 </div>
               </div>
