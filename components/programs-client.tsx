@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { Plus, Trash2 } from "lucide-react";
 import {
   createUserProgram,
   deleteUserProgram,
@@ -11,29 +12,28 @@ import {
 } from "@/lib/actions/programs";
 import { cn } from "@/lib/utils";
 
-type DayType = "push" | "pull" | "legs" | "upper" | "lower" | "rest";
-
-interface DayBuilderItem {
-  name: string;
-  day_type: DayType;
-}
-
 interface ProgramsClientProps {
   userId: string;
   programs: UserProgramSummary[];
 }
 
-const DAY_TYPE_OPTIONS: DayType[] = [
-  "push",
-  "pull",
-  "legs",
-  "upper",
-  "lower",
-  "rest",
+const SUGGESTIONS = [
+  "Push",
+  "Pull",
+  "Legs",
+  "Upper",
+  "Lower",
+  "Full Body",
+  "Rest",
+  "Chest",
+  "Back",
+  "Arms",
+  "Shoulders",
 ];
 
-function buildDayName(dayType: string): string {
-  return dayType.charAt(0).toUpperCase() + dayType.slice(1);
+interface DayBuilderItem {
+  id: string; // for stable keys during reordering
+  name: string;
 }
 
 export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
@@ -44,7 +44,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
   const [showForm, setShowForm] = useState(false);
   const [programName, setProgramName] = useState("");
   const [days, setDays] = useState<DayBuilderItem[]>([
-    { name: buildDayName("push"), day_type: "push" },
+    { id: crypto.randomUUID(), name: "Push" },
   ]);
 
   const onlyOneProgram = programs.length === 1;
@@ -57,8 +57,8 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
     setDays((prev) => [
       ...prev,
       {
-        day_type: "push",
-        name: buildDayName("push"),
+        id: crypto.randomUUID(),
+        name: "",
       },
     ]);
   };
@@ -68,22 +68,11 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
     setDays((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const updateDay = (
-    index: number,
-    field: keyof DayBuilderItem,
-    value: string,
-  ) => {
+  const updateDay = (index: number, value: string) => {
     setDays((prev) =>
       prev.map((day, i) => {
         if (i !== index) return day;
-
-        const updated = { ...day, [field]: value };
-
-        if (field === "day_type") {
-          updated.name = buildDayName(value);
-        }
-
-        return updated;
+        return { ...day, name: value };
       }),
     );
   };
@@ -128,18 +117,40 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
     }
 
     try {
+      const generatedTypes = new Set<string>();
+
       await createUserProgram(
         userId,
         trimmedName,
-        days.map((day, index) => ({
-          day_order: index + 1,
-          day_type: day.day_type,
-          name: buildDayName(day.day_type),
-        })),
+        days.map((day, index) => {
+          const finalName = day.name.trim() || `Day ${index + 1}`;
+
+          let baseType = finalName
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-|-$/g, "")
+            .substring(0, 15);
+
+          if (!baseType) baseType = `day-${index + 1}`;
+
+          let dayType = baseType;
+          let counter = 1;
+          while (generatedTypes.has(dayType)) {
+            dayType = `${baseType}-${counter}`.substring(0, 20);
+            counter++;
+          }
+          generatedTypes.add(dayType);
+
+          return {
+            day_order: index + 1,
+            day_type: dayType,
+            name: finalName,
+          };
+        }),
       );
       setShowForm(false);
       setProgramName("");
-      setDays([{ name: buildDayName("push"), day_type: "push" }]);
+      setDays([{ id: crypto.randomUUID(), name: "Push" }]);
       refreshAfterAction();
     } catch {
       setError("Could not create program. Please try again.");
@@ -197,41 +208,46 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
               <button
                 onClick={addDay}
                 disabled={days.length >= 7}
-                className="px-2 py-1 text-[11px] rounded-md border border-app2 text-app hover:bg-app2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="flex items-center gap-1.5 px-2 py-1 text-[11px] rounded-md border border-app2 text-app hover:bg-app2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
+                <Plus className="w-3 h-3" />
                 Add day
               </button>
             </div>
 
             {days.map((day, index) => (
               <div
-                key={index}
-                className="flex flex-col gap-2 sm:grid sm:grid-cols-12 sm:items-center"
+                key={day.id}
+                className="flex flex-col gap-2 sm:flex-row sm:items-center"
               >
-                <div className="sm:col-span-5">
-                  <select
-                    value={day.day_type}
-                    onChange={(e) =>
-                      updateDay(index, "day_type", e.target.value)
-                    }
-                    className="w-full px-2 py-1.5 text-sm rounded-lg border border-app2 bg-app2 text-app"
-                  >
-                    {DAY_TYPE_OPTIONS.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
+                <div className="flex-1 flex flex-col gap-1.5">
+                  <input
+                    type="text"
+                    value={day.name}
+                    onChange={(e) => updateDay(index, e.target.value)}
+                    placeholder="Day Name (e.g. Chest + Triceps)"
+                    className="w-full px-3 py-1.5 text-sm rounded-lg border border-app2 bg-app2 text-app"
+                  />
+                  <div className="flex flex-wrap gap-1.5">
+                    {SUGGESTIONS.map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        type="button"
+                        onClick={() => updateDay(index, suggestion)}
+                        className="px-2 py-0.5 text-[10px] rounded-full border border-app2 text-muted hover:text-app hover:bg-app2 transition-colors"
+                      >
+                        {suggestion}
+                      </button>
                     ))}
-                  </select>
+                  </div>
                 </div>
-                <div className="sm:col-span-5 px-2 py-1.5 text-sm rounded-lg border border-app2 bg-app2 text-muted">
-                  {day.name}
-                </div>
-                <div className="sm:col-span-2 flex justify-end">
+                <div className="flex justify-end sm:self-start sm:mt-1">
                   <button
                     onClick={() => removeDay(index)}
                     disabled={days.length <= 1}
-                    className="px-2 py-1 text-[11px] rounded-md border border-app2 text-muted hover:text-app hover:bg-app2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    className="flex items-center gap-1.5 px-2 py-1 text-[11px] border border-red-900/30 text-red-500/80 hover:text-red-500 hover:bg-red-500/10 hover:border-red-900/50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   >
+                    <Trash2 className="w-3 h-3" />
                     Remove
                   </button>
                 </div>
@@ -243,7 +259,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
             <button
               onClick={handleCreateProgram}
               disabled={isPending}
-              className="px-4 py-1.5 text-sm rounded-lg border border-app2 text-app hover:bg-app2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="px-4 py-1.5 text-sm font-medium rounded-lg bg-accent text-[#0a0a0a] hover:bg-accent/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {isPending ? "Saving..." : "Create Program"}
             </button>
@@ -265,35 +281,46 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
             <div
               key={program.id}
               className={cn(
-                "bg-app border rounded-xl p-4",
-                isActive ? "border-accent" : "border-app",
+                "group relative border rounded-xl p-4 transition-all duration-300 overflow-hidden",
+                isActive
+                  ? "bg-accent/5 border-accent/40 shadow-[0_0_20px_-5px_rgba(200,255,0,0.1)]"
+                  : "bg-app border-app hover:border-app2",
               )}
             >
-              <div className="flex items-center justify-between gap-3 mb-3">
-                <div>
-                  <h3 className="text-base font-medium text-app">
+              {/* {isActive && (
+                <div className="absolute top-0 left-0 w-1 h-full bg-accent" />
+              )} */}
+              <div className="flex items-start justify-between gap-3 mb-2 sm:mb-3">
+                <div className={cn("flex-1", isActive ? "pl-2" : "")}>
+                  <h3
+                    className={`text-xl sm:text-2xl font-medium text-app font-bebas leading-tight`}
+                  >
                     {program.name}
                   </h3>
-                  <p className="text-xs text-muted mt-0.5">
+                  <p className="text-xs text-muted mt-1">
                     {program.days.length} day
                     {program.days.length === 1 ? "" : "s"}
                   </p>
                 </div>
                 {program.is_active && (
-                  <span className="text-[10px] uppercase tracking-widest px-2 py-1 rounded-md border border-accent/50 text-accent">
+                  <span className="shrink-0 mt-1 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md border border-accent/20 bg-accent/10 text-accent">
                     Active
                   </span>
                 )}
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() => handleSetActive(program.id)}
-                  disabled={program.is_active || isPending}
-                  className="px-3 py-1.5 text-xs rounded-lg border border-app2 text-app hover:bg-app2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                >
-                  Set Active
-                </button>
+              <div
+                className={cn("flex flex-wrap gap-2", isActive ? "pl-2" : "")}
+              >
+                {!program.is_active && (
+                  <button
+                    onClick={() => handleSetActive(program.id)}
+                    disabled={isPending}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg text-muted hover:text-accent hover:bg-accent/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    Set Active
+                  </button>
+                )}
 
                 <Link
                   href={`/programs/${program.id}`}
