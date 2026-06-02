@@ -13,6 +13,7 @@ import {
   type UserProgramSummary,
 } from "@/lib/actions/programs";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface ProgramsClientProps {
   userId: string;
@@ -244,13 +245,13 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
             >
               Cancel
             </button>
-            <button
+            <Button
               onClick={handleCreateProgram}
               disabled={isPending}
-              className="flex-1 md:flex-none px-4 py-1.5 text-sm rounded-lg bg-accent font-semibold text-[#0a0a0a] hover:bg-accent/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="flex-1 md:flex-none"
             >
               {isPending ? "Saving..." : "Create Program"}
-            </button>
+            </Button>
           </div>
         </div>
       )}
