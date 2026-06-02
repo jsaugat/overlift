@@ -1,11 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, ChevronRight } from "lucide-react";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { CheckmarkCircle04Icon, ViewIcon } from "@hugeicons/core-free-icons";
+import { CheckmarkCircle04Icon } from "@hugeicons/core-free-icons";
 import {
   createUserProgram,
   deleteUserProgram,
@@ -13,14 +12,15 @@ import {
   type UserProgramSummary,
 } from "@/lib/actions/programs";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 interface ProgramsClientProps {
@@ -56,6 +56,8 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
   const [programName, setProgramName] = useState("");
   const [days, setDays] = useState<DayBuilderItem[]>([
     { id: crypto.randomUUID(), name: "Push" },
+    { id: crypto.randomUUID(), name: "Pull" },
+    { id: crypto.randomUUID(), name: "Legs" },
   ]);
 
   const onlyOneProgram = programs.length === 1;
@@ -142,7 +144,11 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
       );
       setShowForm(false);
       setProgramName("");
-      setDays([{ id: crypto.randomUUID(), name: "Push" }]);
+      setDays([
+        { id: crypto.randomUUID(), name: "Push" },
+        { id: crypto.randomUUID(), name: "Pull" },
+        { id: crypto.randomUUID(), name: "Legs" },
+      ]);
       refreshAfterAction();
     } catch {
       setError("Could not create program. Please try again.");
@@ -150,25 +156,26 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="sm:flex items-center justify-between gap-3">
+    <div className="space-y-6">
+      {/* Dashboard Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
         <div>
-          <h2 className="text-xl font-medium tracking-[0.04em] uppercase text-app">
-            Programs
+          <h2 className="font-bebas text-[32px] sm:text-[40px] uppercase tracking-wide leading-none text-app">
+            Active Training Templates
           </h2>
-          <p className="text-muted mb-4">
-            Create and manage your training programs.
+          <p className="text-muted text-[13px] sm:text-sm mt-1.5">
+            Select an ongoing structure or assemble a custom iteration scheme
           </p>
         </div>
-        <button
+        <Button
           onClick={() => {
             setError(null);
-            setShowForm((prev) => !prev);
+            setShowForm(true);
           }}
-          className="w-full md:w-fit px-3 py-1.5 rounded-lg border border-app2 text-app hover:bg-app2 transition-colors cursor-pointer"
+          className="w-full sm:w-auto"
         >
-          + New Program
-        </button>
+          <Plus className="w-4 h-4 mr-1.5" /> New Program
+        </Button>
       </div>
 
       {error && (
@@ -177,172 +184,207 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
         </div>
       )}
 
-      {showForm && (
-        <div className="bg-app border border-app rounded-xl p-4 space-y-3">
-          <div>
-            <label className="block mb-1  text-muted">Program name</label>
-            <input
-              type="text"
-              value={programName}
-              onChange={(e) => setProgramName(e.target.value)}
-              placeholder="My Program"
-              className="w-full px-3 py-2 text-sm rounded-lg border border-app2 bg-app2 text-app"
-            />
-          </div>
+      {/* Program Creator Modal */}
+      <Dialog open={showForm} onOpenChange={setShowForm}>
+        <DialogContent className="max-w-md bg-app border border-app2 rounded-xl p-6 text-app">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold text-app uppercase tracking-wide">
+              Initialize New Template
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted">
+              Map your schedule macrocycles and create individual active days.
+            </DialogDescription>
+          </DialogHeader>
 
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <p className="text-muted">Days ({days.length}/7)</p>
+          <div className="space-y-4 my-2">
+            <div>
+              <label className="block mb-1.5 text-[11px] uppercase tracking-wider font-bold text-muted">
+                Program name
+              </label>
+              <Input
+                type="text"
+                value={programName}
+                onChange={(e) => setProgramName(e.target.value)}
+                placeholder="e.g. Push Pull Legs, Upper Lower Split"
+                className="w-full bg-app2 border border-app2 text-app placeholder:text-muted/50"
+              />
             </div>
 
-            {days.map((day, index) => (
-              <div
-                key={day.id}
-                className="flex flex-col gap-2 sm:flex-row sm:items-start"
-              >
-                <div className="flex-1 flex flex-col gap-1.5">
-                  <input
-                    type="text"
-                    value={day.name}
-                    onChange={(e) => updateDay(index, e.target.value)}
-                    placeholder="Day Name (e.g. Chest + Triceps)"
-                    className="w-full px-3 py-1.5 text-sm rounded-lg border border-app2 bg-app2 text-app"
-                  />
-                  {!day.name.trim() && (
-                    <div className="flex flex-wrap gap-1.5 mt-0.5">
-                      {SUGGESTIONS.map((suggestion) => (
-                        <button
-                          key={suggestion}
-                          type="button"
-                          onClick={() => updateDay(index, suggestion)}
-                          className="px-2 py-0.5 text-xs rounded-full border border-app2 text-muted hover:text-white hover:bg-app2 transition-colors cursor-pointer"
-                        >
-                          {suggestion}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <div className="flex justify-end sm:mt-1">
-                  <button
-                    onClick={() => removeDay(index)}
-                    disabled={days.length <= 1}
-                    className="flex items-center gap-1.5 px-2 py-1 text-[11px] border border-neutral-900/30 text-neutral-500/80 hover:text-neutral-500 hover:bg-neutral-500/10 hover:border-neutral-900/50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                    Remove Day
-                  </button>
-                </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="block text-[11px] uppercase tracking-wider font-bold text-muted">
+                  Days ({days.length}/7)
+                </label>
               </div>
-            ))}
-          </div>
 
-          <button
-            onClick={addDay}
-            disabled={days.length >= 7}
-            className="flex items-center gap-1.5 justify-center w-full md:w-fit md:mt-6 mx-auto px-2 py-1 text-sm rounded-md border border-app2 text-app hover:bg-app2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-          >
-            <Plus className="w-3 h-3" />
-            Add day
-          </button>
+              <div className="max-h-60 overflow-y-auto space-y-2 pr-1 divide-y divide-app">
+                {days.map((day, index) => (
+                  <div
+                    key={day.id}
+                    className="flex flex-col gap-2 pt-2 first:pt-0"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="text-[10px] font-mono text-muted uppercase">
+                        Day {String(index + 1).padStart(2, "0")}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeDay(index)}
+                        disabled={days.length <= 1}
+                        className="text-[10px] text-red-500/80 hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        Remove Day
+                      </button>
+                    </div>
+                    <div className="flex-1 flex flex-col gap-1.5">
+                      <Input
+                        type="text"
+                        value={day.name}
+                        onChange={(e) => updateDay(index, e.target.value)}
+                        placeholder="Day Name (e.g. Chest + Triceps)"
+                        className="w-full bg-app2 border border-app2 text-app placeholder:text-muted/50"
+                      />
+                      {!day.name.trim() && (
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {SUGGESTIONS.map((suggestion) => (
+                            <button
+                              key={suggestion}
+                              type="button"
+                              onClick={() => updateDay(index, suggestion)}
+                              className="px-2 py-0.5 text-[10px] rounded-full border border-app2 text-muted hover:text-white hover:bg-app2 transition-colors cursor-pointer"
+                            >
+                              {suggestion}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-          <div className="flex items-center justify-end gap-2 pt-1 ml-auto w-full">
-            <button
-              onClick={() => setShowForm(false)}
-              className=" px-4 py-1.5 text-sm rounded-lg border border-app2 text-muted hover:bg-app2 transition-colors cursor-pointer"
-            >
-              Cancel
-            </button>
             <Button
-              onClick={handleCreateProgram}
-              disabled={isPending}
-              className="flex-1 md:flex-none"
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={addDay}
+              disabled={days.length >= 7}
+              className="w-full border-dashed border-app2 hover:bg-app2 mt-2"
             >
-              {isPending ? "Saving..." : "Create Program"}
+              <Plus className="w-3.5 h-3.5 mr-1" />
+              Add Training Day
             </Button>
           </div>
+
+          <div className="flex items-center justify-end gap-2 mt-4 pt-4 border-t border-app">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowForm(false)}
+              className="border-app2"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={handleCreateProgram}
+              disabled={isPending}
+            >
+              {isPending ? "Saving..." : "Create & Configure"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Programs Grid */}
+      {programs.length === 0 ? (
+        <div className="text-center py-16 sm:py-20 border border-dashed border-app rounded-lg bg-[rgba(255,255,255,0.002)]">
+          <p className="text-sm text-muted mb-5">
+            No training programs discovered inside your library profile.
+          </p>
+          <Button onClick={() => setShowForm(true)}>Create a Program</Button>
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] lg:grid-cols-[repeat(auto-fill,minmax(340px,1fr))]">
+          {programs.map((program) => {
+            const isActive = program.id === activeProgramId;
+            const dayStrings = program.days.map((d) => d.name).join(" • ");
+
+            return (
+              <div
+                key={program.id}
+                className={cn(
+                  "group relative border rounded-xl p-5 sm:p-6 transition-all duration-200 overflow-hidden flex flex-col justify-between min-h-[160px] sm:min-h-[180px] cursor-pointer",
+                  "hover:translate-y-[-2px]",
+                  isActive
+                    ? "bg-accent/[0.03] border-accent/30 shadow-[0_0_24px_-6px_rgba(200,255,0,0.1)]"
+                    : "bg-app2 border-app hover:border-app2 hover:bg-app3",
+                )}
+                onClick={() => router.push(`/programs/${program.id}`)}
+              >
+                {/* Active accent bar */}
+                {isActive && (
+                  <div className="absolute top-0 left-0 w-full h-[2px] bg-accent" />
+                )}
+
+                <div>
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="text-lg sm:text-xl font-bold text-app leading-tight group-hover:text-accent transition-colors">
+                      {program.name}
+                    </h3>
+                    {isActive && (
+                      <Badge
+                        variant="outline"
+                        className="shrink-0 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border-accent/20 bg-accent/10 text-accent h-auto"
+                      >
+                        Active
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-[13px] text-muted mt-2 leading-relaxed line-clamp-2">
+                    {dayStrings || "No day tracks configured yet."}
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between mt-6 pt-3 border-t border-app/50 text-[11px] font-mono text-muted uppercase group-hover:text-muted">
+                  <div>ID: SR-{program.id}</div>
+                  <div
+                    className="flex items-center gap-2"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {!program.is_active && (
+                      <button
+                        onClick={() => handleSetActive(program.id)}
+                        disabled={isPending}
+                        className="px-2.5 py-1 flex items-center gap-1 text-[10px] rounded border border-app2 text-accent hover:bg-app2 transition-colors cursor-pointer"
+                      >
+                        <HugeiconsIcon
+                          icon={CheckmarkCircle04Icon}
+                          size={11}
+                          color="currentColor"
+                          strokeWidth={1.5}
+                        />
+                        Set Active
+                      </button>
+                    )}
+                    {!program.is_active && !onlyOneProgram && (
+                      <button
+                        onClick={() => handleDelete(program.id)}
+                        disabled={isPending}
+                        className="p-1 text-red-500/80 hover:text-red-500 hover:bg-red-500/10 rounded transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                    <ChevronRight className="w-3 h-3 text-muted group-hover:text-app transition-colors ml-1" />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
-
-      <div className="grid gap-3">
-        {programs.map((program) => {
-          const isActive = program.id === activeProgramId;
-
-          return (
-            <div
-              key={program.id}
-              className={cn(
-                "group relative border rounded-xl p-4 transition-all duration-300 overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4",
-                isActive
-                  ? "bg-accent/5 border-accent/40 shadow-[0_0_20px_-5px_rgba(200,255,0,0.1)]"
-                  : "bg-app border-app",
-              )}
-            >
-              {/* {isActive && (
-                <div className="absolute top-0 left-0 w-1 h-full bg-accent" />
-              )} */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-3">
-                  <h3 className="text-xl font-medium text-app leading-tight">
-                    {program.name}
-                  </h3>
-                  {program.is_active && (
-                    <span className="shrink-0 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md border border-accent/20 bg-accent/10 text-accent">
-                      Active
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-muted mt-1">
-                  {program.days.length} day
-                  {program.days.length === 1 ? "" : "s"}
-                </p>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-2 shrink-0">
-                {!program.is_active && (
-                  <button
-                    onClick={() => handleSetActive(program.id)}
-                    disabled={isPending}
-                    className="px-3 py-1.5 flex items-center gap-1 text-xs rounded-lg font-medium border border-app2 text-accent hover:bg-app2 transition-colors cursor-pointer"
-                  >
-                    <HugeiconsIcon
-                      icon={CheckmarkCircle04Icon}
-                      size={14}
-                      color="currentColor"
-                      strokeWidth={1.5}
-                    />
-                    Set Active
-                  </button>
-                )}
-
-                <Link
-                  href={`/programs/${program.id}`}
-                  className="px-3 py-1.5 flex items-center gap-1 text-xs rounded-lg border border-app2 text-app hover:bg-app2 transition-colors"
-                >
-                  <HugeiconsIcon
-                    icon={ViewIcon}
-                    size={14}
-                    color="currentColor"
-                    strokeWidth={1.5}
-                  />
-                  View / Edit
-                </Link>
-
-                {!program.is_active && !onlyOneProgram && (
-                  <button
-                    onClick={() => handleDelete(program.id)}
-                    disabled={isPending}
-                    className="flex items-center gap-1.5 px-2 py-1 text-[11px] border border-red-900/30 text-red-500/80 hover:text-red-500 hover:bg-red-500/10 hover:border-red-900/50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                    Delete
-                  </button>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
     </div>
   );
 }

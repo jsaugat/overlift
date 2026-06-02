@@ -120,6 +120,45 @@ export async function isExerciseLibrarySeeded(): Promise<boolean> {
   return (count ?? 0) > 0;
 }
 
+export interface ExerciseLibraryItem {
+  id: number;
+  name: string;
+  muscle_group: string | null;
+  equipment: string | null;
+  source: string | null;
+}
+
+/**
+ * Fetch all exercises from the library, scoping to shared + user's custom ones.
+ * Returns items sorted alphabetically within each muscle group.
+ */
+export async function getExerciseLibrary(): Promise<ExerciseLibraryItem[]> {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let query = supabase
+    .from("exercises")
+    .select("id, name, muscle_group, equipment, source")
+    .order("muscle_group", { ascending: true })
+    .order("name", { ascending: true })
+    .limit(500);
+
+  if (user?.id) {
+    query = query.or(`user_id.is.null,user_id.eq.${user.id}`);
+  } else {
+    query = query.is("user_id", null);
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    throw error;
+  }
+
+  return (data ?? []) as ExerciseLibraryItem[];
+}
+
 /**
  * Search exercises by name or muscle group, scoping results to
  * shared rows or the current user when authenticated.

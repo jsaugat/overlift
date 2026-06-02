@@ -487,3 +487,195 @@ export async function deleteUserProgram(
 
   return { success: true };
 }
+
+export async function getProgramWithExercises(
+  userId: string,
+  programId: number,
+): Promise<ActiveProgram | null> {
+  try {
+    const supabase = await createSupabaseServerClient();
+
+    const { data, error } = await supabase
+      .from("user_programs")
+      .select(
+        "id, name, is_active, created_at, starting_day, user_program_days ( id, day_order, name, user_program_exercises ( id, exercise_id, position, sets, rep_min, rep_max, exercises ( id, name, muscle_group, equipment ) ) )",
+      )
+      .eq("user_id", userId)
+      .eq("id", programId)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Failed to fetch program", error);
+      return null;
+    }
+
+    const programData = data as unknown as ActiveProgramQueryRow | null;
+
+    if (!programData) {
+      return null;
+    }
+
+    const orderedDays = (programData.user_program_days ?? [])
+      .slice()
+      .sort((a, b) => a.day_order - b.day_order);
+
+    const days: ProgramDay[] = orderedDays.map((day) => {
+      const orderedExercises = (day.user_program_exercises ?? [])
+        .slice()
+        .sort((a, b) => a.position - b.position);
+
+      const exercises: ProgramExercise[] = orderedExercises.map((exercise) => ({
+        id: exercise.id,
+        exercise_id: exercise.exercise_id,
+        position: exercise.position,
+        sets: exercise.sets,
+        rep_min: exercise.rep_min,
+        rep_max: exercise.rep_max,
+        exercise: {
+          id: exercise.exercises?.id ?? exercise.exercise_id,
+          name: exercise.exercises?.name ?? "",
+          muscle_group: exercise.exercises?.muscle_group ?? "",
+          equipment: exercise.exercises?.equipment ?? null,
+        },
+      }));
+
+      return {
+        id: day.id,
+        day_order: day.day_order,
+        name: day.name,
+        exercises,
+      };
+    });
+
+    return {
+      id: programData.id,
+      name: programData.name,
+      is_active: programData.is_active,
+      created_at: programData.created_at,
+      starting_day: programData.starting_day ?? 0,
+      days,
+    };
+  } catch (error) {
+    console.error("Unexpected error fetching program", error);
+    return null;
+  }
+}
+
+export async function addExerciseToDay(
+  userId: string,
+  dayId: number,
+  exerciseId: number,
+  sets: number = 3,
+  repMin: number = 8,
+  repMax: number = 12,
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createSupabaseServerClient();
+
+  // Get current max position for the day
+  const { data: existing, error: fetchError } = await supabase
+    .from("user_program_exercises")
+    .select("position")
+    .eq("user_program_day_id", dayId)
+    .order("position", { ascending: false })
+    .limit(1);
+
+  if (fetchError) {
+    return { success: false, error: "Failed to fetch exercises" };
+  }
+
+  const maxPosition =
+    existing && existing.length > 0
+      ? (existing[0] as { position: number }).position
+      : 0;
+
+  const { error: insertError } = await supabase
+    .from("user_program_exercises")
+    .insert({
+      user_program_day_id: dayId,
+      user_id: userId,
+      exercise_id: exerciseId,
+      position: maxPosition + 1,
+      sets,
+      rep_min: repMin,
+      rep_max: repMax,
+    } as any);
+
+  if (insertError) {
+    return { success: false, error: "Failed to add exercise" };
+  }
+
+  return { success: true };
+}
+
+export async function removeExerciseFromDay(
+  userId: string,
+  exerciseRowId: number,
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createSupabaseServerClient();
+
+  const { error } = await supabase
+    .from("user_program_exercises")
+    .delete()
+    .eq("id", exerciseRowId)
+    .eq("user_id", userId);
+
+  if (error) {
+    return { success: false, error: "Failed to remove exercise" };
+  }
+
+  return { success: true };
+}
+
+export async function updateExerciseSettings(
+  userId: string,
+  exerciseRowId: number,
+  sets: number,
+  repMin: number,
+  repMax: number,
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createSupabaseServerClient();
+
+  const { error } = await (supabase.from("user_program_exercises") as any)
+    .update({ sets, rep_min: repMin, rep_max: repMax })
+    .eq("id", exerciseRowId)
+    .eq("user_id", userId);
+
+  if (error) {
+    return { success: false, error: "Failed to update exercise" };
+  }
+
+  return { success: true };
+}
+
+export async function createCustomExercise(
+  userId: string,
+  name: string,
+  muscleGroup: string,
+  equipment: string,
+): Promise<{ success: boolean; exerciseId?: number; error?: string }> {
+  const supabase = await createSupabaseServerClient();
+
+  const trimmedName = name.trim();
+  if (!trimmedName) {
+    return { success: false, error: "Exercise name is required" };
+  }
+
+  const { data, error } = await supabase
+    .from("exercises")
+    .insert({
+      name: trimmedName.toLowerCase(),
+      muscle_group: muscleGroup || null,
+      equipment: equipment || "bodyweight",
+      source: "custom",
+      user_id: userId,
+    } as any)
+    .select("id")
+    .single();
+
+  if (error) {
+    return { success: false, error: "Failed to create exercise" };
+  }
+
+  const created = data as unknown as { id: number } | null;
+  return { success: true, exerciseId: created?.id };
+}

@@ -1,9 +1,2 @@
-- Use @components/ui/button for button component
-- Use @components/ui/dialog for dialog or modal component
-- Use @components/ui/input for input component
-- Use @components/ui/label for label component
-- Use @components/ui/select for select component
-- Use @components/ui/textarea for textarea component
-- Use @components/ui/tooltip for tooltip component
-
-install using shadcn command if needed any shadcn component
+- Use @components/ui for components to use for button, input, select and so on, use shadcn to add new components
+- Use @components/ui/sick-button for small buttons like edit exercise, delete exercise, modal close and so on

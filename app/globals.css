@@ -259,6 +259,52 @@
     color: var(--text-muted);
     border: 1px solid var(--border);
   }
+
+  .badge-back {
+    background-color: rgba(0, 140, 255, 0.12) !important;
+    color: #44bfff !important;
+  }
+  .badge-chest {
+    background-color: rgba(255, 69, 58, 0.12) !important;
+    color: #ff6b64 !important;
+  }
+  .badge-shoulders {
+    background-color: rgba(255, 159, 10, 0.12) !important;
+    color: #ffb340 !important;
+  }
+  .badge-biceps {
+    background-color: rgba(191, 90, 242, 0.12) !important;
+    color: #d187ff !important;
+  }
+  .badge-triceps {
+    background-color: rgba(48, 209, 88, 0.12) !important;
+    color: #66e084 !important;
+  }
+  .badge-quads {
+    background-color: rgba(255, 214, 10, 0.12) !important;
+    color: #ffd60a !important;
+  }
+  .badge-hamstrings {
+    background-color: rgba(172, 142, 104, 0.15) !important;
+    color: #d4bda2 !important;
+  }
+  .badge-calves {
+    background-color: rgba(142, 142, 147, 0.12) !important;
+    color: #aeaea3 !important;
+  }
+  .badge-core {
+    background-color: rgba(255, 55, 95, 0.12) !important;
+    color: #ff668a !important;
+  }
+  .badge-generic {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: #888888 !important;
+  }
+  .badge-custom {
+    background-color: rgba(200, 255, 0, 0.1) !important;
+    color: var(--accent) !important;
+    border: 1px solid rgba(200, 255, 0, 0.2) !important;
+  }
 }
 
 .divide-app > :not([hidden]) ~ :not([hidden]) {
