@@ -73,7 +73,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
 
       if (!error && data) {
         const weights: Record<string, number> = {};
-        data.forEach((w) => {
+        (data as Array<{ exercise: string; weight_kg: number }>).forEach((w) => {
           weights[w.exercise] = w.weight_kg;
         });
         setTargetWeights(weights);

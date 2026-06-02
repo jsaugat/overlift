@@ -87,7 +87,7 @@ export async function seedExerciseLibrary(): Promise<{
   for (const chunk of chunks) {
     const { data, error } = await supabase
       .from("exercises")
-      .upsert(chunk, {
+      .upsert(chunk as any, {
         onConflict: "name",
         ignoreDuplicates: true,
       })

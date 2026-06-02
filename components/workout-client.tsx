@@ -20,9 +20,15 @@ export function WorkoutClient({ program, defaultDayOrder }: WorkoutClientProps) 
     return null;
   }
 
+  const today = new Date().getDay(); // 0-6
+  const offset = (today - (program.starting_day ?? 0) + 7) % 7;
+  const todayDayOrder = offset + 1;
+  const todayDay = program.days.find((d) => d.day_order === todayDayOrder);
+  const todayDayName = todayDay?.name ?? "Rest";
+
   return (
     <>
-      <AppHeader dayName={day.name} />
+      <AppHeader dayName={todayDayName} />
       <div className="bg-app border border-app rounded-xl mt-2 overflow-hidden mb-12">
         <Nav />
         <div className="p-4 sm:p-6">
