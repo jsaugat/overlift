@@ -171,9 +171,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
       {showForm && (
         <div className="bg-app border border-app rounded-xl p-4 space-y-3">
           <div>
-            <label className="text-xs text-muted block mb-1">
-              Program name
-            </label>
+            <label className="block mb-1  text-muted">Program name</label>
             <input
               type="text"
               value={programName}
@@ -185,17 +183,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <p className="text-xs text-muted uppercase">
-                Days ({days.length}/7)
-              </p>
-              <button
-                onClick={addDay}
-                disabled={days.length >= 7}
-                className="flex items-center gap-1.5 px-2 py-1 text-[11px] rounded-md border border-app2 text-app hover:bg-app2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-              >
-                <Plus className="w-3 h-3" />
-                Add day
-              </button>
+              <p className="text-muted">Days ({days.length}/7)</p>
             </div>
 
             {days.map((day, index) => (
@@ -240,17 +228,26 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
             ))}
           </div>
 
-          <div className="flex items-center gap-2 pt-1 ml-auto w-fit">
+          <button
+            onClick={addDay}
+            disabled={days.length >= 7}
+            className="flex items-center gap-1.5 justify-center w-full md:w-fit md:mt-6 mx-auto px-2 py-1 text-sm rounded-md border border-app2 text-app hover:bg-app2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          >
+            <Plus className="w-3 h-3" />
+            Add day
+          </button>
+
+          <div className="flex items-center justify-end gap-2 pt-1 ml-auto w-full">
             <button
               onClick={() => setShowForm(false)}
-              className="px-4 py-1.5 text-sm rounded-lg border border-app2 text-muted hover:bg-app2 transition-colors cursor-pointer"
+              className=" px-4 py-1.5 text-sm rounded-lg border border-app2 text-muted hover:bg-app2 transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={handleCreateProgram}
               disabled={isPending}
-              className="px-4 py-1.5 text-sm font-medium rounded-lg bg-accent text-[#0a0a0a] hover:bg-accent/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="flex-1 md:flex-none px-4 py-1.5 text-sm rounded-lg bg-accent font-semibold text-[#0a0a0a] hover:bg-accent/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {isPending ? "Saving..." : "Create Program"}
             </button>
