@@ -1,0 +1,2647 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Overlift // System - Program Studio</title>
+    <!-- GOOGLE FONTS: DM Sans & Bebas Neue -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Bebas+Neue&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* --- BRANDING & DESIGN SYSTEM (HIGHEND CINEMATIC / LUXE DARK) --- */
+      :root {
+        --bg-main: #060606;
+        --bg-card: #0d0d0d;
+        --bg-input: #121212;
+        --bg-hover: #161616;
+        --bg-active: #1e1e1e;
+
+        --border-subtle: #1a1a1a;
+        --border-focus: #2a2a2a;
+        --border-luxe: #333333;
+
+        --text-primary: #ffffff;
+        --text-secondary: #8e8e93;
+        --text-muted: #48484a;
+
+        --accent-brand: #ccff00; /* Neon Lime Gold Vibe */
+        --accent-brand-hover: #b5e600;
+        --accent-danger: #ff453a;
+
+        --font-main: "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+        --font-condensed: "Bebas Neue", sans-serif;
+        --font-mono:
+          ui-monospace, SFMono-Regular, SF Pro Mono, Menlo, monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: var(--bg-main);
+        color: var(--text-primary);
+        font-family: var(--font-main);
+        -webkit-font-smoothing: antialiased;
+        padding-bottom: 80px;
+        overflow-x: hidden;
+      }
+
+      /* --- SICK SKEUOMORPHIC SHARP BUTTON SYSTEM --- */
+      .sick-btn-icon {
+        background: transparent;
+        padding: 8px;
+        border-radius: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        border-top: 1px solid var(--border-luxe);
+        border-l: 1px solid var(--border-luxe);
+        border-right: 1px solid #000000;
+        border-bottom: 1px solid #000000;
+        color: var(--text-secondary);
+      }
+      .sick-btn-icon:hover {
+        color: var(--text-primary);
+        background-color: var(--bg-hover);
+      }
+      .sick-btn-icon.danger {
+        color: var(--text-muted);
+      }
+      .sick-btn-icon.danger:hover {
+        color: var(--accent-danger);
+        background-color: rgba(255, 69, 58, 0.05);
+      }
+
+      /* --- GLASSMORPHISM & LUXE SECTIONS --- */
+      .glass-panel {
+        background: rgba(13, 13, 13, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+      }
+
+      /* --- HEADER --- */
+      header {
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border-subtle);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: rgba(6, 6, 6, 0.8);
+        position: sticky;
+        top: 0;
+        z-index: 90;
+      }
+      @media (min-width: 768px) {
+        header {
+          padding: 20px 40px;
+        }
+      }
+
+      .brand-meta {
+        font-size: 11px;
+        font-family: var(--font-mono);
+        letter-spacing: 3px;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+      }
+
+      .brand-meta span {
+        color: var(--text-muted);
+        margin: 0 6px;
+      }
+
+      .user-nav {
+        font-size: 12px;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+      }
+      .user-nav span {
+        color: var(--text-muted);
+        margin-right: 12px;
+        display: none;
+      }
+      @media (min-width: 640px) {
+        .user-nav span {
+          display: inline;
+        }
+      }
+      .user-nav a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        border-bottom: 1px transparent solid;
+      }
+      .user-nav a:hover {
+        color: var(--text-primary);
+        border-bottom-color: var(--accent-brand);
+      }
+
+      /* --- LAYOUT CONTAINER --- */
+      .container {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 24px 16px;
+      }
+      @media (min-width: 768px) {
+        .container {
+          padding: 40px 24px;
+        }
+      }
+
+      /* --- CONDENSED HERO HEADLINE --- */
+      .app-banner {
+        margin-bottom: 32px;
+      }
+      @media (min-width: 768px) {
+        .app-banner {
+          margin-bottom: 40px;
+        }
+      }
+      .app-banner h1 {
+        font-family: var(--font-condensed);
+        font-size: 48px;
+        font-weight: 400;
+        letter-spacing: -0.5px;
+        line-height: 0.9;
+        text-transform: uppercase;
+        color: var(--text-primary);
+      }
+      @media (min-width: 640px) {
+        .app-banner h1 {
+          font-size: 72px;
+        }
+      }
+      @media (min-width: 1024px) {
+        .app-banner h1 {
+          font-size: 96px;
+          letter-spacing: -1px;
+        }
+      }
+
+      .app-banner h1 .highlight {
+        color: var(--accent-brand);
+        display: block;
+      }
+
+      /* --- SYSTEM NAV TABS --- */
+      .nav-tabs {
+        display: flex;
+        gap: 4px;
+        border-bottom: 1px solid var(--border-subtle);
+        margin-bottom: 32px;
+      }
+      @media (min-width: 768px) {
+        .nav-tabs {
+          gap: 8px;
+          margin-bottom: 40px;
+        }
+      }
+      .nav-tab {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-family: var(--font-main);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        padding: 12px 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+        transition: color 0.2s ease;
+      }
+      @media (min-width: 768px) {
+        .nav-tab {
+          font-size: 13px;
+          padding: 14px 20px;
+          gap: 10px;
+        }
+      }
+      .nav-tab:hover {
+        color: var(--text-primary);
+      }
+      .nav-tab.active {
+        color: var(--text-primary);
+      }
+      .nav-tab.active::after {
+        content: "";
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background-color: var(--accent-brand);
+      }
+
+      /* --- DASHBOARD SCREENS CONTAINER --- */
+      .screen-view {
+        display: none;
+      }
+      .screen-view.active {
+        display: block;
+      }
+
+      /* --- STATE 1: DASHBOARD OVERVIEW --- */
+      .dashboard-header-row {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 28px;
+      }
+      @media (min-width: 640px) {
+        .dashboard-header-row {
+          flex-direction: row;
+          align-items: flex-end;
+        }
+      }
+      .dashboard-title-area h2 {
+        font-family: var(--font-condensed);
+        font-size: 32px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        line-height: 1;
+      }
+      @media (min-width: 768px) {
+        .dashboard-title-area h2 {
+          font-size: 40px;
+        }
+      }
+      .dashboard-title-area p {
+        color: var(--text-secondary);
+        font-size: 13px;
+        margin-top: 6px;
+      }
+      @media (min-width: 768px) {
+        .dashboard-title-area p {
+          font-size: 14px;
+          margin-top: 4px;
+        }
+      }
+
+      .dashboard-header-row .btn {
+        width: 100%;
+      }
+      @media (min-width: 640px) {
+        .dashboard-header-row .btn {
+          width: auto;
+        }
+      }
+
+      .programs-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      @media (min-width: 640px) {
+        .programs-grid {
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+      }
+      @media (min-width: 1024px) {
+        .programs-grid {
+          grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+          gap: 20px;
+        }
+      }
+
+      .program-card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: 8px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 160px;
+      }
+      @media (min-width: 768px) {
+        .program-card {
+          padding: 24px;
+          min-height: 180px;
+        }
+      }
+      .program-card:hover {
+        border-color: var(--border-focus);
+        transform: translateY(-2px);
+        background-color: var(--bg-hover);
+      }
+      .program-card .title-line {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+      }
+      @media (min-width: 768px) {
+        .program-card .title-line {
+          font-size: 20px;
+        }
+      }
+      .program-card .days-summary {
+        font-size: 13px;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+      .program-card .card-meta {
+        margin-top: 24px;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .program-card:hover .card-meta {
+        color: var(--text-secondary);
+      }
+
+      /* --- STATE 2 & 3: BUILDER & MANAGER FLOWS --- */
+      .builder-layout {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 24px;
+        align-items: start;
+      }
+      @media (min-width: 950px) {
+        .builder-layout {
+          grid-template-columns: 320px 1fr;
+          gap: 32px;
+        }
+      }
+      @media (min-width: 1200px) {
+        .builder-layout {
+          grid-template-columns: 340px 1fr;
+          gap: 40px;
+        }
+      }
+
+      .card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: 8px;
+        padding: 20px;
+      }
+      @media (min-width: 768px) {
+        .card {
+          padding: 24px;
+        }
+      }
+
+      .card-title {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--text-secondary);
+        margin-bottom: 18px;
+        font-weight: 700;
+      }
+
+      .program-header-block {
+        margin-bottom: 24px;
+      }
+      .program-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+      }
+      .program-name-display {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--text-primary);
+      }
+      @media (min-width: 768px) {
+        .program-name-display {
+          font-size: 26px;
+        }
+      }
+
+      /* --- DYNAMIC DAYS MANAGER (CREATION FLOW) --- */
+      .creator-days-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .creator-day-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        background-color: var(--bg-input);
+        padding: 8px 10px;
+        border: 1px solid var(--border-subtle);
+        border-radius: 6px;
+      }
+      @media (min-width: 640px) {
+        .creator-day-row {
+          padding: 10px 12px;
+        }
+      }
+      .creator-day-row .day-num {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--text-muted);
+        min-width: 40px;
+      }
+      @media (min-width: 640px) {
+        .creator-day-row .day-num {
+          font-size: 12px;
+          min-width: 45px;
+        }
+      }
+      .creator-day-row .form-input {
+        padding: 6px 10px;
+        font-size: 13px;
+        background-color: transparent;
+        border-color: transparent;
+      }
+      @media (min-width: 640px) {
+        .creator-day-row .form-input {
+          font-size: 14px;
+        }
+      }
+      .creator-day-row .form-input:focus {
+        background-color: var(--bg-main);
+        border-color: var(--border-subtle);
+      }
+
+      /* --- ARCHITECTURE SIDEBAR LIST --- */
+      .days-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .day-selector-btn {
+        background-color: transparent;
+        border: 1px solid var(--border-subtle);
+        border-radius: 6px;
+        padding: 12px 14px;
+        color: var(--text-secondary);
+        text-align: left;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.2s ease;
+        font-family: var(--font-main);
+        font-size: 13px;
+      }
+      @media (min-width: 768px) {
+        .day-selector-btn {
+          padding: 14px 18px;
+          font-size: 14px;
+        }
+      }
+      .day-selector-btn:hover {
+        border-color: var(--border-focus);
+        color: var(--text-primary);
+        background-color: rgba(255, 255, 255, 0.01);
+      }
+      .day-selector-btn.active {
+        border-color: var(--accent-brand);
+        background-color: rgba(204, 255, 0, 0.03);
+        color: var(--text-primary);
+        font-weight: 700;
+      }
+      .day-selector-btn .meta-count {
+        font-size: 10px;
+        font-family: var(--font-mono);
+        background-color: var(--bg-input);
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: var(--text-secondary);
+      }
+      .day-selector-btn.active .meta-count {
+        background-color: var(--accent-brand);
+        color: var(--bg-main);
+        font-weight: 700;
+      }
+
+      /* --- WORKOUT DAY WORKSPACE --- */
+      .day-workspace-header {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 24px;
+        border-bottom: 1px solid var(--border-subtle);
+        padding-bottom: 16px;
+      }
+      @media (min-width: 640px) {
+        .day-workspace-header {
+          flex-direction: row;
+          align-items: center;
+          margin-bottom: 28px;
+          padding-bottom: 20px;
+        }
+      }
+      .day-title-area h2 {
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        line-height: 1.1;
+      }
+      @media (min-width: 768px) {
+        .day-title-area h2 {
+          font-size: 32px;
+        }
+      }
+      .day-title-area p {
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-top: 4px;
+      }
+      @media (min-width: 768px) {
+        .day-title-area p {
+          font-size: 14px;
+        }
+      }
+      .day-workspace-header .btn {
+        width: 100%;
+      }
+      @media (min-width: 640px) {
+        .day-workspace-header .btn {
+          width: auto;
+        }
+      }
+
+      /* --- COMPONENT BUTTONS --- */
+      .btn {
+        font-family: var(--font-main);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 10px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.15s ease;
+        border: none;
+        white-space: nowrap;
+      }
+      @media (min-width: 768px) {
+        .btn {
+          font-size: 13px;
+          padding: 12px 20px;
+          gap: 10px;
+        }
+      }
+      .btn-primary {
+        background-color: var(--accent-brand);
+        color: var(--bg-main);
+      }
+      .btn-primary:hover {
+        background-color: var(--accent-brand-hover);
+      }
+      .btn-secondary {
+        background-color: var(--bg-input);
+        color: var(--text-primary);
+        border: 1px solid var(--border-subtle);
+      }
+      .btn-secondary:hover {
+        background-color: var(--bg-hover);
+        border-color: var(--border-focus);
+      }
+      .btn-sm {
+        padding: 6px 12px;
+        font-size: 11px;
+      }
+      @media (min-width: 768px) {
+        .btn-sm {
+          padding: 8px 14px;
+        }
+      }
+      .btn-block {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+      }
+
+      /* --- EXERCISES DRAGGABLE ROW LIST --- */
+      .exercise-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .exercise-row {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: 6px;
+        padding: 16px;
+        transition:
+          transform 0.2s ease,
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
+        user-select: none;
+      }
+      @media (min-width: 640px) {
+        .exercise-row {
+          flex-direction: row;
+          align-items: center;
+          padding: 18px 20px;
+          gap: 0;
+        }
+      }
+      .exercise-row:hover {
+        border-color: var(--border-focus);
+      }
+      .exercise-row.dragging {
+        opacity: 0.4;
+        background-color: var(--bg-hover);
+        border-color: var(--accent-brand);
+        transform: scale(1.005);
+      }
+
+      .exercise-row-left-group {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .drag-handle {
+        cursor: grab;
+        color: var(--text-muted);
+        padding-right: 12px;
+        display: flex;
+        align-items: center;
+      }
+      @media (min-width: 640px) {
+        .drag-handle {
+          padding-right: 16px;
+        }
+      }
+      .drag-handle:active {
+        cursor: grabbing;
+      }
+      .drag-handle:hover {
+        color: var(--text-secondary);
+      }
+
+      .pos-index {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        color: var(--text-muted);
+        width: 24px;
+        font-weight: 600;
+      }
+      @media (min-width: 640px) {
+        .pos-index {
+          font-size: 13px;
+          width: 30px;
+        }
+      }
+
+      .exercise-main-info {
+        flex: 1;
+        min-width: 0;
+        padding-right: 8px;
+      }
+      .exercise-row-name {
+        font-weight: 700;
+        font-size: 15px;
+        color: var(--text-primary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 6px;
+      }
+      @media (min-width: 640px) {
+        .exercise-row-name {
+          font-size: 16px;
+        }
+      }
+      .exercise-row-tags {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .exercise-row-right-group {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        border-top: 1px solid var(--border-subtle);
+        padding-top: 14px;
+      }
+      @media (min-width: 640px) {
+        .exercise-row-right-group {
+          width: auto;
+          border-top: none;
+          padding-top: 0;
+          justify-content: flex-end;
+        }
+      }
+
+      .exercise-row-settings {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+      @media (min-width: 640px) {
+        .exercise-row-settings {
+          gap: 28px;
+          margin-right: 24px;
+        }
+      }
+      .setting-metric {
+        text-align: left;
+      }
+      @media (min-width: 640px) {
+        .setting-metric {
+          text-align: right;
+        }
+      }
+      .setting-metric .metric-val {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+      }
+      @media (min-width: 640px) {
+        .setting-metric .metric-val {
+          font-size: 16px;
+        }
+      }
+      .setting-metric .metric-lbl {
+        font-size: 9px;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 2px;
+      }
+      @media (min-width: 640px) {
+        .setting-metric .metric-lbl {
+          font-size: 10px;
+          margin-top: 3px;
+        }
+      }
+
+      .exercise-row-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      @media (min-width: 640px) {
+        .exercise-row-actions {
+          border-left: 1px solid var(--border-subtle);
+          padding-left: 16px;
+        }
+      }
+
+      /* --- EMPTY CONFIGURATION CANVAS STATES --- */
+      .empty-state {
+        text-align: center;
+        padding: 60px 16px;
+        border: 1px dashed var(--border-subtle);
+        border-radius: 8px;
+        color: var(--text-secondary);
+        background-color: rgba(255, 255, 255, 0.002);
+      }
+      @media (min-width: 768px) {
+        .empty-state {
+          padding: 80px 24px;
+        }
+      }
+      .empty-state p {
+        margin-bottom: 20px;
+        font-size: 14px;
+      }
+      @media (min-width: 768px) {
+        .empty-state p {
+          margin-bottom: 24px;
+          font-size: 15px;
+        }
+      }
+
+      /* --- LUXE SOLID BADGES --- */
+      .badge {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 3px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-block;
+      }
+      .badge-back {
+        background-color: rgba(0, 140, 255, 0.12);
+        color: #44bfff;
+      }
+      .badge-chest {
+        background-color: rgba(255, 69, 58, 0.12);
+        color: #ff6b64;
+      }
+      .badge-shoulders {
+        background-color: rgba(255, 159, 10, 0.12);
+        color: #ffb340;
+      }
+      .badge-biceps {
+        background-color: rgba(191, 90, 242, 0.12);
+        color: #d187ff;
+      }
+      .badge-triceps {
+        background-color: rgba(48, 209, 88, 0.12);
+        color: #66e084;
+      }
+      .badge-quads {
+        background-color: rgba(255, 214, 10, 0.12);
+        color: #ffd60a;
+      }
+      .badge-hamstrings {
+        background-color: rgba(172, 142, 104, 0.15);
+        color: #d4bda2;
+      }
+      .badge-calves {
+        background-color: rgba(142, 142, 147, 0.12);
+        color: #aeaea3;
+      }
+      .badge-core {
+        background-color: rgba(255, 55, 95, 0.12);
+        color: #ff668a;
+      }
+      .badge-generic {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: var(--text-secondary);
+      }
+      .badge-custom {
+        background-color: rgba(204, 255, 0, 0.1);
+        color: var(--accent-brand);
+        border: 1px solid rgba(204, 255, 0, 0.2);
+      }
+
+      /* --- MODAL DIALOGS MATRIX --- */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        backdrop-filter: blur(8px);
+        padding: 12px;
+      }
+      .modal-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .modal-window {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-focus);
+        border-radius: 12px;
+        width: 100%;
+        max-width: 580px;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-shadow: 0 24px 50px rgba(0, 0, 0, 0.8);
+        transform: scale(0.97);
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .modal-overlay.active .modal-window {
+        transform: scale(1);
+      }
+
+      .modal-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--border-subtle);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      @media (min-width: 768px) {
+        .modal-header {
+          padding: 22px 28px;
+        }
+      }
+      .modal-header h3 {
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+      }
+      @media (min-width: 768px) {
+        .modal-header h3 {
+          font-size: 18px;
+        }
+      }
+
+      .modal-body {
+        padding: 20px;
+        overflow-y: auto;
+        flex: 1;
+      }
+      @media (min-width: 768px) {
+        .modal-body {
+          padding: 28px;
+        }
+      }
+
+      .modal-footer {
+        padding: 16px 20px;
+        border-top: 1px solid var(--border-subtle);
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        background-color: rgba(0, 0, 0, 0.2);
+      }
+      @media (min-width: 768px) {
+        .modal-footer {
+          padding: 18px 28px;
+        }
+      }
+
+      /* --- STANDARD DEUX CONTROLS --- */
+      .form-group {
+        margin-bottom: 22px;
+      }
+      .form-group:last-child {
+        margin-bottom: 0;
+      }
+      .form-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+      }
+      .form-input {
+        width: 100%;
+        background-color: var(--bg-input);
+        border: 1px solid var(--border-subtle);
+        border-radius: 6px;
+        padding: 12px 16px;
+        color: var(--text-primary);
+        font-family: var(--font-main);
+        font-size: 14px;
+        transition: all 0.15s ease;
+      }
+      .form-input:focus {
+        outline: none;
+        border-color: var(--border-focus);
+        background-color: var(--bg-hover);
+      }
+      .form-input::placeholder {
+        color: var(--text-muted);
+      }
+
+      .settings-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+        background-color: rgba(0, 0, 0, 0.2);
+        padding: 16px;
+        border-radius: 8px;
+        border: 1px solid var(--border-subtle);
+      }
+      @media (min-width: 768px) {
+        .settings-grid {
+          gap: 16px;
+          padding: 20px;
+        }
+      }
+
+      /* --- EXPLORATION & SEARCH SPECIFICS --- */
+      .search-container {
+        position: relative;
+        margin-bottom: 20px;
+      }
+      .search-icon-embedded {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+      }
+      .search-container .form-input {
+        padding-left: 44px;
+      }
+
+      .library-scroll-zone {
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid var(--border-subtle);
+        border-radius: 8px;
+        background-color: rgba(0, 0, 0, 0.15);
+      }
+      @media (min-width: 768px) {
+        .library-scroll-zone {
+          max-height: 360px;
+        }
+      }
+
+      .library-section-title {
+        background-color: var(--bg-input);
+        padding: 10px 16px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-secondary);
+        border-top: 1px solid var(--border-subtle);
+        border-bottom: 1px solid var(--border-subtle);
+      }
+      .library-section-title:first-child {
+        border-top: none;
+      }
+
+      .library-item-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.01);
+        cursor: pointer;
+        transition: background-color 0.1s ease;
+      }
+      @media (min-width: 768px) {
+        .library-item-row {
+          padding: 14px 16px;
+        }
+      }
+      .library-item-row:last-child {
+        border-bottom: none;
+      }
+      .library-item-row:hover {
+        background-color: var(--bg-hover);
+      }
+      .item-meta-block {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 0;
+        flex: 1;
+      }
+      .item-title-text {
+        font-size: 14px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .item-tags-row {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .item-tags-row::-webkit-scrollbar {
+        display: none;
+      }
+
+      .modal-inline-notice {
+        margin-top: 24px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-subtle);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      @media (min-width: 480px) {
+        .modal-inline-notice {
+          flex-direction: row;
+          align-items: center;
+          gap: 0;
+        }
+      }
+      .modal-inline-notice p {
+        font-size: 13px;
+        color: var(--text-secondary);
+      }
+      .modal-inline-notice .btn {
+        width: 100%;
+      }
+      @media (min-width: 480px) {
+        .modal-inline-notice .btn {
+          width: auto;
+        }
+      }
+
+      .custom-exercise-panel {
+        background-color: rgba(0, 0, 0, 0.4);
+        border: 1px solid var(--border-subtle);
+        border-radius: 8px;
+        padding: 16px;
+        margin-top: 20px;
+        display: none;
+      }
+      @media (min-width: 768px) {
+        .custom-exercise-panel {
+          padding: 20px;
+        }
+      }
+      .custom-exercise-panel.active {
+        display: block;
+      }
+      .panel-header-title {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--accent-brand);
+        margin-bottom: 16px;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .display-flex {
+        display: flex;
+      }
+      .justify-content-between {
+        justify-content: space-between;
+      }
+      .align-items-center {
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- OVERLIFT SYSTEM TOP DECK BAR -->
+    <header>
+      <div class="brand-meta">OVERLIFT <span>//</span> STUDIO</div>
+      <div class="user-nav">
+        <span>saugatec@gmail.com</span>
+        <a href="#back" onclick="routeToDashboard(event)">Dashboard</a>
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- MATTE CINEMATIC CONDENSED HERO -->
+      <div class="app-banner">
+        <h1>Stop switching <span class="highlight">too soon</span></h1>
+      </div>
+
+      <!-- CORE NAVIGATION TABS -->
+      <div class="nav-tabs">
+        <button class="nav-tab active" onclick="routeToDashboard(event)">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+          </svg>
+          Programs
+        </button>
+        <button
+          class="nav-tab"
+          disabled
+          style="opacity: 0.3; cursor: not-allowed"
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <path
+              d="M18 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"
+            />
+          </svg>
+          Workout Analytics
+        </button>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- VIEW 1: HOME DASHBOARD HUB -->
+      <!-- ========================================================================= -->
+      <div id="screenDashboard" class="screen-view active">
+        <div class="dashboard-header-row">
+          <div class="dashboard-title-area">
+            <h2>Active Training Templates</h2>
+            <p>
+              Select an ongoing structure or assemble a custom iteration scheme
+            </p>
+          </div>
+          <div>
+            <button class="btn btn-primary" onclick="initiateNewProgramFlow()">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              New Program
+            </button>
+          </div>
+        </div>
+
+        <div class="programs-grid" id="dashboardGridContainer">
+          <!-- Dynamically populated card arrays populate here -->
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- VIEW 2: NEW PROGRAM INITIALIZER (CREATION ARCHITECTURE FLOW) -->
+      <!-- ========================================================================= -->
+      <div id="screenProgramCreator" class="screen-view">
+        <div class="dashboard-header-row">
+          <div class="dashboard-title-area">
+            <h2>Initialize New Template</h2>
+            <p>
+              Map your schedule macrocycles and create individual active days
+            </p>
+          </div>
+          <div>
+            <button class="btn btn-secondary" onclick="routeToDashboard(event)">
+              Cancel
+            </button>
+          </div>
+        </div>
+
+        <div style="max-width: 680px; margin: 0 auto" class="card">
+          <div class="card-title">Program Specifications</div>
+
+          <div class="form-group">
+            <label class="form-label">Program Name</label>
+            <input
+              type="text"
+              class="form-input"
+              id="newProgramNameField"
+              placeholder="e.g., Push Pull Legs, Upper Lower Split"
+            />
+          </div>
+
+          <div
+            style="margin-top: 32px; margin-bottom: 12px"
+            class="display-flex justify-content-between align-items-center"
+          >
+            <div class="card-title" style="margin-bottom: 0">
+              Day Composition Schedule
+            </div>
+          </div>
+
+          <div class="creator-days-list" id="creatorDaysDynamicList">
+            <!-- Dynamic placeholder rows inject sequentially -->
+          </div>
+
+          <button
+            class="btn btn-secondary btn-sm btn-block"
+            style="border-style: dashed; margin-bottom: 32px"
+            onclick="addBlankDayToCreatorFlow()"
+          >
+            + Add Training Day
+          </button>
+
+          <div
+            style="
+              display: flex;
+              justify-content: flex-end;
+              gap: 12px;
+              border-top: 1px solid var(--border-subtle);
+              padding-top: 24px;
+            "
+          >
+            <button class="btn btn-secondary" onclick="routeToDashboard(event)">
+              Discard
+            </button>
+            <button
+              class="btn btn-primary"
+              onclick="packageAndSaveCreatedProgram()"
+            >
+              Create &amp; Configure Exercises
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- VIEW 3: SYSTEM MANAGER WORKSPACE (EXERCISE GENERATOR CANVAS) -->
+      <!-- ========================================================================= -->
+      <div id="screenProgramWorkspace" class="screen-view">
+        <div class="builder-layout">
+          <!-- LEFT RAIL ARCHITECTURE LIST -->
+          <div class="card">
+            <div class="program-header-block">
+              <div class="program-label">Active Matrix</div>
+              <div class="program-name-display" id="workspaceProgramName">
+                ---
+              </div>
+            </div>
+
+            <div class="card-title">Program Architecture</div>
+            <div class="days-list" id="workspaceDaysContainer">
+              <!-- Navigation hooks drop dynamically -->
+            </div>
+          </div>
+
+          <!-- RIGHT RAIL TARGET DATA CANVAS -->
+          <div class="workspace-main">
+            <div class="day-workspace-header">
+              <div class="day-title-area">
+                <h2 id="currentDayTitle">---</h2>
+                <p id="currentDaySubtitle">0 exercises configured</p>
+              </div>
+              <div>
+                <button
+                  class="btn btn-primary"
+                  onclick="openAddExerciseModal()"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                  Add Exercise
+                </button>
+              </div>
+            </div>
+
+            <!-- REORDERABLE EXERCISE ROW ZONE CONTAINER -->
+            <div class="exercise-list" id="exerciseListContainer">
+              <!-- Dynamic items layout visually directly inside -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- MODAL MATRIX 1: EXERCISE LIBRARY DISCOVERY -->
+    <!-- ========================================================================= -->
+    <div class="modal-overlay" id="addExerciseModal">
+      <div class="modal-window">
+        <div class="modal-header">
+          <h3>Add Exercise</h3>
+          <button
+            class="sick-btn-icon"
+            onclick="closeModal('addExerciseModal')"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- INPUT ELEMENT FOR SEARCH FILTERS -->
+          <div class="search-container">
+            <span class="search-icon-embedded">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </span>
+            <input
+              type="text"
+              class="form-input"
+              id="exerciseSearchField"
+              placeholder="Search exercises..."
+              autocomplete="off"
+            />
+          </div>
+
+          <!-- DYNAMIC SCROLL VIEW -->
+          <div class="library-scroll-zone" id="libraryScrollZone">
+            <!-- Structural section rows render directly via state mechanics -->
+          </div>
+
+          <!-- ADD BACKEND PANEL INLINE TRIGGER HOOK -->
+          <div class="modal-inline-notice" id="libraryNoticeFooter">
+            <p>Can't find your exercise?</p>
+            <button class="btn btn-secondary btn-sm" id="btnToggleCustomForm">
+              + Create Custom Exercise
+            </button>
+          </div>
+
+          <!-- CUSTOM CREATOR INLINE BLOCK SUB-FORM -->
+          <div class="custom-exercise-panel" id="customExerciseFormPanel">
+            <div class="panel-header-title">Create Custom Exercise</div>
+
+            <div class="form-group">
+              <label class="form-label">Exercise Name</label>
+              <input
+                type="text"
+                class="form-input"
+                id="customNameField"
+                placeholder="e.g., My Gym Special Row"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Muscle Group</label>
+              <select class="form-input" id="customMuscleField">
+                <option value="Chest">Chest</option>
+                <option value="Shoulders">Shoulders</option>
+                <option value="Back">Back</option>
+                <option value="Biceps">Biceps</option>
+                <option value="Triceps">Triceps</option>
+                <option value="Quads">Quads</option>
+                <option value="Hamstrings">Hamstrings</option>
+                <option value="Calves">Calves</option>
+                <option value="Core">Core</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Equipment</label>
+              <select class="form-input" id="customEquipmentField">
+                <option value="Machine">Machine</option>
+                <option value="Dumbbell">Dumbbell</option>
+                <option value="Barbell">Barbell</option>
+                <option value="Cable">Cable</option>
+                <option value="Bodyweight">Bodyweight</option>
+              </select>
+            </div>
+
+            <div
+              style="
+                display: flex;
+                justify-content: flex-end;
+                gap: 8px;
+                margin-top: 16px;
+              "
+            >
+              <button
+                class="btn btn-secondary btn-sm"
+                id="btnCancelCustomExercise"
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                class="btn btn-primary btn-sm"
+                id="btnSaveCustomExercise"
+                type="button"
+              >
+                Save Exercise
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- MODAL MATRIX 2: EDITING REPS / CONFIGS -->
+    <!-- ========================================================================= -->
+    <div class="modal-overlay" id="editSettingsModal">
+      <div class="modal-window" style="max-width: 420px">
+        <div class="modal-header">
+          <h3 id="editSettingsTitle">Configure Parameters</h3>
+          <button
+            class="sick-btn-icon"
+            onclick="closeModal('editSettingsModal')"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="settings-grid">
+            <div class="form-group">
+              <label class="form-label">Sets</label>
+              <input
+                type="number"
+                class="form-input"
+                id="cfgSets"
+                min="1"
+                max="20"
+                style="
+                  font-family: var(--font-mono);
+                  font-size: 16px;
+                  text-align: center;
+                "
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Rep Min</label>
+              <input
+                type="number"
+                class="form-input"
+                id="cfgRepMin"
+                min="0"
+                max="200"
+                style="
+                  font-family: var(--font-mono);
+                  font-size: 16px;
+                  text-align: center;
+                "
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Rep Max</label>
+              <input
+                type="number"
+                class="form-input"
+                id="cfgRepMax"
+                min="0"
+                max="200"
+                style="
+                  font-family: var(--font-mono);
+                  font-size: 16px;
+                  text-align: center;
+                "
+              />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('editSettingsModal')"
+          >
+            Cancel
+          </button>
+          <button class="btn btn-primary" id="btnSaveSettingsUpdate">
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- APPLICATION DATABASE CONTROL RUNTIME LOGIC -->
+    <!-- ========================================================================= -->
+    <script>
+      // --- DATA DICTIONARY SYSTEM ---
+      const EXERCISE_LIBRARY = [
+        // Chest
+        {
+          id: 1,
+          name: "Smith Machine Incline Press",
+          muscle: "Chest",
+          equipment: "Machine",
+        },
+        {
+          id: 2,
+          name: "Iso-Lateral Incline Chest Press",
+          muscle: "Chest",
+          equipment: "Machine",
+        },
+        { id: 3, name: "Pec Deck Fly", muscle: "Chest", equipment: "Machine" },
+        {
+          id: 4,
+          name: "Smith Machine Flat Bench Press",
+          muscle: "Chest",
+          equipment: "Machine",
+        },
+        // Shoulders
+        {
+          id: 5,
+          name: "Smith Machine OHP Seated",
+          muscle: "Shoulders",
+          equipment: "Machine",
+        },
+        {
+          id: 6,
+          name: "Dumbbell Lateral Raises",
+          muscle: "Shoulders",
+          equipment: "Dumbbell",
+        },
+        {
+          id: 7,
+          name: "Cable Lateral Raises",
+          muscle: "Shoulders",
+          equipment: "Cable",
+        },
+        { id: 8, name: "Face Pulls", muscle: "Shoulders", equipment: "Cable" },
+        // Triceps
+        {
+          id: 9,
+          name: "Cable Tricep Pushdown",
+          muscle: "Triceps",
+          equipment: "Cable",
+        },
+        {
+          id: 10,
+          name: "Overhead Dumbbell Extension",
+          muscle: "Triceps",
+          equipment: "Dumbbell",
+        },
+        // Back
+        {
+          id: 11,
+          name: "Lat Pulldown Wide Grip",
+          muscle: "Back",
+          equipment: "Machine",
+        },
+        {
+          id: 12,
+          name: "Lat Pulldown Close Grip",
+          muscle: "Back",
+          equipment: "Machine",
+        },
+        { id: 13, name: "Machine Row", muscle: "Back", equipment: "Machine" },
+        // Biceps
+        {
+          id: 14,
+          name: "Dumbbell Bicep Curl",
+          muscle: "Biceps",
+          equipment: "Dumbbell",
+        },
+        {
+          id: 15,
+          name: "Hammer Curl",
+          muscle: "Biceps",
+          equipment: "Dumbbell",
+        },
+        // Quads
+        { id: 16, name: "Leg Press", muscle: "Quads", equipment: "Machine" },
+        {
+          id: 17,
+          name: "Smith Machine Squat",
+          muscle: "Quads",
+          equipment: "Machine",
+        },
+        {
+          id: 18,
+          name: "Leg Extension",
+          muscle: "Quads",
+          equipment: "Machine",
+        },
+        // Hamstrings
+        {
+          id: 19,
+          name: "Leg Curl",
+          muscle: "Hamstrings",
+          equipment: "Machine",
+        },
+        // Adductors
+        {
+          id: 20,
+          name: "Adductor Machine",
+          muscle: "Adductors",
+          equipment: "Machine",
+        },
+        // Abductors
+        {
+          id: 21,
+          name: "Abductor Machine",
+          muscle: "Abductors",
+          equipment: "Machine",
+        },
+        // Calves
+        {
+          id: 22,
+          name: "Calf Raise Machine",
+          muscle: "Calves",
+          equipment: "Machine",
+        },
+        // Core
+        {
+          id: 23,
+          name: "Incline Sit-Up",
+          muscle: "Core",
+          equipment: "Bodyweight",
+        },
+
+        // 30+ Benchmark Expansions
+        {
+          id: 24,
+          name: "Incline Dumbbell Press",
+          muscle: "Chest",
+          equipment: "Dumbbell",
+        },
+        {
+          id: 25,
+          name: "Barbell Overhead Press",
+          muscle: "Shoulders",
+          equipment: "Barbell",
+        },
+        {
+          id: 26,
+          name: "Barbell Conventional Deadlift",
+          muscle: "Back",
+          equipment: "Barbell",
+        },
+        {
+          id: 27,
+          name: "Seated Cable Row",
+          muscle: "Back",
+          equipment: "Cable",
+        },
+        {
+          id: 28,
+          name: "Preacher Curl Machine",
+          muscle: "Biceps",
+          equipment: "Machine",
+        },
+        {
+          id: 29,
+          name: "Barbell Back Squat",
+          muscle: "Quads",
+          equipment: "Barbell",
+        },
+        {
+          id: 30,
+          name: "Romanian Deadlift (Dumbbell)",
+          muscle: "Hamstrings",
+          equipment: "Dumbbell",
+        },
+        {
+          id: 31,
+          name: "Hanging Knee Raise",
+          muscle: "Core",
+          equipment: "Bodyweight",
+        },
+        {
+          id: 32,
+          name: "Standing Calf Raises",
+          muscle: "Calves",
+          equipment: "Dumbbell",
+        },
+      ];
+
+      // --- RELATIONAL STATE ENGINE POOLS ---
+      let user_programs = [
+        { id: 101, name: "Push Pull Legs" },
+        { id: 102, name: "Arnold Split" },
+        { id: 103, name: "Upper Lower Hypertrophy" },
+      ];
+
+      let user_program_days = [
+        // Push Pull Legs
+        { id: 201, user_program_id: 101, day_order: 1, name: "Push" },
+        { id: 202, user_program_id: 101, day_order: 2, name: "Pull" },
+        { id: 203, user_program_id: 101, day_order: 3, name: "Legs" },
+        // Arnold Split
+        { id: 204, user_program_id: 102, day_order: 1, name: "Chest & Back" },
+        {
+          id: 205,
+          user_program_id: 102,
+          day_order: 2,
+          name: "Shoulders & Arms",
+        },
+        { id: 206, user_program_id: 102, day_order: 3, name: "Legs" },
+        // Upper Lower
+        { id: 207, user_program_id: 103, day_order: 1, name: "Upper Body" },
+        { id: 208, user_program_id: 103, day_order: 2, name: "Lower Body" },
+      ];
+
+      let user_program_exercises = [
+        // Push Day
+        {
+          id: 501,
+          user_program_day_id: 201,
+          exercise_id: 1,
+          position: 1,
+          sets: 3,
+          rep_min: 8,
+          rep_max: 12,
+        },
+        {
+          id: 502,
+          user_program_day_id: 201,
+          exercise_id: 3,
+          position: 2,
+          sets: 3,
+          rep_min: 10,
+          rep_max: 15,
+        },
+        {
+          id: 503,
+          user_program_day_id: 201,
+          exercise_id: 9,
+          position: 3,
+          sets: 3,
+          rep_min: 10,
+          rep_max: 12,
+        },
+        // Pull Day
+        {
+          id: 504,
+          user_program_day_id: 202,
+          exercise_id: 11,
+          position: 1,
+          sets: 4,
+          rep_min: 8,
+          rep_max: 12,
+        },
+        {
+          id: 505,
+          user_program_day_id: 202,
+          exercise_id: 13,
+          position: 2,
+          sets: 4,
+          rep_min: 10,
+          rep_max: 12,
+        },
+        {
+          id: 506,
+          user_program_day_id: 202,
+          exercise_id: 15,
+          position: 3,
+          sets: 3,
+          rep_min: 12,
+          rep_max: 15,
+        },
+        // Legs Day
+        {
+          id: 507,
+          user_program_day_id: 203,
+          exercise_id: 16,
+          position: 1,
+          sets: 3,
+          rep_min: 8,
+          rep_max: 12,
+        },
+        {
+          id: 508,
+          user_program_day_id: 203,
+          exercise_id: 18,
+          position: 2,
+          sets: 3,
+          rep_min: 10,
+          rep_max: 15,
+        },
+        {
+          id: 509,
+          user_program_day_id: 203,
+          exercise_id: 19,
+          position: 3,
+          sets: 3,
+          rep_min: 10,
+          rep_max: 12,
+        },
+
+        // Chest & Back (Arnold)
+        {
+          id: 510,
+          user_program_day_id: 204,
+          exercise_id: 4,
+          position: 1,
+          sets: 4,
+          rep_min: 6,
+          rep_max: 10,
+        },
+        {
+          id: 511,
+          user_program_day_id: 204,
+          exercise_id: 26,
+          position: 2,
+          sets: 3,
+          rep_min: 5,
+          rep_max: 8,
+        },
+        // Shoulders & Arms (Arnold)
+        {
+          id: 512,
+          user_program_day_id: 205,
+          exercise_id: 25,
+          position: 1,
+          sets: 4,
+          rep_min: 8,
+          rep_max: 10,
+        },
+        {
+          id: 513,
+          user_program_day_id: 205,
+          exercise_id: 14,
+          position: 2,
+          sets: 3,
+          rep_min: 10,
+          rep_max: 12,
+        },
+        // Upper Body
+        {
+          id: 514,
+          user_program_day_id: 207,
+          exercise_id: 2,
+          position: 1,
+          sets: 4,
+          rep_min: 8,
+          rep_max: 11,
+        },
+      ];
+
+      // Runtimes
+      let activeProgramId = null;
+      let selectedDayId = null;
+      let globalEditTargetId = null;
+      let transientDaysArray = []; // Temporary buffer for the compilation form pipeline
+
+      // --- MUSCLE SELECT HOOK MATCHERS ---
+      function getMuscleClass(muscle) {
+        if (!muscle) return "badge-generic";
+        const m = muscle.toLowerCase();
+        if (m.includes("chest")) return "badge-chest";
+        if (m.includes("shoulder")) return "badge-shoulders";
+        if (m.includes("back")) return "badge-back";
+        if (m.includes("bicep")) return "badge-biceps";
+        if (m.includes("tricep")) return "badge-triceps";
+        if (m.includes("quad")) return "badge-quads";
+        if (m.includes("hamstring")) return "badge-hamstrings";
+        if (m.includes("calv")) return "badge-calves";
+        if (m.includes("core")) return "badge-core";
+        return "badge-generic";
+      }
+
+      // =========================================================================
+      // ROUTING DISPATCH STATE MANAGEMENT
+      // =========================================================================
+      function routeToDashboard(e) {
+        if (e) e.preventDefault();
+        switchActiveView("screenDashboard");
+        renderDashboardHub();
+      }
+
+      function switchActiveView(viewId) {
+        document.querySelectorAll(".screen-view").forEach((view) => {
+          view.classList.remove("active");
+        });
+        document.getElementById(viewId).classList.add("active");
+        window.scrollTo(0, 0);
+      }
+
+      // =========================================================================
+      // VIEW HUB 1: MAIN DASHBOARD ARCHIVE
+      // =========================================================================
+      function renderDashboardHub() {
+        const grid = document.getElementById("dashboardGridContainer");
+        grid.innerHTML = "";
+
+        if (user_programs.length === 0) {
+          grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <p>No training programs discovered inside your library profile.</p>
+                        <button class="btn btn-primary" onclick="initiateNewProgramFlow()">Create a Program</button>
+                    </div>
+                `;
+          return;
+        }
+
+        user_programs.forEach((prog) => {
+          const days = user_program_days
+            .filter((d) => d.user_program_id === prog.id)
+            .sort((a, b) => a.day_order - b.day_order);
+          const dayStrings = days.map((d) => d.name).join(" • ");
+
+          const card = document.createElement("div");
+          card.className = "program-card";
+          card.onclick = () => loadProgramToWorkspace(prog.id);
+
+          card.innerHTML = `
+                    <div>
+                        <div class="title-line">${prog.name}</div>
+                        <div class="days-summary">${dayStrings ? dayStrings : "No assigned day tracks configured yet."}</div>
+                    </div>
+                    <div class="card-meta">
+                        <div>ID: SR-${prog.id}</div>
+                        <div>${days.length} SPLIT DAYS <svg style="display:inline; vertical-align:middle; margin-left:4px;" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+                    </div>
+                `;
+          grid.appendChild(card);
+        });
+      }
+
+      // =========================================================================
+      // VIEW HUB 2: NEW COMPOSITION FORM GENERATION
+      // =========================================================================
+      function initiateNewProgramFlow() {
+        document.getElementById("newProgramNameField").value = "";
+
+        // Seed base architecture pattern defaults (Push Pull Legs structural base setup)
+        transientDaysArray = [
+          { day_order: 1, name: "Push" },
+          { day_order: 2, name: "Pull" },
+          { day_order: 3, name: "Legs" },
+        ];
+
+        switchActiveView("screenProgramCreator");
+        renderCreatorDaysList();
+      }
+
+      function renderCreatorDaysList() {
+        const listContainer = document.getElementById("creatorDaysDynamicList");
+        listContainer.innerHTML = "";
+
+        transientDaysArray.forEach((day, index) => {
+          const row = document.createElement("div");
+          row.className = "creator-day-row";
+
+          row.innerHTML = `
+                    <div class="day-num">DAY 0${index + 1}</div>
+                    <input type="text" class="form-input" value="${day.name}" placeholder="e.g., Upper Body, Power Day" oninput="updateTransientDayName(${index}, this.value)">
+                    <button class="sick-btn-icon danger" onclick="removeDayFromCreatorFlow(${index})" title="Remove Day Track">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                `;
+          listContainer.appendChild(row);
+        });
+      }
+
+      function updateTransientDayName(index, val) {
+        transientDaysArray[index].name = val;
+      }
+
+      function addBlankDayToCreatorFlow() {
+        const nextOrder = transientDaysArray.length + 1;
+        transientDaysArray.push({ day_order: nextOrder, name: "" });
+        renderCreatorDaysList();
+
+        // Auto focus newly appended tracks
+        const inputs = document
+          .getElementById("creatorDaysDynamicList")
+          .querySelectorAll("input");
+        if (inputs.length > 0) inputs[inputs.length - 1].focus();
+      }
+
+      function removeDayFromCreatorFlow(index) {
+        transientDaysArray.splice(index, 1);
+        // Re-normalize ordering keys sequence indexes
+        transientDaysArray.forEach((d, i) => (d.day_order = i + 1));
+        renderCreatorDaysList();
+      }
+
+      function packageAndSaveCreatedProgram() {
+        const titleInput = document
+          .getElementById("newProgramNameField")
+          .value.trim();
+        if (!titleInput) {
+          alert(
+            "Please declare a distinct programmatic identifier name for your template.",
+          );
+          return;
+        }
+
+        // Ensure we have at least one defined structured track field
+        if (transientDaysArray.length === 0) {
+          alert(
+            "Your profile requires at least one dedicated structured sequence breakdown record track.",
+          );
+          return;
+        }
+
+        // Clean data entries validation checks
+        let verificationFlag = true;
+        transientDaysArray.forEach((d) => {
+          d.name = d.name.trim();
+          if (!d.name) verificationFlag = false;
+        });
+
+        if (!verificationFlag) {
+          alert(
+            "Please provide valid structural configurations names for all defined day paths.",
+          );
+          return;
+        }
+
+        // Database Save Operations Simulation
+        const generatedProgramId =
+          user_programs.length > 0
+            ? Math.max(...user_programs.map((p) => p.id)) + 1
+            : 101;
+
+        const newProgramRecord = {
+          id: generatedProgramId,
+          name: titleInput,
+        };
+        user_programs.push(newProgramRecord);
+
+        let lastDayGeneratedId =
+          user_program_days.length > 0
+            ? Math.max(...user_program_days.map((d) => d.id))
+            : 200;
+
+        transientDaysArray.forEach((transientDay) => {
+          lastDayGeneratedId++;
+          user_program_days.push({
+            id: lastDayGeneratedId,
+            user_program_id: generatedProgramId,
+            day_order: transientDay.day_order,
+            name: transientDay.name,
+          });
+        });
+
+        // Transition Context Target straight over to Exercise Matrix Canvas
+        loadProgramToWorkspace(generatedProgramId);
+      }
+
+      // =========================================================================
+      // VIEW HUB 3: CENTRAL MANAGEMENT CANVAS LABS
+      // =========================================================================
+      function loadProgramToWorkspace(programId) {
+        activeProgramId = programId;
+        const programObj = user_programs.find((p) => p.id === programId);
+        if (!programObj) return;
+
+        document.getElementById("workspaceProgramName").innerText =
+          programObj.name;
+
+        // Fetch attached internal dynamic day nodes
+        const associatedDays = user_program_days
+          .filter((d) => d.user_program_id === programId)
+          .sort((a, b) => a.day_order - b.day_order);
+
+        if (associatedDays.length > 0) {
+          selectedDayId = associatedDays[0].id;
+        } else {
+          selectedDayId = null;
+        }
+
+        switchActiveView("screenProgramWorkspace");
+        renderWorkspaceSidebar();
+        renderWorkspaceActiveCanvas();
+      }
+
+      function renderWorkspaceSidebar() {
+        const container = document.getElementById("workspaceDaysContainer");
+        container.innerHTML = "";
+
+        const activeDays = user_program_days
+          .filter((d) => d.user_program_id === activeProgramId)
+          .sort((a, b) => a.day_order - b.day_order);
+
+        activeDays.forEach((day) => {
+          const totalExercisesCount = user_program_exercises.filter(
+            (e) => e.user_program_day_id === day.id,
+          ).length;
+
+          const btn = document.createElement("button");
+          btn.className = `day-selector-btn ${day.id === selectedDayId ? "active" : ""}`;
+          btn.onclick = () => {
+            selectedDayId = day.id;
+            renderWorkspaceSidebar();
+            renderWorkspaceActiveCanvas();
+          };
+
+          btn.innerHTML = `
+                    <span>Day ${day.day_order} - ${day.name}</span>
+                    <span class="meta-count">${totalExercisesCount} ${totalExercisesCount === 1 ? "Ex" : "Exs"}</span>
+                `;
+          container.appendChild(btn);
+        });
+      }
+
+      function renderWorkspaceActiveCanvas() {
+        const listContainer = document.getElementById("exerciseListContainer");
+        listContainer.innerHTML = "";
+
+        if (!selectedDayId) {
+          document.getElementById("currentDayTitle").innerText =
+            "Empty Structure";
+          document.getElementById("currentDaySubtitle").innerText =
+            "No internal nodes discovered.";
+          return;
+        }
+
+        const dayObj = user_program_days.find((d) => d.id === selectedDayId);
+        document.getElementById("currentDayTitle").innerText = dayObj
+          ? `${dayObj.name} Track`
+          : "Exercise Configurations";
+
+        const exercises = user_program_exercises
+          .filter((e) => e.user_program_day_id === selectedDayId)
+          .sort((a, b) => a.position - b.position);
+
+        document.getElementById("currentDaySubtitle").innerText =
+          `${exercises.length} ${exercises.length === 1 ? "exercise" : "exercises"} total`;
+
+        if (exercises.length === 0) {
+          listContainer.innerHTML = `
+                    <div class="empty-state">
+                        <p>No configuration instances loaded yet for this target training path.</p>
+                        <button class="btn btn-secondary btn-sm" onclick="openAddExerciseModal()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Add Exercise
+                        </button>
+                    </div>
+                `;
+          return;
+        }
+
+        exercises.forEach((item, index) => {
+          const def = EXERCISE_LIBRARY.find((x) => x.id === item.exercise_id);
+          const name = def ? def.name : "Custom Compound Exercise";
+          const muscle = def ? def.muscle : "General";
+          const equip = def ? def.equipment : "Universal";
+          const isCustom = def ? def.isCustom : false;
+
+          const row = document.createElement("div");
+          row.className = "exercise-row";
+          row.setAttribute("draggable", "true");
+          row.setAttribute("data-id", item.id);
+
+          row.innerHTML = `
+                    <div class="exercise-row-left-group">
+                        <div class="drag-handle">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/></svg>
+                        </div>
+                        <div class="pos-index">0${index + 1}</div>
+                        <div class="exercise-main-info">
+                            <div class="exercise-row-name">${name}</div>
+                            <div class="exercise-row-tags">
+                                <span class="badge ${getMuscleClass(muscle)}">${muscle}</span>
+                                <span class="badge badge-generic">${equip}</span>
+                                ${isCustom ? '<span class="badge badge-custom">Custom</span>' : ""}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="exercise-row-right-group">
+                        <div class="exercise-row-settings">
+                            <div class="setting-metric">
+                                <div class="metric-val">${item.sets}</div>
+                                <div class="metric-lbl">Sets</div>
+                            </div>
+                            <div class="setting-metric">
+                                <div class="metric-val">${item.rep_min} - ${item.rep_max}</div>
+                                <div class="metric-lbl">Reps</div>
+                            </div>
+                        </div>
+                        <div class="exercise-row-actions">
+                            <button class="sick-btn-icon" onclick="openEditSettingsModal(${item.id})" title="Edit Target Ranges">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            </button>
+                            <button class="sick-btn-icon danger" onclick="removeExerciseNode(${item.id})" title="Drop Record Track">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+          bindDragDropRowMechanics(row);
+          listContainer.appendChild(row);
+        });
+      }
+
+      // =========================================================================
+      // REORDER VISUAL LOGIC HANDLERS
+      // =========================================================================
+      let dragSourceNode = null;
+
+      function bindDragDropRowMechanics(row) {
+        row.addEventListener("dragstart", function (e) {
+          dragSourceNode = this;
+          this.classList.add("dragging");
+          e.dataTransfer.effectAllowed = "move";
+        });
+
+        row.addEventListener("dragend", function () {
+          this.classList.remove("dragging");
+          dragSourceNode = null;
+          commitReorderedLayoutPositions();
+        });
+
+        row.addEventListener("dragover", function (e) {
+          e.preventDefault();
+          return false;
+        });
+        row.addEventListener("dragenter", function () {
+          if (this !== dragSourceNode)
+            this.style.borderTop = "2px dashed var(--accent-brand)";
+        });
+        row.addEventListener("dragleave", function () {
+          this.style.borderTop = "";
+        });
+
+        row.addEventListener("drop", function (e) {
+          e.preventDefault();
+          this.style.borderTop = "";
+          if (this !== dragSourceNode) {
+            const trackingArr = Array.from(
+              document
+                .getElementById("exerciseListContainer")
+                .querySelectorAll(".exercise-row"),
+            );
+            const droppedIndex = trackingArr.indexOf(this);
+            const draggedIndex = trackingArr.indexOf(dragSourceNode);
+
+            if (draggedIndex < droppedIndex) {
+              this.parentNode.insertBefore(dragSourceNode, this.nextSibling);
+            } else {
+              this.parentNode.insertBefore(dragSourceNode, this);
+            }
+          }
+        });
+      }
+
+      function commitReorderedLayoutPositions() {
+        const visualDOMRows = document
+          .getElementById("exerciseListContainer")
+          .querySelectorAll(".exercise-row");
+        visualDOMRows.forEach((row, i) => {
+          const relationalId = parseInt(row.getAttribute("data-id"));
+          const originalTargetObj = user_program_exercises.find(
+            (ex) => ex.id === relationalId,
+          );
+          if (originalTargetObj) originalTargetObj.position = i + 1;
+        });
+        renderWorkspaceActiveCanvas();
+      }
+
+      // =========================================================================
+      // ITEM MODAL SELECTION & EDIT FLOW MANAGERS
+      // =========================================================================
+      function removeExerciseNode(id) {
+        user_program_exercises = user_program_exercises.filter(
+          (e) => e.id !== id,
+        );
+
+        // Re-normalize layout stack indexes tracking positions
+        const remaining = user_program_exercises
+          .filter((e) => e.user_program_day_id === selectedDayId)
+          .sort((a, b) => a.position - b.position);
+        remaining.forEach((e, index) => (e.position = index + 1));
+
+        renderWorkspaceSidebar();
+        renderWorkspaceActiveCanvas();
+      }
+
+      function openEditSettingsModal(itemId) {
+        const item = user_program_exercises.find((e) => e.id === itemId);
+        if (!item) return;
+
+        globalEditTargetId = itemId;
+        const def = EXERCISE_LIBRARY.find((x) => x.id === item.exercise_id);
+
+        document.getElementById("editSettingsTitle").innerText = def
+          ? def.name
+          : "Modify Target Configuration";
+        document.getElementById("cfgSets").value = item.sets;
+        document.getElementById("cfgRepMin").value = item.rep_min;
+        document.getElementById("cfgRepMax").value = item.rep_max;
+
+        openModal("editSettingsModal");
+      }
+
+      document.getElementById("btnSaveSettingsUpdate").onclick = function () {
+        const item = user_program_exercises.find(
+          (e) => e.id === globalEditTargetId,
+        );
+        if (item) {
+          item.sets = parseInt(document.getElementById("cfgSets").value) || 3;
+          item.rep_min =
+            parseInt(document.getElementById("cfgRepMin").value) || 8;
+          item.rep_max =
+            parseInt(document.getElementById("cfgRepMax").value) || 12;
+        }
+        closeModal("editSettingsModal");
+        renderWorkspaceActiveCanvas();
+      };
+
+      // =========================================================================
+      // CATALOG MODAL SEARCH SEARCH ENGINES
+      // =========================================================================
+      function renderLibraryList(filterQuery = "") {
+        const zone = document.getElementById("libraryScrollZone");
+        zone.innerHTML = "";
+
+        const query = filterQuery.trim().toLowerCase();
+
+        if (query === "") {
+          const categoricalMap = {};
+          EXERCISE_LIBRARY.forEach((ex) => {
+            if (!categoricalMap[ex.muscle]) categoricalMap[ex.muscle] = [];
+            categoricalMap[ex.muscle].push(ex);
+          });
+
+          Object.keys(categoricalMap)
+            .sort()
+            .forEach((groupTitle) => {
+              const header = document.createElement("div");
+              header.className = "library-section-title";
+              header.innerText = groupTitle;
+              zone.appendChild(header);
+
+              categoricalMap[groupTitle].forEach((ex) => {
+                zone.appendChild(compileLibraryItemRow(ex));
+              });
+            });
+        } else {
+          const filteredMatches = EXERCISE_LIBRARY.filter(
+            (ex) =>
+              ex.name.toLowerCase().includes(query) ||
+              ex.muscle.toLowerCase().includes(query),
+          );
+
+          if (filteredMatches.length === 0) {
+            zone.innerHTML = `
+                        <div style="text-align:center; padding:40px 16px; color:var(--text-secondary); font-size:14px;">
+                            No matching exercises found
+                        </div>
+                    `;
+          } else {
+            filteredMatches.forEach((ex) => {
+              zone.appendChild(compileLibraryItemRow(ex));
+            });
+          }
+        }
+      }
+
+      function compileLibraryItemRow(ex) {
+        const row = document.createElement("div");
+        row.className = "library-item-row";
+        row.onclick = () => pushSelectedExerciseToActiveStack(ex.id);
+
+        row.innerHTML = `
+                <div class="item-meta-block">
+                    <div class="item-title-text">${ex.name}</div>
+                    <div class="item-tags-row">
+                        <span class="badge ${getMuscleClass(ex.muscle)}">${ex.muscle}</span>
+                        <span class="badge badge-generic">${ex.equipment}</span>
+                        ${ex.isCustom ? '<span class="badge badge-custom">Custom</span>' : ""}
+                    </div>
+                </div>
+                <div>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </div>
+            `;
+        return row;
+      }
+
+      function pushSelectedExerciseToActiveStack(exerciseId) {
+        const siblingNodes = user_program_exercises.filter(
+          (e) => e.user_program_day_id === selectedDayId,
+        );
+        const nextPositionIdx = siblingNodes.length + 1;
+        const generatedIdentity =
+          user_program_exercises.length > 0
+            ? Math.max(...user_program_exercises.map((e) => e.id)) + 1
+            : 501;
+
+        const instancedRecord = {
+          id: generatedIdentity,
+          user_program_day_id: selectedDayId,
+          exercise_id: exerciseId,
+          position: nextPositionIdx,
+          sets: 3,
+          rep_min: 8,
+          rep_max: 12,
+        };
+
+        user_program_exercises.push(instancedRecord);
+
+        closeModal("addExerciseModal");
+        renderWorkspaceSidebar();
+        renderWorkspaceActiveCanvas();
+      }
+
+      // =========================================================================
+      // CUSTOM TYPE GENERATORS HANDLERS
+      // =========================================================================
+      document.getElementById("btnToggleCustomForm").onclick = function () {
+        const panel = document.getElementById("customExerciseFormPanel");
+        panel.classList.toggle("active");
+        if (panel.classList.contains("active")) {
+          panel.scrollIntoView({ behavior: "smooth" });
+          document.getElementById("customNameField").focus();
+        }
+      };
+
+      document.getElementById("btnCancelCustomExercise").onclick = () =>
+        resetCustomFormView();
+
+      document.getElementById("btnSaveCustomExercise").onclick = function () {
+        const customTitle = document
+          .getElementById("customNameField")
+          .value.trim();
+        const targetMuscle = document.getElementById("customMuscleField").value;
+        const targetEquip = document.getElementById(
+          "customEquipmentField",
+        ).value;
+
+        if (!customTitle) {
+          alert("Please declare an explicit, valid tracking label name.");
+          return;
+        }
+
+        const maxLibraryIdx =
+          EXERCISE_LIBRARY.length > 0
+            ? Math.max(...EXERCISE_LIBRARY.map((x) => x.id)) + 1
+            : 1000;
+
+        const entityDefinition = {
+          id: maxLibraryIdx,
+          name: customTitle,
+          muscle: targetMuscle,
+          equipment: targetEquip,
+          isCustom: true,
+        };
+
+        EXERCISE_LIBRARY.push(entityDefinition);
+        resetCustomFormView();
+        pushSelectedExerciseToActiveStack(maxLibraryIdx);
+      };
+
+      function resetCustomFormView() {
+        document.getElementById("customNameField").value = "";
+        document
+          .getElementById("customExerciseFormPanel")
+          .classList.remove("active");
+        document.getElementById("exerciseSearchField").value = "";
+        renderLibraryList("");
+      }
+
+      // =========================================================================
+      // GENERAL MODAL SHELL LAYER WRAPPERS
+      // =========================================================================
+      function openModal(id) {
+        document.getElementById(id).classList.add("active");
+      }
+
+      function closeModal(id) {
+        document.getElementById(id).classList.remove("active");
+        if (id === "addExerciseModal") resetCustomFormView();
+      }
+
+      function openAddExerciseModal() {
+        document.getElementById("exerciseSearchField").value = "";
+        renderLibraryList("");
+        openModal("addExerciseModal");
+        setTimeout(() => {
+          document.getElementById("exerciseSearchField").focus();
+        }, 80);
+      }
+
+      document.getElementById("exerciseSearchField").oninput = (e) =>
+        renderLibraryList(e.target.value);
+
+      window.onclick = function (event) {
+        if (event.target.classList.contains("modal-overlay")) {
+          closeModal(event.target.id);
+        }
+      };
+
+      // --- RUNTIME SYSTEM INITIALIZE BOOTSTRAP ---
+      routeToDashboard();
+    </script>
+  </body>
+</html>
