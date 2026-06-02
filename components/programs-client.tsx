@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { CheckmarkSquare04Icon, ViewIcon } from "@hugeicons/core-free-icons";
 import {
   createUserProgram,
   deleteUserProgram,
@@ -264,7 +266,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
             <div
               key={program.id}
               className={cn(
-                "group relative border rounded-xl p-4 transition-all duration-300 overflow-hidden",
+                "group relative border rounded-xl p-4 transition-all duration-300 overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4",
                 isActive
                   ? "bg-accent/5 border-accent/40 shadow-[0_0_20px_-5px_rgba(200,255,0,0.1)]"
                   : "bg-app border-app",
@@ -273,38 +275,50 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
               {/* {isActive && (
                 <div className="absolute top-0 left-0 w-1 h-full bg-accent" />
               )} */}
-              <div className="flex items-start justify-between gap-3 mb-2 sm:mb-3">
-                <div className={cn("flex-1", isActive ? "" : "")}>
-                  <h3 className={`text-xl font-medium text-app leading-tight`}>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-3">
+                  <h3 className="text-xl font-medium text-app leading-tight">
                     {program.name}
                   </h3>
-                  <p className="text-xs text-muted mt-1">
-                    {program.days.length} day
-                    {program.days.length === 1 ? "" : "s"}
-                  </p>
+                  {program.is_active && (
+                    <span className="shrink-0 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md border border-accent/20 bg-accent/10 text-accent">
+                      Active
+                    </span>
+                  )}
                 </div>
-                {program.is_active && (
-                  <span className="shrink-0 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md border border-accent/20 bg-accent/10 text-accent">
-                    Active
-                  </span>
-                )}
+                <p className="text-xs text-muted mt-1">
+                  {program.days.length} day
+                  {program.days.length === 1 ? "" : "s"}
+                </p>
               </div>
 
-              <div className={cn("flex flex-wrap gap-2", isActive ? "" : "")}>
+              <div className="flex flex-wrap items-center gap-2 shrink-0">
                 {!program.is_active && (
                   <button
                     onClick={() => handleSetActive(program.id)}
                     disabled={isPending}
-                    className="px-3 py-1.5 text-xs rounded-lg border border-app2 text-accent hover:bg-app2 transition-colors cursor-pointer"
+                    className="px-3 py-1.5 flex items-center gap-1 text-xs rounded-lg font-medium border border-app2 text-accent hover:bg-app2 transition-colors cursor-pointer"
                   >
+                    <HugeiconsIcon
+                      icon={CheckmarkSquare04Icon}
+                      size={14}
+                      color="currentColor"
+                      strokeWidth={1.5}
+                    />
                     Set Active
                   </button>
                 )}
 
                 <Link
                   href={`/programs/${program.id}`}
-                  className="px-3 py-1.5 text-xs rounded-lg border border-app2 text-app hover:bg-app2 transition-colors"
+                  className="px-3 py-1.5 flex items-center gap-1 text-xs rounded-lg border border-app2 text-app hover:bg-app2 transition-colors"
                 >
+                  <HugeiconsIcon
+                    icon={ViewIcon}
+                    size={14}
+                    color="currentColor"
+                    strokeWidth={1.5}
+                  />
                   View / Edit
                 </Link>
 

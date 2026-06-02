@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Programs Dashboard - Material Design Visible Actions</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        /* Google Material Dark Theme Palette */
+        --md-bg: #111214;
+        --md-surface: #1f1f23;
+        --md-surface-variant: #2a2a2f;
+        --md-outline: #44474e;
+
+        /* Material Accents */
+        --md-primary: #a8c7fa; /* Material Blue */
+        --md-on-primary: #062e6f;
+        --md-primary-container: #004a77;
+        --md-text: #e3e2e6;
+        --md-text-variant: #c4c6d0;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background-color: var(--md-bg);
+        color: var(--md-text);
+        padding: 3rem 2rem;
+        display: flex;
+        justify-content: center;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 900px;
+      }
+
+      /* --- Header Section --- */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--md-outline);
+        padding-bottom: 1.5rem;
+      }
+
+      .header-title h1 {
+        font-size: 1.75rem;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+      }
+
+      .header-title p {
+        color: var(--md-text-variant);
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+      }
+
+      .btn-fab {
+        background-color: var(--md-primary-container);
+        color: #c2e7ff;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 16px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: background-color 0.2s;
+      }
+
+      .btn-fab:hover {
+        background-color: #005c93;
+      }
+
+      /* --- Program Cards List --- */
+      .cards-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .card {
+        background-color: var(--md-surface);
+        border-radius: 24px;
+        padding: 1.25rem 1.75rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid transparent;
+        transition:
+          background-color 0.2s,
+          border-color 0.2s;
+      }
+
+      .card.active {
+        background-color: var(--md-surface-variant);
+        border: 1px solid rgba(168, 199, 250, 0.25);
+      }
+
+      /* --- Card Content --- */
+      .card-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .card-title-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .card-title {
+        font-size: 1.2rem;
+        font-weight: 500;
+      }
+
+      .card-meta {
+        font-size: 0.85rem;
+        color: var(--md-text-variant);
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .status-badge {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #004a77;
+        background-color: #c2e7ff;
+        padding: 0.25rem 0.75rem;
+        border-radius: 100px;
+      }
+
+      /* --- Card Actions Area --- */
+      .card-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      /* Material Text Button (For View / Edit) */
+      .btn-text {
+        background: transparent;
+        border: none;
+        color: var(--md-primary);
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .btn-text:hover {
+        background-color: rgba(168, 199, 250, 0.08);
+      }
+
+      /* Material Pill Button (For Set Active) */
+      .btn-pill {
+        background-color: transparent;
+        border: 1px solid var(--md-outline);
+        color: var(--md-text);
+        padding: 0.5rem 1.25rem;
+        border-radius: 100px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .btn-pill:hover {
+        background-color: rgba(255, 255, 255, 0.04);
+        border-color: var(--md-text-variant);
+      }
+
+      /* More Options Icon Menu Button */
+      .btn-icon {
+        background: transparent;
+        border: none;
+        color: var(--md-text-variant);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .btn-icon:hover {
+        background-color: rgba(255, 255, 255, 0.08);
+        color: var(--md-text);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="header-title">
+          <h1>Programs</h1>
+          <p>Create and manage your training programs.</p>
+        </div>
+        <button class="btn-fab">
+          <span class="material-symbols-outlined">add</span>
+          New Program
+        </button>
+      </header>
+
+      <div class="cards-list">
+        <div class="card">
+          <div class="card-info">
+            <div class="card-title-row">
+              <span class="card-title">wwwww</span>
+            </div>
+            <div class="card-meta">
+              <span class="material-symbols-outlined" style="font-size: 16px"
+                >calendar_today</span
+              >
+              2 days
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn-pill">Set Active</button>
+            <button class="btn-text">View / Edit</button>
+            <button class="btn-icon" title="More options (Delete)">
+              <span class="material-symbols-outlined">more_vert</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-info">
+            <div class="card-title-row">
+              <span class="card-title">Glutie</span>
+            </div>
+            <div class="card-meta">
+              <span class="material-symbols-outlined" style="font-size: 16px"
+                >calendar_today</span
+              >
+              2 days
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn-pill">Set Active</button>
+            <button class="btn-text">View / Edit</button>
+            <button class="btn-icon" title="More options (Delete)">
+              <span class="material-symbols-outlined">more_vert</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="card active">
+          <div class="card-info">
+            <div class="card-title-row">
+              <span class="card-title">Lean Bulk PPL + Upper/Lower</span>
+              <span class="status-badge">Active</span>
+            </div>
+            <div class="card-meta">
+              <span class="material-symbols-outlined" style="font-size: 16px"
+                >calendar_today</span
+              >
+              7 days
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn-text" style="color: var(--md-primary)">
+              View / Edit
+            </button>
+            <button class="btn-icon" title="More options (Delete)">
+              <span class="material-symbols-outlined">more_vert</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
