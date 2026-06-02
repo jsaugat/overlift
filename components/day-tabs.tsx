@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 
 interface DayTabsProps {
   days: ProgramDay[];
-  activeDay: string;
-  onSelect: (dayName: string) => void;
+  activeDayOrder: number;
+  onSelect: (dayOrder: number) => void;
   startingDay?: number;
 }
 
@@ -35,7 +35,7 @@ function getDayLabel(day: ProgramDay) {
 
 export function DayTabs({
   days,
-  activeDay,
+  activeDayOrder,
   onSelect,
   startingDay,
 }: DayTabsProps) {
@@ -46,7 +46,7 @@ export function DayTabs({
   return (
     <div className="grid grid-cols-4 gap-[2px] mb-10">
       {days.map((day) => {
-        const isActive = day.name === activeDay;
+        const isActive = day.day_order === activeDayOrder;
         const isToday = day.day_order === todayDayOrder;
         const dayLabel = toTitleCase(day.name);
         const dayColor = colorMap[dayLabel] || "var(--color-text-dim)";
@@ -56,16 +56,14 @@ export function DayTabs({
         return (
           <button
             key={`${day.name}-${day.id}`}
-            onClick={() => onSelect(day.name)}
+            onClick={() => onSelect(day.day_order)}
             className={cn(
               "pt-[10px] pb-[10px] px-[4px] text-center cursor-pointer md:rounded-t-[4px] transition-colors relative",
               "active:bg-app3 md:hover:bg-app3",
               isRest ? "opacity-60" : "",
               isActive
                 ? "bg-app2 after:bg-[var(--day-color)] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px]"
-                : // : isToday
-                  //   ? "bg-accent/5 after:bg-accent/40 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px]"
-                  "after:bg-transparent after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:transition-colors",
+                : "after:bg-transparent after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:transition-colors",
             )}
             style={
               {
