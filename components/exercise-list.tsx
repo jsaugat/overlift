@@ -183,7 +183,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
       ? "Gym closed on Saturdays. Rest, recover, and hit your protein target."
       : "Rest day — prioritise sleep, light walking, and your protein.";
     return (
-      <div className="bg-app border border-app rounded-xl p-6 text-center">
+      <div className="bg-app rounded-xl p-6 text-center">
         <Moon className="mx-auto mb-2 text-muted" size={28} />
         <p className="text-sm text-muted">{msg}</p>
       </div>
