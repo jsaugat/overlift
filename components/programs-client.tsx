@@ -5,7 +5,7 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { CheckmarkSquare04Icon, ViewIcon } from "@hugeicons/core-free-icons";
+import { CheckmarkCircle04Icon, ViewIcon } from "@hugeicons/core-free-icons";
 import {
   createUserProgram,
   deleteUserProgram,
@@ -300,7 +300,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                     className="px-3 py-1.5 flex items-center gap-1 text-xs rounded-lg font-medium border border-app2 text-accent hover:bg-app2 transition-colors cursor-pointer"
                   >
                     <HugeiconsIcon
-                      icon={CheckmarkSquare04Icon}
+                      icon={CheckmarkCircle04Icon}
                       size={14}
                       color="currentColor"
                       strokeWidth={1.5}

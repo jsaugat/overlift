@@ -7,6 +7,7 @@ interface DayTabsProps {
   days: ProgramDay[];
   activeDay: string;
   onSelect: (dayName: string) => void;
+  startingDay?: number;
 }
 
 const colorMap: Record<string, string> = {
@@ -32,11 +33,21 @@ function getDayLabel(day: ProgramDay) {
   return toTitleCase(day.name).slice(0, 3);
 }
 
-export function DayTabs({ days, activeDay, onSelect }: DayTabsProps) {
+export function DayTabs({
+  days,
+  activeDay,
+  onSelect,
+  startingDay,
+}: DayTabsProps) {
+  const today = new Date().getDay(); // 0-6
+  const offset = startingDay !== undefined ? (today - startingDay + 7) % 7 : -1;
+  const todayDayOrder = offset !== -1 ? offset + 1 : -1;
+
   return (
     <div className="grid grid-cols-4 gap-[2px] mb-10">
       {days.map((day) => {
         const isActive = day.name === activeDay;
+        const isToday = day.day_order === todayDayOrder;
         const dayLabel = toTitleCase(day.name);
         const dayColor = colorMap[dayLabel] || "var(--color-text-dim)";
         const isRest = day.name.toLowerCase() === "rest";
@@ -52,7 +63,9 @@ export function DayTabs({ days, activeDay, onSelect }: DayTabsProps) {
               isRest ? "opacity-60" : "",
               isActive
                 ? "bg-app2 after:bg-[var(--day-color)] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px]"
-                : "after:bg-transparent after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:transition-colors",
+                : // : isToday
+                  //   ? "bg-accent/5 after:bg-accent/40 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px]"
+                  "after:bg-transparent after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:transition-colors",
             )}
             style={
               {
@@ -62,11 +75,14 @@ export function DayTabs({ days, activeDay, onSelect }: DayTabsProps) {
           >
             <div
               className={cn(
-                "font-mono text-[9px] tracking-[0.12em] uppercase mb-[3px]",
+                "font-mono text-[10px] tracking-[0.12em] uppercase mb-[3px] flex items-center justify-center gap-1",
                 isActive ? "text-app" : "text-muted",
               )}
             >
               {shortLabel}
+              {isToday && (
+                <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+              )}
             </div>
             <div
               className="font-bebas text-[clamp(18px,4.2vw,20px)] tracking-[0.04em]"

@@ -15,7 +15,6 @@ export default async function WorkoutPage() {
   }
 
   const activeProgram = await ensureUserHasProgram(user.id);
-  console.log(activeProgram, "thisprogram");
 
   if (!activeProgram) {
     return null;

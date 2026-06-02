@@ -11,11 +11,13 @@ import type {
 
 export function getTodayKey(program?: ActiveProgram): string {
   if (program && program.days && program.days.length) {
-    const orderedDays = program.days
-      .slice()
-      .sort((a, b) => a.day_order - b.day_order);
+    const today = new Date().getDay(); // 0-6
+    const startingDay = program.starting_day ?? 0;
+    const offset = (today - startingDay + 7) % 7;
+    const activeDayOrder = offset + 1; // because day_order starts at 1
 
-    return orderedDays[0]?.name ?? "Rest";
+    const todayDay = program.days.find((day) => day.day_order === activeDayOrder);
+    return todayDay?.name ?? "Rest";
   }
 
   return "Rest";

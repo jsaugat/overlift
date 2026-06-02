@@ -351,7 +351,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
 
                             {!isEditing ? (
                               <div className="flex flex-col items-center">
-                                <div className="text-xl font-black leading-none mb-0.5 text-app">
+                                <div className="text-2xl font-black leading-none mb-0.5 text-app font-bebas">
                                   {displayWeight}
                                   <span className="text-sm text-muted font-normal ml-1">
                                     kg

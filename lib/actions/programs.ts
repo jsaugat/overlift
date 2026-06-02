@@ -33,6 +33,7 @@ export interface ActiveProgram {
   name: string;
   is_active: boolean;
   created_at: string;
+  starting_day: number;
   days: ProgramDay[];
 }
 
@@ -47,6 +48,7 @@ export interface UserProgramSummary {
   name: string;
   is_active: boolean;
   created_at: string;
+  starting_day: number;
   days: UserProgramDaySummary[];
 }
 
@@ -104,6 +106,7 @@ interface ActiveProgramQueryRow {
   name: string;
   is_active: boolean;
   created_at: string;
+  starting_day: number;
   user_program_days: ActiveProgramQueryDay[] | null;
 }
 
@@ -112,6 +115,7 @@ interface UserProgramListQueryRow {
   name: string;
   is_active: boolean;
   created_at: string;
+  starting_day: number;
   user_program_days: UserProgramDaySummary[] | null;
 }
 
@@ -234,7 +238,7 @@ export async function getActiveProgram(
     const { data, error } = await supabase
       .from("user_programs")
       .select(
-        "id, name, is_active, created_at, user_program_days ( id, day_order, name, user_program_exercises ( id, exercise_id, position, sets, rep_min, rep_max, exercises ( id, name, muscle_group, equipment ) ) )",
+        "id, name, is_active, created_at, starting_day, user_program_days ( id, day_order, name, user_program_exercises ( id, exercise_id, position, sets, rep_min, rep_max, exercises ( id, name, muscle_group, equipment ) ) )",
       )
       .eq("user_id", userId)
       .eq("is_active", true)
@@ -292,6 +296,7 @@ export async function getActiveProgram(
       name: programData.name,
       is_active: programData.is_active,
       created_at: programData.created_at,
+      starting_day: programData.starting_day ?? 0,
       days,
     };
   } catch (error) {
@@ -326,7 +331,7 @@ export async function getUserPrograms(
   const { data, error } = await supabase
     .from("user_programs")
     .select(
-      "id, name, is_active, created_at, user_program_days ( id, day_order, name )",
+      "id, name, is_active, created_at, starting_day, user_program_days ( id, day_order, name )",
     )
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
@@ -352,6 +357,7 @@ export async function getUserPrograms(
       name: program.name,
       is_active: program.is_active,
       created_at: program.created_at,
+      starting_day: program.starting_day ?? 0,
       days,
     };
   });

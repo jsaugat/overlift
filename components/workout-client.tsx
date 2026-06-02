@@ -30,6 +30,7 @@ export function WorkoutClient({ program, defaultDay }: WorkoutClientProps) {
             days={program.days}
             activeDay={activeDay}
             onSelect={setActiveDay}
+            startingDay={program.starting_day}
           />
           <ExerciseList day={day} />
           <div className="mt-4 rounded-xl border-0 border-[#5a3900] border-l-[2px] border-l-[#f59e0b] bg-[#3d240050] px-4 py-3 text-sm leading-6 text-[#f2d6a0] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
