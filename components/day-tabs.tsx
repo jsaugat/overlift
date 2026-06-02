@@ -11,17 +11,17 @@ interface DayTabsProps {
 }
 
 const workoutColors = [
-  "var(--color-push)",
-  "var(--color-pull)",
-  "var(--color-legs)",
-  "var(--color-upper)",
-  "var(--color-lower)",
+  "var(--color-day-1)",
+  "var(--color-day-2)",
+  "var(--color-day-3)",
+  "var(--color-day-4)",
+  "var(--color-day-5)",
 ];
 
 function getDayColor(day: { name: string; day_order: number }) {
   const nameLower = day.name.toLowerCase();
   if (nameLower === "rest" || nameLower === "closed") {
-    return "var(--color-rest)";
+    return "var(--color-day-rest)";
   }
   const order = Number.isInteger(day.day_order) ? day.day_order : 1;
   const index = Math.max(0, order - 1) % workoutColors.length;
