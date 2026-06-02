@@ -10,15 +10,23 @@ interface DayTabsProps {
   startingDay?: number;
 }
 
-const colorMap: Record<string, string> = {
-  Push: "var(--color-push)",
-  Pull: "var(--color-pull)",
-  Legs: "var(--color-legs)",
-  Upper: "var(--color-upper)",
-  Lower: "var(--color-lower)",
-  Rest: "var(--color-rest)",
-  Closed: "var(--color-rest)",
-};
+const workoutColors = [
+  "var(--color-push)",
+  "var(--color-pull)",
+  "var(--color-legs)",
+  "var(--color-upper)",
+  "var(--color-lower)",
+];
+
+function getDayColor(day: { name: string; day_order: number }) {
+  const nameLower = day.name.toLowerCase();
+  if (nameLower === "rest" || nameLower === "closed") {
+    return "var(--color-rest)";
+  }
+  const order = Number.isInteger(day.day_order) ? day.day_order : 1;
+  const index = Math.max(0, order - 1) % workoutColors.length;
+  return workoutColors[index];
+}
 
 function toTitleCase(value: string) {
   if (!value) return value;
@@ -49,7 +57,7 @@ export function DayTabs({
         const isActive = day.day_order === activeDayOrder;
         const isToday = day.day_order === todayDayOrder;
         const dayLabel = toTitleCase(day.name);
-        const dayColor = colorMap[dayLabel] || "var(--color-text-dim)";
+        const dayColor = getDayColor(day);
         const isRest = day.name.toLowerCase() === "rest";
         const shortLabel = getDayLabel(day);
 

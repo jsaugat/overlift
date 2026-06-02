@@ -33,6 +33,29 @@ function loadLS<T>(key: string, fallback: T): T {
   }
 }
 
+const workoutColors = [
+  "var(--color-push)",
+  "var(--color-pull)",
+  "var(--color-legs)",
+  "var(--color-upper)",
+  "var(--color-lower)",
+];
+
+function getDayColor(day: { name: string; day_order: number }) {
+  const nameLower = day.name.toLowerCase();
+  if (nameLower === "rest" || nameLower === "closed") {
+    return "var(--color-rest)";
+  }
+  const order = Number.isInteger(day.day_order) ? day.day_order : 1;
+  const index = Math.max(0, order - 1) % workoutColors.length;
+  return workoutColors[index];
+}
+
+function toTitleCase(value: string) {
+  if (!value) return value;
+  return value[0].toUpperCase() + value.slice(1);
+}
+
 export function ExerciseList({ day }: ExerciseListProps) {
   const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
@@ -43,6 +66,8 @@ export function ExerciseList({ day }: ExerciseListProps) {
     {},
   );
   const [editingSet, setEditingSet] = useState<string | null>(null);
+
+  const dayColor = getDayColor(day);
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -197,28 +222,31 @@ export function ExerciseList({ day }: ExerciseListProps) {
   const pct = total ? Math.round((done / total) * 100) : 0;
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+    <div
+      className="animate-in fade-in slide-in-from-bottom-2 duration-300"
+      style={
+        {
+          "--day-color": dayColor,
+        } as React.CSSProperties
+      }
+    >
       {/* Header */}
       <div className="flex items-end justify-between mb-6 pb-5 border-b border-app flex-wrap gap-3">
         <div>
           <h2
-            className="font-bebas text-[clamp(24px,4vw,32px)] tracking-[0.04em] uppercase"
-            style={{ color: `var(--color-${dayTypeColor})` }}
+            className="font-bebas text-[clamp(24px,4vw,32px)] tracking-[0.04em] uppercase text-[var(--day-color)]"
           >
             {dayTypeLabel} DAY
           </h2>
           <div className="flex items-center gap-[7px] text-[11px] text-muted font-mono mt-[8px]">
             <div
-              className="w-[6px] h-[6px] rounded-full shrink-0"
-              style={{
-                backgroundColor: `var(--color-${dayTypeColor})`,
-              }}
+              className="w-[6px] h-[6px] rounded-full shrink-0 bg-[var(--day-color)]"
             ></div>
             {total} EXERCISES
           </div>
         </div>
         <div className="text-right">
-          <div className="font-bebas text-[24px] text-accent">{pct}%</div>
+          <div className="font-bebas text-[24px] text-[var(--day-color)]">{pct}%</div>
           <div className="font-mono text-[10px] text-muted pb-[2px] uppercase">
             COMPLETED
           </div>
@@ -228,10 +256,9 @@ export function ExerciseList({ day }: ExerciseListProps) {
       {/* Progress bar */}
       <div className="h-[2px] bg-app2 -mt-[25px] mb-[24px] relative z-0">
         <div
-          className="h-full transition-all duration-300"
+          className="h-full transition-all duration-300 bg-[var(--day-color)]"
           style={{
             width: `${pct}%`,
-            backgroundColor: `var(--color-${dayTypeColor})`,
           }}
         />
       </div>
@@ -261,11 +288,18 @@ export function ExerciseList({ day }: ExerciseListProps) {
                 role="checkbox"
                 className={cn(
                   "mt-0.5 w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition-colors cursor-pointer",
-                  isDone ? "badge-pull border-pull" : "border-app2",
+                  isDone ? "border-[var(--day-color)]" : "border-app2",
                 )}
+                style={
+                  isDone
+                    ? {
+                        backgroundColor: "color-mix(in srgb, var(--day-color) 15%, transparent)",
+                      }
+                    : {}
+                }
               >
                 {isDone && (
-                  <Check size={11} className="text-pull" strokeWidth={3} />
+                  <Check size={11} className="text-[var(--day-color)]" strokeWidth={3} />
                 )}
               </button>
 
@@ -317,33 +351,41 @@ export function ExerciseList({ day }: ExerciseListProps) {
                             className={cn(
                               "relative flex flex-col justify-center min-h-[90px] p-2 text-center border rounded-xl transition-all duration-200 cursor-pointer overflow-hidden",
                               isEditing
-                                ? "bg-neutral-900 border-[#00bfff] shadow-[0_0_0_1px_rgba(0,191,255,0.2)] cursor-default"
+                                ? "bg-neutral-900 border-[var(--day-color)] cursor-default"
                                 : hasData
-                                  ? "bg-[rgba(204,255,0,0.02)] border-[rgba(204,255,0,0.3)] hover:translate-y-[-2px]"
+                                  ? "hover:translate-y-[-2px]"
                                   : "bg-neutral-900/40 border-app2 hover:border-muted hover:translate-y-[-2px]",
                             )}
-                            style={isEditing ? { gridColumn: "span 1" } : {}}
+                            style={{
+                              ...(isEditing ? { gridColumn: "span 1" } : {}),
+                              ...(isEditing
+                                ? {
+                                    boxShadow: "0 0 0 1px color-mix(in srgb, var(--day-color) 20%, transparent)",
+                                  }
+                                : hasData
+                                  ? {
+                                      backgroundColor: "color-mix(in srgb, var(--day-color) 2%, transparent)",
+                                      borderColor: "color-mix(in srgb, var(--day-color) 30%, transparent)",
+                                    }
+                                  : {}),
+                            }}
                           >
                             {/* Status Dot */}
                             <div
                               className={cn(
-                                "absolute top-2 right-2 w-1.5 h-1.5 rounded-full",
-                                isEditing
-                                  ? "bg-[#00bfff] shadow-[0_0_8px_#00bfff]"
-                                  : hasData
-                                    ? "bg-[#ccff00] shadow-[0_0_8px_#ccff00]"
-                                    : "bg-neutral-700",
+                                "absolute top-2 right-2 w-1.5 h-1.5 rounded-full transition-all duration-200",
+                                isEditing || hasData
+                                  ? "bg-[var(--day-color)] shadow-[0_0_8px_var(--day-color)]"
+                                  : "bg-neutral-700",
                               )}
                             />
 
                             <div
                               className={cn(
                                 "text-[10px] uppercase font-bold tracking-widest mb-1.5 transition-colors",
-                                isEditing
-                                  ? "text-[#00bfff]"
-                                  : hasData
-                                    ? "text-[#ccff00]"
-                                    : "text-muted",
+                                isEditing || hasData
+                                  ? "text-[var(--day-color)]"
+                                  : "text-muted",
                               )}
                             >
                               Set {setIdx + 1}
@@ -382,7 +424,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
                                   onChange={(e) =>
                                     updateSet(setId, "weight", e.target.value)
                                   }
-                                  className="w-[85%] bg-neutral-950 border border-neutral-800 rounded-md text-app px-1 py-1 text-center font-bold text-sm focus:outline-none focus:border-[#00bfff]"
+                                  className="w-[85%] bg-neutral-950 border border-neutral-800 rounded-md text-app px-1 py-1 text-center font-bold text-sm focus:outline-none focus:border-[var(--day-color)]"
                                   autoFocus
                                 />
                                 <input
@@ -392,7 +434,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
                                   onChange={(e) =>
                                     updateSet(setId, "reps", e.target.value)
                                   }
-                                  className="w-[85%] bg-neutral-950 border border-neutral-800 rounded-md text-app px-1 py-1 text-center font-bold text-sm focus:outline-none focus:border-[#00bfff]"
+                                  className="w-[85%] bg-neutral-950 border border-neutral-800 rounded-md text-app px-1 py-1 text-center font-bold text-sm focus:outline-none focus:border-[var(--day-color)]"
                                 />
                                 <button
                                   onClick={async () => {
@@ -400,7 +442,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
                                     setEditingSet(null);
                                   }}
                                   disabled={isSetSaving}
-                                  className="w-[85%] bg-[#00bfff] text-black border-none rounded-md py-1 font-extrabold text-[10px] uppercase cursor-pointer hover:bg-white transition-colors disabled:opacity-50"
+                                  className="w-[85%] bg-[var(--day-color)] text-black border-none rounded-md py-1 font-extrabold text-[10px] uppercase cursor-pointer hover:bg-white transition-colors disabled:opacity-50"
                                 >
                                   {isSetSaving ? "..." : "Save"}
                                 </button>
