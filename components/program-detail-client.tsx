@@ -69,7 +69,7 @@ export function ProgramDetailClient({
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-3">
       {/* Back button + Program Header */}
       <div className="flex items-center gap-3">
         <Link
@@ -78,7 +78,7 @@ export function ProgramDetailClient({
         >
           <Button variant={"outline"} size={"sm"}>
             <ChevronLeft className="w-3.5 h-3.5" />
-            Programs
+            All programs
           </Button>
         </Link>
       </div>

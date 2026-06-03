@@ -65,6 +65,8 @@ export function AddExerciseDialog({
   onExerciseAdded,
 }: AddExerciseDialogProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterMuscle, setFilterMuscle] = useState<string>("All");
+  const [filterEquipment, setFilterEquipment] = useState<string>("All");
   const [showCustomForm, setShowCustomForm] = useState(false);
   const [customName, setCustomName] = useState("");
   const [customMuscle, setCustomMuscle] = useState("Chest");
@@ -75,6 +77,8 @@ export function AddExerciseDialog({
   useEffect(() => {
     if (open) {
       setSearchQuery("");
+      setFilterMuscle("All");
+      setFilterEquipment("All");
       setShowCustomForm(false);
       setCustomName("");
       setTimeout(() => searchRef.current?.focus(), 100);
@@ -87,10 +91,23 @@ export function AddExerciseDialog({
     let filtered = exercises;
 
     if (query) {
-      filtered = exercises.filter(
+      filtered = filtered.filter(
         (ex) =>
           ex.name.toLowerCase().includes(query) ||
-          (ex.muscle_group?.toLowerCase() ?? "").includes(query),
+          (ex.muscle_group?.toLowerCase() ?? "").includes(query) ||
+          (ex.equipment?.toLowerCase() ?? "").includes(query),
+      );
+    }
+
+    if (filterMuscle !== "All") {
+      filtered = filtered.filter(
+        (ex) => (ex.muscle_group || "Other").toLowerCase() === filterMuscle.toLowerCase()
+      );
+    }
+
+    if (filterEquipment !== "All") {
+      filtered = filtered.filter(
+        (ex) => (ex.equipment || "Bodyweight").toLowerCase() === filterEquipment.toLowerCase()
       );
     }
 
@@ -102,7 +119,7 @@ export function AddExerciseDialog({
     }
 
     return Object.entries(map).sort(([a], [b]) => a.localeCompare(b));
-  }, [exercises, searchQuery]);
+  }, [exercises, searchQuery, filterMuscle, filterEquipment]);
 
   const handleSelectExercise = (exerciseId: number) => {
     startTransition(async () => {
@@ -143,7 +160,7 @@ export function AddExerciseDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="px-5 sm:px-7 shrink-0">
+        <div className="px-5 sm:px-7 shrink-0 flex flex-col gap-3">
           {/* Search Input */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
@@ -155,6 +172,37 @@ export function AddExerciseDialog({
               placeholder="Search exercises..."
               className="pl-10 bg-app2 border-app2 text-app placeholder:text-muted/50"
             />
+          </div>
+
+          {/* Filters */}
+          <div className="flex gap-2">
+            <Select value={filterMuscle} onValueChange={setFilterMuscle}>
+              <SelectTrigger className="flex-1 bg-app2 border-app2 text-app h-8 text-xs">
+                <SelectValue placeholder="Muscle Group" />
+              </SelectTrigger>
+              <SelectContent className="bg-app2 border-app2">
+                <SelectItem value="All">All Muscles</SelectItem>
+                {MUSCLE_GROUPS.map((m) => (
+                  <SelectItem key={m} value={m}>
+                    {m}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={filterEquipment} onValueChange={setFilterEquipment}>
+              <SelectTrigger className="flex-1 bg-app2 border-app2 text-app h-8 text-xs">
+                <SelectValue placeholder="Equipment" />
+              </SelectTrigger>
+              <SelectContent className="bg-app2 border-app2">
+                <SelectItem value="All">All Equipment</SelectItem>
+                {EQUIPMENT_OPTIONS.map((e) => (
+                  <SelectItem key={e} value={e}>
+                    {e}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
