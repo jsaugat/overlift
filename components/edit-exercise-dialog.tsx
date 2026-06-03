@@ -67,9 +67,9 @@ export function EditExerciseDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-sm bg-app border border-app2 rounded-xl p-0 text-app overflow-hidden">
-        <DialogHeader className="px-5 pt-5 sm:px-7 sm:pt-6">
-          <DialogTitle className="text-base font-bold text-app capitalize">
+      <DialogContent className="max-w-sm bg-app border border-app2 rounded-xl p-0">
+        <DialogHeader className="px-5 pt-5 sm:px-7 sm:pt-6 gap-0">
+          <DialogTitle className="text-lg font-play capitalize">
             {exerciseName}
           </DialogTitle>
           <DialogDescription className="text-xs text-muted">
@@ -89,7 +89,7 @@ export function EditExerciseDialog({
                 onChange={(e) => setSets(parseInt(e.target.value) || 0)}
                 min={1}
                 max={20}
-                className="bg-app2 border-app2 text-app font-mono text-center text-base"
+                className="bg-app2 border-app2 text-app font-play text-center text-base"
               />
             </div>
             <div>
@@ -102,7 +102,7 @@ export function EditExerciseDialog({
                 onChange={(e) => setRepMin(parseInt(e.target.value) || 0)}
                 min={0}
                 max={200}
-                className="bg-app2 border-app2 text-app font-mono text-center text-base"
+                className="bg-app2 border-app2 text-app font-play text-center text-base"
               />
             </div>
             <div>
@@ -115,13 +115,13 @@ export function EditExerciseDialog({
                 onChange={(e) => setRepMax(parseInt(e.target.value) || 0)}
                 min={0}
                 max={200}
-                className="bg-app2 border-app2 text-app font-mono text-center text-base"
+                className="bg-app2 border-app2 text-app font-play text-center text-base"
               />
             </div>
           </div>
         </div>
 
-        <DialogFooter className="px-5 py-4 sm:px-7 border-t border-app bg-[rgba(0,0,0,0.2)]">
+        <DialogFooter className="m-0 border-t border-app bg-[rgba(0,0,0,0.2)]">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}

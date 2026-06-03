@@ -66,10 +66,12 @@ export function ProgramDetailClient({
       <div className="flex items-center gap-3">
         <Link
           href="/programs"
-          className="flex items-center gap-1 px-2.5 py-1 text-xs rounded-lg border border-app2 text-muted hover:text-app hover:bg-app2 transition-colors"
+          // className="flex items-center gap-1 px-2.5 py-1 text-xs rounded-lg border border-app2 text-muted hover:text-app hover:bg-app2 transition-colors"
         >
-          <ChevronLeft className="w-3.5 h-3.5" />
-          Programs
+          <Button variant={"outline"} size={"sm"}>
+            <ChevronLeft className="w-3.5 h-3.5" />
+            Programs
+          </Button>
         </Link>
       </div>
 
@@ -79,16 +81,16 @@ export function ProgramDetailClient({
         <div className="bg-app2 border border-app rounded-xl p-5 lg:sticky lg:top-4">
           {/* Program Name Header */}
           <div className="mb-5">
-            <div className="text-[11px] uppercase tracking-widest text-muted font-mono mb-1">
+            <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-mono mb-1">
               Active Matrix
             </div>
-            <div className="text-[22px] sm:text-[26px] font-extrabold text-app leading-tight">
+            <div className="text-[22px] font-play sm:text-[26px] font-medium leading-tight">
               {program.name}
             </div>
           </div>
 
           {/* Days List */}
-          <div className="text-[11px] uppercase tracking-[1.5px] font-bold text-muted mb-4">
+          <div className="text-[11px] uppercase tracking-widest font-mono text-muted-foreground mb-2">
             Program Architecture
           </div>
           <div className="flex flex-col gap-2">
@@ -101,10 +103,10 @@ export function ProgramDetailClient({
                   key={day.id}
                   onClick={() => setSelectedDayId(day.id)}
                   className={cn(
-                    "w-full text-left rounded-lg border px-3.5 py-3 flex items-center justify-between transition-all cursor-pointer text-sm",
+                    "w-full font-play text-left rounded-lg border px-3.5 py-3 flex items-center justify-between transition-all cursor-pointer text-sm",
                     isActive
-                      ? "border-accent bg-accent/[0.03] text-app font-bold"
-                      : "border-app text-muted hover:border-app2 hover:text-app hover:bg-[rgba(255,255,255,0.01)]",
+                      ? "border-primary/50 bg-primary/3 hover:border-primary/80"
+                      : "border-app text-muted hover:bg-muted",
                   )}
                 >
                   <span>
@@ -112,9 +114,9 @@ export function ProgramDetailClient({
                   </span>
                   <span
                     className={cn(
-                      "text-[10px] font-mono rounded px-1.5 py-0.5",
+                      "text-[10px] rounded px-1.5 py-0.5",
                       isActive
-                        ? "bg-accent text-app font-bold"
+                        ? "bg-accent text-black font-bold"
                         : "bg-app3 text-muted",
                     )}
                   >
@@ -133,7 +135,7 @@ export function ProgramDetailClient({
               {/* Day Header */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-app">
                 <div>
-                  <h2 className="text-2xl sm:text-[32px] font-extrabold text-app leading-tight tracking-tight">
+                  <h2 className="text-2xl sm:text-[32px] font-play leading-tight tracking-tight">
                     {selectedDay.name} Track
                   </h2>
                   <p className="text-sm text-muted mt-1">
@@ -234,7 +236,13 @@ interface ExerciseRowProps {
   isPending: boolean;
 }
 
-function ExerciseRow({ item, index, onEdit, onRemove, isPending }: ExerciseRowProps) {
+function ExerciseRow({
+  item,
+  index,
+  onEdit,
+  onRemove,
+  isPending,
+}: ExerciseRowProps) {
   const name = item.exercise.name || "Custom Exercise";
   const muscle = item.exercise.muscle_group || "General";
   const equipment = item.exercise.equipment || "Bodyweight";
@@ -255,7 +263,7 @@ function ExerciseRow({ item, index, onEdit, onRemove, isPending }: ExerciseRowPr
 
         {/* Exercise name + tags */}
         <div className="flex-1 min-w-0 pr-2">
-          <div className="font-bold text-[15px] sm:text-base text-app truncate mb-1.5 capitalize">
+          <div className="uppercase text-[15px] sm:text-base font-play truncate mb-1.5 capitalize">
             {name}
           </div>
           <div className="flex gap-1.5 flex-wrap">
@@ -282,17 +290,17 @@ function ExerciseRow({ item, index, onEdit, onRemove, isPending }: ExerciseRowPr
       <div className="flex items-center justify-between w-full sm:w-auto border-t sm:border-t-0 border-app pt-3.5 sm:pt-0">
         {/* Settings Metrics */}
         <div className="flex items-center gap-5 sm:gap-7 sm:mr-6">
-          <div className="sm:text-right">
-            <div className="font-mono text-[15px] sm:text-base font-bold text-app">
+          <div className="text-center">
+            <div className="font-mono text-[15px] sm:text-base text-app">
               {item.sets ?? 3}
             </div>
             <div className="text-[9px] sm:text-[10px] text-muted uppercase tracking-wide mt-0.5">
               Sets
             </div>
           </div>
-          <div className="sm:text-right">
-            <div className="font-mono text-[15px] sm:text-base font-bold text-app">
-              {item.rep_min ?? 8} – {item.rep_max ?? 12}
+          <div className="text-center">
+            <div className="font-mono text-[15px] sm:text-base">
+              {item.rep_min ?? 8} - {item.rep_max ?? 12}
             </div>
             <div className="text-[9px] sm:text-[10px] text-muted uppercase tracking-wide mt-0.5">
               Reps
