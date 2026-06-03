@@ -101,13 +101,17 @@ export function AddExerciseDialog({
 
     if (filterMuscle !== "All") {
       filtered = filtered.filter(
-        (ex) => (ex.muscle_group || "Other").toLowerCase() === filterMuscle.toLowerCase()
+        (ex) =>
+          (ex.muscle_group || "Other").toLowerCase() ===
+          filterMuscle.toLowerCase(),
       );
     }
 
     if (filterEquipment !== "All") {
       filtered = filtered.filter(
-        (ex) => (ex.equipment || "Bodyweight").toLowerCase() === filterEquipment.toLowerCase()
+        (ex) =>
+          (ex.equipment || "Bodyweight").toLowerCase() ===
+          filterEquipment.toLowerCase(),
       );
     }
 
@@ -284,7 +288,7 @@ export function AddExerciseDialog({
             </div>
           ) : (
             <div className="mt-2 p-4 rounded-lg bg-[rgba(0,0,0,0.4)] border border-app space-y-3">
-              <div className="text-[11px] font-bold uppercase tracking-widest text-accent">
+              <div className="text-sm font-play uppercase">
                 Create Custom Exercise
               </div>
 

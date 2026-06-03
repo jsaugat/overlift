@@ -13,7 +13,7 @@ const grindQuotes = [
   ["CONTROL YOUR", "EGO"],
   ["LESS CAN BE", "MORE"],
   ["RECOVERY BUILDS", "MUSCLE"],
-  ["SUPPLEMENTS", "ARE SECONDARY"],
+  ["SUPPLEMENTS", "ARE OVERRATED"],
   ["MORE THAN YOU", "THINK"],
   ["TRACK", "EVERYTHING"],
 ];

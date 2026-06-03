@@ -11,14 +11,26 @@ import {
   GripHorizontal,
   Dumbbell,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SickButton } from "@/components/ui/sick-button";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   type ActiveProgram,
-  type ProgramDay,
   type ProgramExercise,
   removeExerciseFromDay,
+  deleteUserProgram,
 } from "@/lib/actions/programs";
 import type { ExerciseLibraryItem } from "@/lib/actions/exercise-library";
 import { AddExerciseDialog } from "@/components/add-exercise-dialog";
@@ -68,14 +80,21 @@ export function ProgramDetailClient({
     refreshPage();
   };
 
+  const handleDeleteProgram = async () => {
+    const result = await deleteUserProgram(userId, program.id);
+    if (!result.success) {
+      toast.error(result.error ?? "Could not delete program.");
+      return;
+    }
+    toast.success(`Program "${program.name}" deleted.`);
+    router.push("/programs");
+  };
+
   return (
     <div className="space-y-3">
-      {/* Back button + Program Header */}
+      {/* Back button */}
       <div className="flex items-center gap-3">
-        <Link
-          href="/programs"
-          // className="flex items-center gap-1 px-2.5 py-1 text-xs rounded-lg border border-app2 text-muted hover:text-app hover:bg-app2 transition-colors"
-        >
+        <Link href="/programs">
           <Button variant={"outline"} size={"sm"}>
             <ChevronLeft className="w-3.5 h-3.5" />
             All programs
@@ -86,19 +105,16 @@ export function ProgramDetailClient({
       {/* Builder Layout: Sidebar + Canvas */}
       <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] xl:grid-cols-[340px_1fr] gap-5 lg:gap-8 items-start">
         {/* LEFT: Sidebar */}
-        <div className="bg-muted/40 border border-app rounded-xl p-4 sm:p-5 lg:sticky lg:top-4">
+        <div className="bg-muted/40 border border-app rounded-xl p-4 sm:p-5 lg:sticky lg:top-4 flex flex-col gap-4">
           {/* Program Name Header */}
-          <div className="mb-5">
-            {/* <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-mono mb-1">
-              Active Matrix
-            </div> */}
+          <div>
             <div className="text-xl flex items-center gap-2 font-play sm:text-2xl font-medium text-primary leading-tight uppercase">
               <Dumbbell
                 className="min-h-4 sm:min-h-5 min-w-4 sm:min-w-5"
                 size={20}
               />
-              <p className="truncate" title={program.name}>
-                {program.name} RANDOM NAMES OF THE SPOITLS LFSJADKLF
+              <p className="" title={program.name}>
+                {program.name}
               </p>
             </div>
           </div>
@@ -144,7 +160,7 @@ export function ProgramDetailClient({
           </div>
 
           {/* Days List - Mobile Select */}
-          <div className="block lg:hidden mt-3">
+          <div className="block lg:hidden">
             <div className="text-[11px] uppercase tracking-widest font-mono text-muted-foreground mb-2">
               Select Training Day
             </div>
@@ -171,6 +187,50 @@ export function ProgramDetailClient({
                 })}
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Delete Program */}
+          <div className="pt-3 border-t border-app/60 mt-auto">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <SickButton
+                  variant="danger"
+                  className="w-full"
+                  // size="sm"
+                  // className="w-full border-red-900/50 text-red-400/80 hover:bg-red-950/40 hover:text-red-400 hover:border-red-800/60 transition-colors"
+                  disabled={isPending}
+                >
+                  <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                  Delete Program
+                </SickButton>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="bg-app border border-app2 text-app">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="font-play uppercase">
+                    Delete Program?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription className="text-muted">
+                    This will permanently delete{" "}
+                    <span className="text-app font-semibold">
+                      &ldquo;{program.name}&rdquo;
+                    </span>{" "}
+                    and all its days and exercises. This action cannot be
+                    undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="border-app bg-app3/50">
+                  <AlertDialogCancel className="border-app2 bg-transparent hover:bg-app2">
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    variant="destructive"
+                    onClick={handleDeleteProgram}
+                  >
+                    Delete Program
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
 
@@ -365,15 +425,42 @@ function ExerciseRow({
           >
             {""}
           </SickButton>
-          <SickButton
-            variant="danger"
-            icon={<Trash2 className="w-[14px] h-[14px]" />}
-            onClick={onRemove}
-            disabled={isPending}
-            title="Remove Exercise"
-          >
-            {""}
-          </SickButton>
+
+          {/* Delete Exercise — with confirmation */}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <SickButton
+                variant="danger"
+                icon={<Trash2 className="w-[14px] h-[14px]" />}
+                disabled={isPending}
+                title="Remove Exercise"
+              >
+                {""}
+              </SickButton>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="bg-app border border-app2 text-app">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="font-play uppercase">
+                  Remove Exercise?
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-muted">
+                  Remove{" "}
+                  <span className="text-app font-semibold capitalize">
+                    &ldquo;{name}&rdquo;
+                  </span>{" "}
+                  from this training day? You can always add it back later.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="border-app bg-app3/50">
+                <AlertDialogCancel className="border-app2 bg-transparent hover:bg-app2">
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction variant="destructive" onClick={onRemove}>
+                  Remove
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </div>
