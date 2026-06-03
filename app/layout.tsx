@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Bebas_Neue, DM_Sans, DM_Mono, Figtree } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { Toaster } from "sonner";
 
 const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -49,6 +50,7 @@ export default function RootLayout({
         <div className="max-w-275 mx-auto px-5 pt-4 pb-16 md:pb-20 relative z-10">
           {children}
         </div>
+        <Toaster theme="dark" richColors />
       </body>
     </html>
   );

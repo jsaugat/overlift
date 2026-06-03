@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, ChevronRight } from "lucide-react";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -22,6 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 interface ProgramsClientProps {
   userId: string;
@@ -100,6 +101,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
     setError(null);
     try {
       await setActiveProgram(userId, programId);
+      toast.success("Active program updated successfully");
       refreshAfterAction();
     } catch {
       setError("Could not set program as active. Please try again.");
@@ -114,6 +116,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
         setError(result.error ?? "Could not delete program.");
         return;
       }
+      toast.success("Program deleted successfully");
       refreshAfterAction();
     } catch {
       setError("Could not delete program. Please try again.");
@@ -142,6 +145,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
           };
         }),
       );
+      toast.success(`Program "${trimmedName}" created successfully`);
       setShowForm(false);
       setProgramName("");
       setDays([
@@ -227,14 +231,16 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                       <div className="text-[10px] font-mono text-muted uppercase">
                         Day {String(index + 1).padStart(2, "0")}
                       </div>
-                      <button
-                        type="button"
+                      <Button
+                        variant="ghost"
                         onClick={() => removeDay(index)}
+                        size={"xs"}
                         disabled={days.length <= 1}
-                        className="text-[10px] text-red-500/80 hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="text-muted-foreground"
                       >
-                        Remove Day
-                      </button>
+                        <Trash2 size={8} />
+                        Remove
+                      </Button>
                     </div>
                     <div className="flex-1 flex flex-col gap-1.5">
                       <Input
