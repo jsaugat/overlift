@@ -98,9 +98,11 @@ export function ExerciseList({ day }: ExerciseListProps) {
 
       if (!error && data) {
         const weights: Record<string, number> = {};
-        (data as Array<{ exercise: string; weight_kg: number }>).forEach((w) => {
-          weights[w.exercise] = w.weight_kg;
-        });
+        (data as Array<{ exercise: string; weight_kg: number }>).forEach(
+          (w) => {
+            weights[w.exercise] = w.weight_kg;
+          },
+        );
         setTargetWeights(weights);
       }
     }
@@ -233,20 +235,16 @@ export function ExerciseList({ day }: ExerciseListProps) {
       {/* Header */}
       <div className="flex items-end justify-between mb-6 pb-5 border-b border-app flex-wrap gap-3">
         <div>
-          <h2
-            className="font-bebas text-[clamp(24px,4vw,32px)] tracking-[0.04em] uppercase text-[var(--day-color)]"
-          >
+          <h2 className="font-play text-[clamp(24px,4vw,32px)] uppercase text-(--day-color)">
             {dayTypeLabel} DAY
           </h2>
           <div className="flex items-center gap-[7px] text-[11px] text-muted font-mono mt-[8px]">
-            <div
-              className="w-[6px] h-[6px] rounded-full shrink-0 bg-[var(--day-color)]"
-            ></div>
+            <div className="w-[6px] h-[6px] rounded-full shrink-0 bg-[var(--day-color)]"></div>
             {total} EXERCISES
           </div>
         </div>
         <div className="text-right">
-          <div className="font-bebas text-[24px] text-[var(--day-color)]">{pct}%</div>
+          <div className="font-play text-[24px] text-(--day-color)">{pct}%</div>
           <div className="font-mono text-[10px] text-muted pb-[2px] uppercase">
             COMPLETED
           </div>
@@ -293,13 +291,18 @@ export function ExerciseList({ day }: ExerciseListProps) {
                 style={
                   isDone
                     ? {
-                        backgroundColor: "color-mix(in srgb, var(--day-color) 15%, transparent)",
+                        backgroundColor:
+                          "color-mix(in srgb, var(--day-color) 15%, transparent)",
                       }
                     : {}
                 }
               >
                 {isDone && (
-                  <Check size={11} className="text-[var(--day-color)]" strokeWidth={3} />
+                  <Check
+                    size={11}
+                    className="text-[var(--day-color)]"
+                    strokeWidth={3}
+                  />
                 )}
               </button>
 
@@ -307,7 +310,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
               <div className="flex-1 min-w-0">
                 <div
                   className={cn(
-                    "text-base font-medium uppercase text-app",
+                    "text-base font-play font-medium uppercase text-app",
                     isDone && "line-through text-faint",
                   )}
                 >
@@ -341,7 +344,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
                           ? targetWeights[ex.exercise.name]
                           : null;
                         const displayWeight =
-                          setEntry.weight || targetWeight || "X";
+                          setEntry.weight || targetWeight || "0";
                         const displayReps = setEntry.reps || `${repMin}` || "—";
 
                         return (
@@ -360,12 +363,15 @@ export function ExerciseList({ day }: ExerciseListProps) {
                               ...(isEditing ? { gridColumn: "span 1" } : {}),
                               ...(isEditing
                                 ? {
-                                    boxShadow: "0 0 0 1px color-mix(in srgb, var(--day-color) 20%, transparent)",
+                                    boxShadow:
+                                      "0 0 0 1px color-mix(in srgb, var(--day-color) 20%, transparent)",
                                   }
                                 : hasData
                                   ? {
-                                      backgroundColor: "color-mix(in srgb, var(--day-color) 2%, transparent)",
-                                      borderColor: "color-mix(in srgb, var(--day-color) 30%, transparent)",
+                                      backgroundColor:
+                                        "color-mix(in srgb, var(--day-color) 2%, transparent)",
+                                      borderColor:
+                                        "color-mix(in srgb, var(--day-color) 30%, transparent)",
                                     }
                                   : {}),
                             }}
@@ -393,10 +399,10 @@ export function ExerciseList({ day }: ExerciseListProps) {
 
                             {!isEditing ? (
                               <div className="flex flex-col items-center">
-                                <div className="text-2xl font-black leading-none mb-0.5 text-app font-bebas">
+                                <div className="text-2xl font-black leading-none mb-0.5 font-play">
                                   {displayWeight}
                                   <span className="text-sm text-muted font-normal ml-1">
-                                    kg
+                                    KG
                                   </span>
                                 </div>
                                 <div

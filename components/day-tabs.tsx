@@ -91,7 +91,7 @@ export function DayTabs({
               )}
             </div>
             <div
-              className="font-bebas text-[clamp(18px,4.2vw,20px)] tracking-[0.04em]"
+              className="font-play uppercase text-[clamp(16px,4.2vw,18px)] font-medium"
               style={{
                 color: isActive
                   ? "var(--day-color)"

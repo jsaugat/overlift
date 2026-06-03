@@ -10,7 +10,7 @@ export default function TimerPage() {
         <Nav />
         <div className="p-4">
           <div className="md:block">
-            <h2 className="text-xl font-medium text-app mb-1 uppercase">
+            <h2 className="text-app mb-1 uppercase font-play tracking-wide">
               Rest timer
             </h2>
             <p className="text-sm text-muted mb-4">

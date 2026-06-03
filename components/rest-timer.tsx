@@ -113,7 +113,7 @@ export function RestTimer() {
               key={p.secs}
               onClick={() => pickPreset(p.secs)}
               className={cn(
-                "bg-app2 border outline-none font-mono text-[15px] font-bold tracking-wider py-1.5 px-2 rounded-lg cursor-pointer transition-all uppercase",
+                "bg-app2 border outline-none font-play text-sm font-bold tracking-wider py-1.5 px-2 rounded-lg cursor-pointer transition-all uppercase",
                 isActive
                   ? "bg-accent/15 border-accent text-accent shadow-[0_0_12px_rgba(202,255,0,0.4)]"
                   : "border-app text-muted hover:border-accent hover:text-accent hover:bg-accent/15",
@@ -155,7 +155,7 @@ export function RestTimer() {
         <div className="absolute text-center">
           <div
             className={cn(
-              "font-bebas text-[72px] font-black leading-none tracking-[-2px] transition-colors",
+              "font-play text-[72px] font-black leading-none tracking-[-2px] transition-colors",
               isDanger ? "text-[#ff4444]" : "text-app",
             )}
           >
@@ -180,7 +180,7 @@ export function RestTimer() {
         </div>
         <div className="flex items-center gap-1">
           <input
-            className="bg-app3 border border-app text-app font-bebas text-[18px] font-bold w-13 text-center py-1.5 px-1 rounded-md outline-none transition-colors focus:border-accent"
+            className="bg-app3 border border-app text-app font-play text-[18px] font-bold w-13 text-center py-1.5 px-1 rounded-md outline-none transition-colors focus:border-accent"
             type="number"
             value={customMin}
             onChange={(e) => setCustomMin(e.target.value)}
@@ -188,9 +188,9 @@ export function RestTimer() {
             max="99"
             placeholder="mm"
           />
-          <span className="font-bebas text-[18px] font-bold text-muted">:</span>
+          <span className="font-play text-[18px] font-bold text-muted">:</span>
           <input
-            className="bg-app3 border border-app text-app font-bebas text-[18px] font-bold w-13 text-center py-1.5 px-1 rounded-md outline-none transition-colors focus:border-accent"
+            className="bg-app3 border border-app text-app font-play text-[18px] font-bold w-13 text-center py-1.5 px-1 rounded-md outline-none transition-colors focus:border-accent"
             type="number"
             value={customSec}
             onChange={(e) => setCustomSec(e.target.value)}
@@ -199,7 +199,7 @@ export function RestTimer() {
             placeholder="ss"
           />
           <button
-            className="bg-accent text-black font-bebas text-[13px] font-extrabold tracking-[0.08em] py-2 px-3.5 rounded-md outline-none cursor-pointer uppercase ml-1 transition-opacity hover:opacity-80"
+            className="bg-accent text-black font-play text-[13px] font-extrabold tracking-[0.08em] py-2 px-3.5 rounded-md outline-none cursor-pointer uppercase ml-1 transition-opacity hover:opacity-80"
             onClick={applyCustom}
           >
             Set
@@ -212,29 +212,29 @@ export function RestTimer() {
         {!running ? (
           <button
             onClick={start}
-            className="col-span-2 flex items-center justify-center gap-2 bg-accent text-black p-4 rounded-xl font-bebas text-[22px] font-extrabold tracking-widest uppercase cursor-pointer border-none transition-all hover:bg-[#d4ff00] hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(202,255,0,0.4)] active:translate-y-0"
+            className="col-span-2 flex items-center justify-center gap-2 bg-accent text-black p-2 rounded-xl font-play text-lg font-semibold tracking-normal uppercase cursor-pointer border-none transition-all hover:bg-[#d4ff00] hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(202,255,0,0.4)] active:translate-y-0"
           >
             <Play fill="currentColor" stroke="none" size={20} /> Start
           </button>
         ) : (
           <button
             onClick={pause}
-            className="col-span-2 flex items-center justify-center gap-2 bg-app2 text-app p-5.5 rounded-xl border border-app font-bebas text-[22px] font-extrabold tracking-widest uppercase outline-none cursor-pointer transition-all hover:border-accent hover:text-accent"
+            className="col-span-2 flex items-center justify-center gap-2 bg-app2 text-app p-2 rounded-xl border border-app font-play text-lg font-semibold tracking-normal uppercase outline-none cursor-pointer transition-all hover:border-accent hover:text-accent"
           >
             <Pause fill="currentColor" stroke="none" size={20} /> Pause
           </button>
         )}
         <button
           onClick={reset}
-          className="flex items-center justify-center gap-2 bg-app2 text-muted p-3 rounded-xl border border-app font-bebas text-[18px] font-extrabold tracking-widest uppercase outline-none cursor-pointer transition-all active:border-[#ff4444] active:text-[#ff4444]"
+          className="flex items-center justify-center gap-2 bg-app2 text-muted p-3 rounded-xl border border-app font-play text-sm font-extrabold tracking-widest uppercase outline-none cursor-pointer transition-all active:border-[#ff4444] active:text-[#ff4444]"
         >
-          <RotateCcw strokeWidth={3} size={18} /> Reset
+          <RotateCcw strokeWidth={3} size={14} /> Reset
         </button>
         <button
           onClick={() => addTime(15)}
-          className="flex items-center justify-center gap-1 bg-app2 text-muted p-3 rounded-xl border border-app font-bebas text-[18px] font-extrabold tracking-widest uppercase outline-none cursor-pointer transition-all hover:border-accent hover:text-accent"
+          className="flex items-center justify-center gap-1 bg-app2 text-muted p-3 rounded-xl border border-app font-play text-sm font-extrabold tracking-widest uppercase outline-none cursor-pointer transition-all hover:border-accent hover:text-accent"
         >
-          <Plus strokeWidth={4} size={18} /> 15s
+          <Plus strokeWidth={4} size={14} /> 15s
         </button>
       </div>
     </div>

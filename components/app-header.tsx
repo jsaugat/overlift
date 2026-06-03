@@ -79,7 +79,7 @@ export function AppHeader({ dayName }: AppHeaderProps) {
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-accent mb-1.5">
-            OVERLIFT // SYSTEM
+            TEMPER // 2026
           </div>
           <h1 className="font-bebas text-[clamp(52px,12vw,110px)] leading-[0.88] tracking-[0.02em] uppercase">
             {randomQuote[0]}{" "}

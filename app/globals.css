@@ -9,6 +9,7 @@
   --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui;
   --font-mono: var(--font-dm-mono), ui-monospace, SFMono-Regular;
   --font-bebas: var(--font-bebas), ui-sans-serif, system-ui;
+  --font-play: var(--font-play), sans-serif;
 
   --color-app: #0a0a0a;
   --color-app2: #111111;

@@ -23,6 +23,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { SickButton } from "./ui/sick-button";
 
 interface ProgramsClientProps {
   userId: string;
@@ -164,8 +165,8 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
       {/* Dashboard Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
         <div>
-          <h2 className="font-bebas text-[32px] sm:text-[40px] uppercase tracking-wide leading-none text-app">
-            Active Training Templates
+          <h2 className="uppercase font-play tracking-wide leading-none">
+            Training Programs
           </h2>
           <p className="text-muted text-[13px] sm:text-sm mt-1.5">
             Select an ongoing structure or assemble a custom iteration scheme
@@ -190,10 +191,10 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
 
       {/* Program Creator Modal */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="max-w-md bg-app border border-app2 rounded-xl p-6 text-app">
+        <DialogContent className="md:min-w-md max-w-lvh bg-app border border-app2 rounded-xl p-6 text-app">
           <DialogHeader>
-            <DialogTitle className="text-lg font-bold text-app uppercase tracking-wide">
-              Initialize New Template
+            <DialogTitle className="font-play uppercase">
+              Initialize New Program
             </DialogTitle>
             <DialogDescription className="text-xs text-muted">
               Map your schedule macrocycles and create individual active days.
@@ -210,7 +211,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                 value={programName}
                 onChange={(e) => setProgramName(e.target.value)}
                 placeholder="e.g. Push Pull Legs, Upper Lower Split"
-                className="w-full bg-app2 border border-app2 text-app placeholder:text-muted/50"
+                className="w-full bg-app2 border border-app2 text-app placeholder:text-muted/50 focus-visible:ring-1 focus-visible:ring-offset-0"
               />
             </div>
 
@@ -221,50 +222,44 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                 </label>
               </div>
 
-              <div className="max-h-60 overflow-y-auto space-y-2 pr-1 divide-y divide-app">
+              <div className="max-h-80 md:max-h-90 overflow-y-auto space-y-2 pr-1">
                 {days.map((day, index) => (
-                  <div
-                    key={day.id}
-                    className="flex flex-col gap-2 pt-2 first:pt-0"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="text-[10px] font-mono text-muted uppercase">
+                  <div key={day.id} className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-3 bg-app2 border border-app2 rounded-md px-3 py-2 pr-1.5">
+                      <span className="text-[10px] font-mono text-muted uppercase shrink-0 w-10">
                         Day {String(index + 1).padStart(2, "0")}
-                      </div>
-                      <Button
-                        variant="ghost"
-                        onClick={() => removeDay(index)}
-                        size={"xs"}
-                        disabled={days.length <= 1}
-                        className="text-muted-foreground"
-                      >
-                        <Trash2 size={8} />
-                        Remove
-                      </Button>
-                    </div>
-                    <div className="flex-1 flex flex-col gap-1.5">
+                      </span>
                       <Input
                         type="text"
                         value={day.name}
                         onChange={(e) => updateDay(index, e.target.value)}
                         placeholder="Day Name (e.g. Chest + Triceps)"
-                        className="w-full bg-app2 border border-app2 text-app placeholder:text-muted/50"
+                        className="flex-1 border-0 bg-transparent p-0 h-auto text-sm focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted/50 focus:bg-black rounded px-2 -mx-1 transition-colors"
                       />
-                      {!day.name.trim() && (
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {SUGGESTIONS.map((suggestion) => (
-                            <button
-                              key={suggestion}
-                              type="button"
-                              onClick={() => updateDay(index, suggestion)}
-                              className="px-2 py-0.5 text-[10px] rounded-full border border-app2 text-muted hover:text-white hover:bg-app2 transition-colors cursor-pointer"
-                            >
-                              {suggestion}
-                            </button>
-                          ))}
-                        </div>
-                      )}
+                      <SickButton
+                        onClick={() => removeDay(index)}
+                        disabled={days.length <= 1}
+                        className="text-muted-foreground shrink-0 p-1 h-auto"
+                      >
+                        <Trash2 size={14} />
+                      </SickButton>
                     </div>
+
+                    {/* Suggestions */}
+                    {!day.name.trim() && (
+                      <div className="flex flex-wrap gap-1">
+                        {SUGGESTIONS.map((suggestion) => (
+                          <button
+                            key={suggestion}
+                            type="button"
+                            onClick={() => updateDay(index, suggestion)}
+                            className="px-2 py-0.5 text-xs rounded-full border border-app2 text-muted hover:text-white hover:bg-app2 transition-colors cursor-pointer"
+                          >
+                            {suggestion}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -322,7 +317,6 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                 key={program.id}
                 className={cn(
                   "group relative border rounded-xl p-5 sm:p-6 transition-all duration-200 overflow-hidden flex flex-col justify-between min-h-[160px] sm:min-h-[180px] cursor-pointer",
-                  "hover:translate-y-[-2px]",
                   isActive
                     ? "bg-accent/[0.03] border-accent/30 shadow-[0_0_24px_-6px_rgba(200,255,0,0.1)]"
                     : "bg-app2 border-app hover:border-app2 hover:bg-app3",
@@ -336,7 +330,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
 
                 <div>
                   <div className="flex items-start justify-between gap-3">
-                    <h3 className="text-lg sm:text-xl font-bold text-app leading-tight group-hover:text-accent transition-colors">
+                    <h3 className="text-lg sm:text-xl font-medium text-app leading-tight group-hover:text-accent transition-colors font-play">
                       {program.name}
                     </h3>
                     {isActive && (
@@ -354,7 +348,8 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                 </div>
 
                 <div className="flex items-center justify-between mt-6 pt-3 border-t border-app/50 text-[11px] font-mono text-muted uppercase group-hover:text-muted">
-                  <div>ID: SR-{program.id}</div>
+                  {/* <div>ID: SR-{program.id}</div> */}
+                  <div></div>
                   <div
                     className="flex items-center gap-2"
                     onClick={(e) => e.stopPropagation()}
@@ -383,7 +378,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     )}
-                    <ChevronRight className="w-3 h-3 text-muted group-hover:text-app transition-colors ml-1" />
+                    <ChevronRight className="w-5 h-5 text-muted group-hover:translate-x-1 transition-transform ml-1" />
                   </div>
                 </div>
               </div>

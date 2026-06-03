@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bebas_Neue, DM_Sans, DM_Mono, Figtree } from "next/font/google";
+import { Bebas_Neue, DM_Sans, DM_Mono, Figtree, Play } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
@@ -16,6 +16,11 @@ const dmMono = DM_Mono({
   weight: ["400", "500"],
   subsets: ["latin"],
   variable: "--font-dm-mono",
+});
+const play = Play({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  variable: "--font-play",
 });
 
 export const metadata: Metadata = {
@@ -44,6 +49,7 @@ export default function RootLayout({
         dmMono.variable,
         "font-sans",
         figtree.variable,
+        play.variable,
       )}
     >
       <body className={`${dmSans.className} font-sans`}>
