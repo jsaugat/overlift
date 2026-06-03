@@ -9,6 +9,7 @@ import {
   Pencil,
   ChevronLeft,
   GripHorizontal,
+  Dumbbell,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -85,14 +86,20 @@ export function ProgramDetailClient({
       {/* Builder Layout: Sidebar + Canvas */}
       <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] xl:grid-cols-[340px_1fr] gap-5 lg:gap-8 items-start">
         {/* LEFT: Sidebar */}
-        <div className="bg-muted/40 border border-app rounded-xl p-5 lg:sticky lg:top-4">
+        <div className="bg-muted/40 border border-app rounded-xl p-4 sm:p-5 lg:sticky lg:top-4">
           {/* Program Name Header */}
           <div className="mb-5">
-            <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-mono mb-1">
+            {/* <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-mono mb-1">
               Active Matrix
-            </div>
-            <div className="text-[22px] font-play sm:text-[26px] font-medium leading-tight">
-              {program.name}
+            </div> */}
+            <div className="text-xl flex items-center gap-2 font-play sm:text-2xl font-medium text-primary leading-tight uppercase">
+              <Dumbbell
+                className="min-h-4 sm:min-h-5 min-w-4 sm:min-w-5"
+                size={20}
+              />
+              <p className="truncate" title={program.name}>
+                {program.name} RANDOM NAMES OF THE SPOITLS LFSJADKLF
+              </p>
             </div>
           </div>
 
@@ -157,7 +164,8 @@ export function ProgramDetailClient({
                       value={String(day.id)}
                       className="font-play text-sm text-app hover:bg-app2"
                     >
-                      Day {day.day_order} – {day.name} ({exerciseCount} {exerciseCount === 1 ? "Ex" : "Exs"})
+                      Day {day.day_order} – {day.name} ({exerciseCount}{" "}
+                      {exerciseCount === 1 ? "Ex" : "Exs"})
                     </SelectItem>
                   );
                 })}

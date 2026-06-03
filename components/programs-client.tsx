@@ -124,9 +124,11 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
     }
   };
 
+  // Create new program handler
   const handleCreateProgram = async () => {
     setError(null);
 
+    // Validate program name
     const trimmedName = programName.trim();
     if (!trimmedName) {
       setError("Program name is required.");
@@ -134,7 +136,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
     }
 
     try {
-      await createUserProgram(
+      const newProgramId = await createUserProgram(
         userId,
         trimmedName,
         days.map((day, index) => {
@@ -154,7 +156,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
         { id: crypto.randomUUID(), name: "Pull" },
         { id: crypto.randomUUID(), name: "Legs" },
       ]);
-      refreshAfterAction();
+      router.push(`/programs/${newProgramId}`);
     } catch {
       setError("Could not create program. Please try again.");
     }
