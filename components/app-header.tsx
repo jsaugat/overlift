@@ -6,15 +6,15 @@ import { usePathname, useRouter } from "next/navigation";
 import { getSupabase } from "@/lib/supabase";
 
 const grindQuotes = [
-  ["STOP SWITCHING", "TOO SOON"],
-  ["PROGRESSIVE OVERLOAD", "IS KING"],
+  ["NO MORE", "SPLIT HOPPING"],
+  ["PROGRESSIVE OVERLOAD", "DRIVES GAINS"],
   ["INTENSITY OVER", "PERFECTION"],
   ["TRAIN THE MUSCLE", "NOT THE MOVEMENT"],
-  ["CHECK YOUR", "EGO"],
+  ["CONTROL YOUR", "EGO"],
   ["LESS CAN BE", "MORE"],
-  ["RECOVERY IS", "GROWTH"],
-  ["SUPPLEMENTS ARE", "OVERRATED"],
-  ["YOU'RE CAPABLE OF", "MORE THAN YOU THINK"],
+  ["RECOVERY BUILDS", "MUSCLE"],
+  ["SUPPLEMENTS", "ARE SECONDARY"],
+  ["MORE THAN YOU", "THINK"],
   ["TRACK", "EVERYTHING"],
 ];
 
