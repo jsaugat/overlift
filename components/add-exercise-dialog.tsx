@@ -35,15 +35,17 @@ interface AddExerciseDialogProps {
 }
 
 const MUSCLE_GROUPS = [
-  "Chest",
   "Shoulders",
+  "Chest",
   "Back",
   "Biceps",
   "Triceps",
+  "Forearms",
+  "Core",
+  "Glutes",
   "Quads",
   "Hamstrings",
   "Calves",
-  "Core",
 ];
 
 const EQUIPMENT_OPTIONS = [
@@ -157,7 +159,7 @@ export function AddExerciseDialog({
         </div>
 
         {/* Exercise Library Scroll Zone */}
-        <ScrollArea className="mx-5 sm:mx-7 h-[280px] sm:h-[360px] flex-grow min-h-[150px] rounded-lg border border-app bg-[rgba(0,0,0,0.15)]">
+        <ScrollArea className="mx-5 sm:mx-7 h-[360px] sm:h-[480px] flex-grow min-h-[150px] rounded-lg border border-app bg-[rgba(0,0,0,0.15)]">
           {grouped.length === 0 ? (
             <div className="flex items-center justify-center h-full p-10 text-sm text-muted">
               No matching exercises found
@@ -252,7 +254,7 @@ export function AddExerciseDialog({
 
               <div>
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1.5">
-                  Muscle Group
+                  Muscle Group (Top-to-Bottom)
                 </label>
                 <Select value={customMuscle} onValueChange={setCustomMuscle}>
                   <SelectTrigger className="bg-app2 border-app2 text-app w-full">
