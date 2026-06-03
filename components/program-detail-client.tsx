@@ -102,23 +102,19 @@ export function ProgramDetailClient({
         </Link>
       </div>
 
+      {/* Program Title — full width */}
+      <div className="flex items-center gap-2.5 text-xl sm:text-3xl font-play font-semibold text-primary leading-tight py-4">
+        <Dumbbell
+          className="min-h-4 sm:min-h-5 min-w-4 sm:min-w-5 shrink-0"
+          size={24}
+        />
+        <h1 title={program.name}>{program.name}</h1>
+      </div>
+
       {/* Builder Layout: Sidebar + Canvas */}
       <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] xl:grid-cols-[340px_1fr] gap-5 lg:gap-8 items-start">
         {/* LEFT: Sidebar */}
         <div className="bg-muted/40 border border-app rounded-xl p-4 sm:p-5 lg:sticky lg:top-4 flex flex-col gap-4">
-          {/* Program Name Header */}
-          <div>
-            <div className="text-xl flex items-center gap-2 font-play sm:text-2xl font-medium text-primary leading-tight uppercase">
-              <Dumbbell
-                className="min-h-4 sm:min-h-5 min-w-4 sm:min-w-5"
-                size={20}
-              />
-              <p className="" title={program.name}>
-                {program.name}
-              </p>
-            </div>
-          </div>
-
           {/* Days List - Desktop */}
           <div className="hidden lg:block">
             <div className="text-[11px] uppercase tracking-widest font-mono text-muted-foreground mb-2">
@@ -241,7 +237,7 @@ export function ProgramDetailClient({
               {/* Day Header */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-app">
                 <div>
-                  <h2 className="text-2xl sm:text-[32px] font-play leading-tight tracking-tight">
+                  <h2 className="text-2xl font-play leading-tight tracking-tight">
                     {selectedDay.name} Track
                   </h2>
                   <p className="text-sm text-muted mt-1">
