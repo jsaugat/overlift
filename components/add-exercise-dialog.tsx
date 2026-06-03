@@ -20,10 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  addExerciseToDay,
-  createCustomExercise,
-} from "@/lib/actions/programs";
+import { addExerciseToDay, createCustomExercise } from "@/lib/actions/programs";
 import type { ExerciseLibraryItem } from "@/lib/actions/exercise-library";
 import { cn } from "@/lib/utils";
 import { getMuscleClass } from "@/lib/muscle-utils";
@@ -134,9 +131,9 @@ export function AddExerciseDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg bg-app border border-app2 rounded-xl p-0 text-app overflow-hidden">
-        <DialogHeader className="px-5 pt-5 pb-0 sm:px-7 sm:pt-6">
-          <DialogTitle className="text-lg font-bold text-app">
+      <DialogContent className="w-full max-w-[calc(100%-2rem)] sm:max-w-lg h-auto max-h-[calc(100dvh-2rem)] sm:max-h-[85vh] flex flex-col bg-app border border-app2 rounded-xl p-0 text-app overflow-hidden">
+        <DialogHeader className="px-5 pt-5 pb-0 sm:px-7 sm:pt-6 shrink-0">
+          <DialogTitle className="text-lg font-play uppercase">
             Add Exercise
           </DialogTitle>
           <DialogDescription className="text-xs text-muted">
@@ -144,7 +141,7 @@ export function AddExerciseDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="px-5 sm:px-7">
+        <div className="px-5 sm:px-7 shrink-0">
           {/* Search Input */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
@@ -160,7 +157,7 @@ export function AddExerciseDialog({
         </div>
 
         {/* Exercise Library Scroll Zone */}
-        <ScrollArea className="mx-5 sm:mx-7 h-[300px] sm:h-[360px] rounded-lg border border-app bg-[rgba(0,0,0,0.15)]">
+        <ScrollArea className="mx-5 sm:mx-7 h-[280px] sm:h-[360px] flex-grow min-h-[150px] rounded-lg border border-app bg-[rgba(0,0,0,0.15)]">
           {grouped.length === 0 ? (
             <div className="flex items-center justify-center h-full p-10 text-sm text-muted">
               No matching exercises found
@@ -219,15 +216,17 @@ export function AddExerciseDialog({
         </ScrollArea>
 
         {/* Custom Exercise Section */}
-        <div className="px-5 pb-5 sm:px-7 sm:pb-6">
+        <div className="px-5 pb-5 sm:px-7 sm:pb-6 shrink-0">
           {!showCustomForm ? (
-            <div className="flex items-center justify-between pt-2">
-              <p className="text-xs text-muted">Can&apos;t find your exercise?</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2">
+              <p className="text-xs text-muted">
+                Can&apos;t find your exercise?
+              </p>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowCustomForm(true)}
-                className="border-app2 hover:bg-app2"
+                className="border-app2 hover:bg-app2 w-full sm:w-auto"
               >
                 <Plus className="w-3 h-3 mr-1" />
                 Create Custom
@@ -256,7 +255,7 @@ export function AddExerciseDialog({
                   Muscle Group
                 </label>
                 <Select value={customMuscle} onValueChange={setCustomMuscle}>
-                  <SelectTrigger className="bg-app2 border-app2 text-app">
+                  <SelectTrigger className="bg-app2 border-app2 text-app w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-app2 border-app2">
@@ -273,8 +272,11 @@ export function AddExerciseDialog({
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1.5">
                   Equipment
                 </label>
-                <Select value={customEquipment} onValueChange={setCustomEquipment}>
-                  <SelectTrigger className="bg-app2 border-app2 text-app">
+                <Select
+                  value={customEquipment}
+                  onValueChange={setCustomEquipment}
+                >
+                  <SelectTrigger className="bg-app2 border-app2 text-app w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-app2 border-app2">
