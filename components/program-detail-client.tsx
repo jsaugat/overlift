@@ -24,6 +24,13 @@ import { AddExerciseDialog } from "@/components/add-exercise-dialog";
 import { EditExerciseDialog } from "@/components/edit-exercise-dialog";
 import { cn } from "@/lib/utils";
 import { getMuscleClass } from "@/lib/muscle-utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ProgramDetailClientProps {
   userId: string;
@@ -78,7 +85,7 @@ export function ProgramDetailClient({
       {/* Builder Layout: Sidebar + Canvas */}
       <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] xl:grid-cols-[340px_1fr] gap-5 lg:gap-8 items-start">
         {/* LEFT: Sidebar */}
-        <div className="bg-app2 border border-app rounded-xl p-5 lg:sticky lg:top-4">
+        <div className="bg-muted/40 border border-app rounded-xl p-5 lg:sticky lg:top-4">
           {/* Program Name Header */}
           <div className="mb-5">
             <div className="text-[11px] uppercase tracking-widest text-muted-foreground font-mono mb-1">
@@ -89,42 +96,73 @@ export function ProgramDetailClient({
             </div>
           </div>
 
-          {/* Days List */}
-          <div className="text-[11px] uppercase tracking-widest font-mono text-muted-foreground mb-2">
-            Program Architecture
-          </div>
-          <div className="flex flex-col gap-2">
-            {program.days.map((day) => {
-              const isActive = day.id === selectedDayId;
-              const exerciseCount = day.exercises.length;
+          {/* Days List - Desktop */}
+          <div className="hidden lg:block">
+            <div className="text-[11px] uppercase tracking-widest font-mono text-muted-foreground mb-2">
+              Program Architecture
+            </div>
+            <div className="flex flex-col gap-2">
+              {program.days.map((day) => {
+                const isActive = day.id === selectedDayId;
+                const exerciseCount = day.exercises.length;
 
-              return (
-                <button
-                  key={day.id}
-                  onClick={() => setSelectedDayId(day.id)}
-                  className={cn(
-                    "w-full font-play text-left rounded-lg border px-3.5 py-3 flex items-center justify-between transition-all cursor-pointer text-sm",
-                    isActive
-                      ? "border-primary/50 bg-primary/3 hover:border-primary/80"
-                      : "border-app text-muted hover:bg-muted",
-                  )}
-                >
-                  <span>
-                    Day {day.day_order} – {day.name}
-                  </span>
-                  <span
+                return (
+                  <button
+                    key={day.id}
+                    onClick={() => setSelectedDayId(day.id)}
                     className={cn(
-                      "text-[10px] rounded px-1.5 py-0.5",
+                      "w-full font-play text-left rounded-lg border px-3.5 py-3 flex items-center justify-between transition-all cursor-pointer text-sm",
                       isActive
-                        ? "bg-accent text-black font-bold"
-                        : "bg-app3 text-muted",
+                        ? "border-primary/50 bg-primary/3 hover:border-primary/80"
+                        : "border-app text-muted hover:bg-muted",
                     )}
                   >
-                    {exerciseCount} {exerciseCount === 1 ? "Ex" : "Exs"}
-                  </span>
-                </button>
-              );
-            })}
+                    <span>
+                      Day {day.day_order} – {day.name}
+                    </span>
+                    <span
+                      className={cn(
+                        "text-[10px] rounded px-1.5 py-0.5",
+                        isActive
+                          ? "bg-accent text-black font-bold"
+                          : "bg-app3 text-muted",
+                      )}
+                    >
+                      {exerciseCount} {exerciseCount === 1 ? "Ex" : "Exs"}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Days List - Mobile Select */}
+          <div className="block lg:hidden mt-3">
+            <div className="text-[11px] uppercase tracking-widest font-mono text-muted-foreground mb-2">
+              Select Training Day
+            </div>
+            <Select
+              value={selectedDayId ? String(selectedDayId) : ""}
+              onValueChange={(val) => setSelectedDayId(Number(val))}
+            >
+              <SelectTrigger className="w-full bg-app2 border-app font-play py-5 h-10 text-left text-sm flex items-center justify-between">
+                <SelectValue placeholder="Select a day" />
+              </SelectTrigger>
+              <SelectContent className="bg-app border border-app2">
+                {program.days.map((day) => {
+                  const exerciseCount = day.exercises.length;
+                  return (
+                    <SelectItem
+                      key={day.id}
+                      value={String(day.id)}
+                      className="font-play text-sm text-app hover:bg-app2"
+                    >
+                      Day {day.day_order} – {day.name} ({exerciseCount} {exerciseCount === 1 ? "Ex" : "Exs"})
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
