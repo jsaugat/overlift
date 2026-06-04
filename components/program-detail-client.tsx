@@ -103,7 +103,7 @@ export function ProgramDetailClient({
       </div>
 
       {/* Program Title — full width */}
-      <div className="flex items-center gap-2.5 text-xl sm:text-3xl font-play font-semibold text-primary leading-tight py-4">
+      <div className="flex items-center gap-2.5 text-xl sm:text-3xl font-play leading-tight py-4">
         <Dumbbell
           className="min-h-4 sm:min-h-5 min-w-4 sm:min-w-5 shrink-0"
           size={24}
