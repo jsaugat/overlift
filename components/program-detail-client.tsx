@@ -31,6 +31,7 @@ import {
   type ProgramExercise,
   removeExerciseFromDay,
   deleteUserProgram,
+  renameProgram,
 } from "@/lib/actions/programs";
 import type { ExerciseLibraryItem } from "@/lib/actions/exercise-library";
 import { AddExerciseDialog } from "@/components/add-exercise-dialog";
@@ -44,6 +45,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface ProgramDetailClientProps {
   userId: string;
@@ -63,6 +73,8 @@ export function ProgramDetailClient({
   );
   const [addExerciseOpen, setAddExerciseOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<ProgramExercise | null>(null);
+  const [renameOpen, setRenameOpen] = useState(false);
+  const [renameValue, setRenameValue] = useState(program.name);
 
   const selectedDay = program.days.find((d) => d.id === selectedDayId) ?? null;
   const exercises = selectedDay
@@ -90,6 +102,24 @@ export function ProgramDetailClient({
     router.push("/programs");
   };
 
+  const handleRenameOpenChange = (open: boolean) => {
+    if (open) setRenameValue(program.name);
+    setRenameOpen(open);
+  };
+
+  const handleRenameProgram = () => {
+    startTransition(async () => {
+      const result = await renameProgram(userId, program.id, renameValue);
+      if (!result.success) {
+        toast.error(result.error ?? "Could not rename program.");
+        return;
+      }
+      toast.success("Program renamed.");
+      setRenameOpen(false);
+      refreshPage();
+    });
+  };
+
   return (
     <div className="space-y-3">
       {/* Back button */}
@@ -103,12 +133,23 @@ export function ProgramDetailClient({
       </div>
 
       {/* Program Title — full width */}
-      <div className="flex items-center gap-2.5 text-xl sm:text-3xl font-play leading-tight py-4">
+      <div className="flex items-center gap-2.5 text-xl sm:text-3xl font-play leading-tight py-4 min-w-0">
         <Dumbbell
           className="min-h-4 sm:min-h-5 min-w-4 sm:min-w-5 shrink-0"
           size={24}
         />
-        <h1 title={program.name}>{program.name}</h1>
+        <h1 className="flex-1 min-w-0 truncate" title={program.name}>
+          {program.name}
+        </h1>
+        <SickButton
+          variant="text"
+          icon={<Pencil className="w-[14px] h-[14px]" />}
+          onClick={() => handleRenameOpenChange(true)}
+          disabled={isPending}
+          title="Rename Program"
+        >
+          {""}
+        </SickButton>
       </div>
 
       {/* Builder Layout: Sidebar + Canvas */}
@@ -306,6 +347,57 @@ export function ProgramDetailClient({
           onExerciseAdded={refreshPage}
         />
       )}
+
+      {/* Rename Program Dialog */}
+      <Dialog open={renameOpen} onOpenChange={handleRenameOpenChange}>
+        <DialogContent className="max-w-sm bg-app border border-app2 rounded-xl p-0">
+          <DialogHeader className="px-5 pt-5 sm:px-7 sm:pt-6 gap-0">
+            <DialogTitle className="text-lg font-play uppercase">
+              Rename Program
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted">
+              Update the display name for this program.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="px-5 sm:px-7 pb-2">
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-2">
+              Program name
+            </label>
+            <Input
+              type="text"
+              value={renameValue}
+              onChange={(e) => setRenameValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleRenameProgram();
+                }
+              }}
+              placeholder="e.g. Push Pull Legs"
+              className="bg-app2 border-app2 text-app font-play"
+              autoFocus
+            />
+          </div>
+
+          <DialogFooter className="m-0 border-t border-app bg-[rgba(0,0,0,0.2)]">
+            <Button
+              variant="outline"
+              onClick={() => setRenameOpen(false)}
+              className="border-app2"
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleRenameProgram}
+              disabled={isPending || !renameValue.trim()}
+            >
+              {isPending ? "Saving..." : "Save"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Edit Exercise Dialog */}
       {editTarget && (

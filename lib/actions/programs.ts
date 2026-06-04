@@ -647,6 +647,27 @@ export async function updateExerciseSettings(
   return { success: true };
 }
 
+// Rename program
+export async function renameProgram(
+  userId: string,
+  programId: number,
+  newName: string,
+): Promise<{ success: boolean; error?: string }> {
+  const trimmed = newName.trim();
+  if (!trimmed)
+    return { success: false, error: "Program name cannot be empty" };
+
+  const supabase = await createSupabaseServerClient();
+
+  const { error } = await (supabase.from("user_programs") as any)
+    .update({ name: trimmed })
+    .eq("id", programId)
+    .eq("user_id", userId);
+
+  if (error) return { success: false, error: "Failed to rename program" };
+  return { success: true };
+}
+
 export async function createCustomExercise(
   userId: string,
   name: string,
