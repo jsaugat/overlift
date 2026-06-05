@@ -397,6 +397,7 @@ export async function createUserProgram(
   userId: string,
   name: string,
   days: NewProgramDayInput[],
+  startingDay: number = 0,
 ): Promise<number> {
   const supabase = await createSupabaseServerClient();
 
@@ -409,12 +410,15 @@ export async function createUserProgram(
     throw new Error("At least one day is required");
   }
 
+  const normalizedStartingDay = Math.min(6, Math.max(0, startingDay));
+
   const { data: program, error: programError } = await supabase
     .from("user_programs")
     .insert({
       user_id: userId,
       name: trimmedName,
       is_active: false,
+      starting_day: normalizedStartingDay,
     } as any)
     .select("id")
     .single();

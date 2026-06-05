@@ -56,6 +56,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
 
   const [showForm, setShowForm] = useState(false);
   const [programName, setProgramName] = useState("");
+  const [startingDay, setStartingDay] = useState(0); // 0 = Mon … 6 = Sun
   const [days, setDays] = useState<DayBuilderItem[]>([
     { id: crypto.randomUUID(), name: "Push" },
     { id: crypto.randomUUID(), name: "Pull" },
@@ -147,10 +148,12 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
             name: finalName,
           };
         }),
+        startingDay,
       );
       toast.success(`Program "${trimmedName}" created successfully`);
       setShowForm(false);
       setProgramName("");
+      setStartingDay(0);
       setDays([
         { id: crypto.randomUUID(), name: "Push" },
         { id: crypto.randomUUID(), name: "Pull" },
@@ -215,6 +218,32 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                 placeholder="e.g. Push Pull Legs, Upper Lower Split"
                 className="w-full bg-app2 border border-app2 text-app placeholder:text-muted/50 focus-visible:ring-1 focus-visible:ring-offset-0"
               />
+            </div>
+
+            {/* Starting Day */}
+            <div>
+              <label className="block mb-1.5 text-[11px] uppercase tracking-wider font-bold text-muted">
+                Starting Day
+              </label>
+              <div className="flex gap-1.5 flex-wrap">
+                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
+                  (day, i) => (
+                    <button
+                      key={day}
+                      type="button"
+                      onClick={() => setStartingDay(i)}
+                      className={cn(
+                        "flex-1 min-w-[2.5rem] px-2 py-1.5 text-[11px] font-mono uppercase rounded-md border transition-all duration-150 cursor-pointer",
+                        startingDay === i
+                          ? "bg-accent/15 border-accent/50 text-accent font-bold"
+                          : "bg-app2 border-app2 text-muted hover:text-app hover:border-app",
+                      )}
+                    >
+                      {day}
+                    </button>
+                  ),
+                )}
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -284,7 +313,10 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
             <Button
               type="button"
               variant="outline"
-              onClick={() => setShowForm(false)}
+              onClick={() => {
+                setShowForm(false);
+                setStartingDay(0);
+              }}
               className="border-app2"
             >
               Cancel
