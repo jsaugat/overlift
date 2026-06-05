@@ -204,22 +204,17 @@ export function ProgramDetailClient({
       <div className="flex items-center gap-2.5 text-xl sm:text-3xl font-play leading-tight py-4 min-w-0">
         <div className="flex-1 flex items-center gap-2">
           <Dumbbell
-            className="min-h-4 sm:min-h-5 min-w-4 sm:min-w-5 shrink-0"
+            className="min-h-4 sm:min-h-5 min-w-4 sm:min-w-5 shrink-0 text-primary"
             size={24}
-            />
-          <h1 className="min-w-0 truncate bg-gradient-to-r from-primary to-primary via-white bg-clip-text text-transparent w-fit" title={program.name}>
+          />
+          <h1
+            className="min-w-0 truncate text-primary bg-clip-text w-fit cursor-pointer"
+            title={program.name}
+            onClick={() => handleRenameOpenChange(true)}
+          >
             {program.name}
           </h1>
         </div>
-        <SickButton
-          variant="text"
-          icon={<Pencil className="w-[14px] h-[14px]" />}
-          onClick={() => handleRenameOpenChange(true)}
-          disabled={isPending}
-          title="Rename Program"
-        >
-          {""}
-        </SickButton>
       </div>
 
       {/* Mobile day picker — outside sidebar so delete isn't stacked at top */}
@@ -252,7 +247,7 @@ export function ProgramDetailClient({
             </SelectContent>
           </Select>
         </div>
-        {selectedDay && (
+        {/* {selectedDay && (
           <SickButton
             variant="text"
             icon={<Pencil className="w-[14px] h-[14px]" />}
@@ -263,7 +258,7 @@ export function ProgramDetailClient({
           >
             {""}
           </SickButton>
-        )}
+        )} */}
       </div>
 
       {/* Builder Layout: Sidebar + Canvas */}
@@ -352,7 +347,7 @@ export function ProgramDetailClient({
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 min-w-0">
                     <h2 className="text-2xl font-play leading-tight tracking-tight truncate">
-                      {selectedDay.name} Track
+                      {selectedDay.name} Day
                     </h2>
                     <SickButton
                       variant="text"
@@ -360,7 +355,7 @@ export function ProgramDetailClient({
                       onClick={() => openRenameDay(selectedDay)}
                       disabled={isPending}
                       title="Rename Day"
-                      className="shrink-0"
+                      className="shrink-0 sm:hidden"
                     >
                       {""}
                     </SickButton>
