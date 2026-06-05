@@ -321,7 +321,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                   "group relative border rounded-xl p-5 sm:p-6 transition-all duration-200 overflow-hidden flex flex-col justify-between min-h-[160px] sm:min-h-[180px] cursor-pointer",
                   isActive
                     ? "bg-accent/[0.03] border-accent/30 shadow-[0_0_24px_-6px_rgba(200,255,0,0.1)]"
-                    : "bg-app2 border-app hover:border-app2 hover:bg-app3",
+                    : "bg-app2 border",
                 )}
                 onClick={() => router.push(`/programs/${program.id}`)}
               >
@@ -330,6 +330,7 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                   <div className="absolute top-0 left-0 w-full h-[2px] bg-accent" />
                 )}
 
+                {/* Body */}
                 <div>
                   <div className="flex items-start justify-between gap-3">
                     <h3 className="text-lg sm:text-xl font-medium text-app leading-tight group-hover:text-accent transition-colors font-play">
@@ -338,8 +339,9 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                     {isActive && (
                       <Badge
                         variant="outline"
-                        className="shrink-0 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border-accent/20 bg-accent/10 text-accent h-auto"
+                        className="shrink-0 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border-accent/20 bg-accent/10 text-accent h-auto flex items-center"
                       >
+                        <div className="h-1.5 w-1.5 bg-primary rounded-full"></div>
                         Active
                       </Badge>
                     )}
@@ -349,38 +351,31 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between mt-6 pt-3 border-t border-app/50 text-[11px] font-mono text-muted uppercase group-hover:text-muted">
-                  {/* <div>ID: SR-{program.id}</div> */}
-                  <div></div>
+                {/* Footer */}
+                <div className="flex items-center justify-between mt-6 pt-3 border-app/50 text-[11px] font-mono text-muted uppercase group-hover:text-muted">
                   <div
                     className="flex items-center gap-2"
                     onClick={(e) => e.stopPropagation()}
                   >
                     {!program.is_active && (
-                      <button
-                        onClick={() => handleSetActive(program.id)}
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSetActive(program.id);
+                        }}
                         disabled={isPending}
-                        className="px-2.5 py-1 flex items-center gap-1 text-[10px] rounded border border-app2 text-accent hover:bg-app2 transition-colors cursor-pointer"
+                        size={"sm"}
                       >
                         <HugeiconsIcon
                           icon={CheckmarkCircle04Icon}
                           size={11}
                           color="currentColor"
-                          strokeWidth={1.5}
+                          strokeWidth={2.5}
                         />
                         Set Active
-                      </button>
+                      </Button>
                     )}
-                    {!program.is_active && !onlyOneProgram && (
-                      <button
-                        onClick={() => handleDelete(program.id)}
-                        disabled={isPending}
-                        className="p-1 text-red-500/80 hover:text-red-500 hover:bg-red-500/10 rounded transition-colors cursor-pointer"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                    <ChevronRight className="w-5 h-5 text-muted group-hover:translate-x-1 transition-transform ml-1" />
+                    {/* <ChevronRight className="w-5 h-5 text-muted group-hover:translate-x-1 transition-transform ml-1" /> */}
                   </div>
                 </div>
               </div>
