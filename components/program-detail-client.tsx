@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -32,6 +32,8 @@ import {
   removeExerciseFromDay,
   deleteUserProgram,
   renameProgram,
+  renameProgramDay,
+  type ProgramDay,
 } from "@/lib/actions/programs";
 import type { ExerciseLibraryItem } from "@/lib/actions/exercise-library";
 import { AddExerciseDialog } from "@/components/add-exercise-dialog";
@@ -75,6 +77,11 @@ export function ProgramDetailClient({
   const [editTarget, setEditTarget] = useState<ProgramExercise | null>(null);
   const [renameOpen, setRenameOpen] = useState(false);
   const [renameValue, setRenameValue] = useState(program.name);
+  const [renameDayOpen, setRenameDayOpen] = useState(false);
+  const [renameDayTarget, setRenameDayTarget] = useState<ProgramDay | null>(
+    null,
+  );
+  const [renameDayValue, setRenameDayValue] = useState("");
 
   const selectedDay = program.days.find((d) => d.id === selectedDayId) ?? null;
   const exercises = selectedDay
@@ -120,6 +127,67 @@ export function ProgramDetailClient({
     });
   };
 
+  const openRenameDay = (day: ProgramDay) => {
+    setRenameDayTarget(day);
+    setRenameDayValue(day.name);
+    setRenameDayOpen(true);
+  };
+
+  const handleRenameDayOpenChange = (open: boolean) => {
+    if (!open) setRenameDayTarget(null);
+    setRenameDayOpen(open);
+  };
+
+  const handleRenameDay = () => {
+    if (!renameDayTarget) return;
+    startTransition(async () => {
+      const result = await renameProgramDay(
+        userId,
+        renameDayTarget.id,
+        renameDayValue,
+      );
+      if (!result.success) {
+        toast.error(result.error ?? "Could not rename day.");
+        return;
+      }
+      toast.success("Day renamed.");
+      setRenameDayOpen(false);
+      setRenameDayTarget(null);
+      refreshPage();
+    });
+  };
+
+  const deleteProgramDialog = (trigger: ReactNode) => (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
+      <AlertDialogContent className="bg-app border border-app2 text-app">
+        <AlertDialogHeader>
+          <AlertDialogTitle className="font-play uppercase">
+            Delete Program?
+          </AlertDialogTitle>
+          <AlertDialogDescription className="text-muted">
+            This will permanently delete{" "}
+            <span className="text-app font-semibold">
+              &ldquo;{program.name}&rdquo;
+            </span>{" "}
+            and all its days and exercises. This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter className="border-app bg-app3/50">
+          <AlertDialogCancel className="border-app2 bg-transparent hover:bg-app2">
+            Cancel
+          </AlertDialogCancel>
+          <AlertDialogAction
+            variant="destructive"
+            onClick={handleDeleteProgram}
+          >
+            Delete Program
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+
   return (
     <div className="space-y-3">
       {/* Back button */}
@@ -134,13 +202,15 @@ export function ProgramDetailClient({
 
       {/* Program Title — full width */}
       <div className="flex items-center gap-2.5 text-xl sm:text-3xl font-play leading-tight py-4 min-w-0">
-        <Dumbbell
-          className="min-h-4 sm:min-h-5 min-w-4 sm:min-w-5 shrink-0"
-          size={24}
-        />
-        <h1 className="flex-1 min-w-0 truncate" title={program.name}>
-          {program.name}
-        </h1>
+        <div className="flex-1 flex items-center gap-2">
+          <Dumbbell
+            className="min-h-4 sm:min-h-5 min-w-4 sm:min-w-5 shrink-0"
+            size={24}
+            />
+          <h1 className="min-w-0 truncate bg-gradient-to-r from-primary to-primary via-white bg-clip-text text-transparent w-fit" title={program.name}>
+            {program.name}
+          </h1>
+        </div>
         <SickButton
           variant="text"
           icon={<Pencil className="w-[14px] h-[14px]" />}
@@ -152,12 +222,55 @@ export function ProgramDetailClient({
         </SickButton>
       </div>
 
+      {/* Mobile day picker — outside sidebar so delete isn't stacked at top */}
+      <div className="lg:hidden flex items-end gap-2">
+        <div className="flex-1 min-w-0">
+          <div className="text-[11px] uppercase tracking-widest font-mono text-muted-foreground mb-2">
+            Training Day
+          </div>
+          <Select
+            value={selectedDayId ? String(selectedDayId) : ""}
+            onValueChange={(val) => setSelectedDayId(Number(val))}
+          >
+            <SelectTrigger className="w-full bg-app2 border-app font-play h-11 text-left text-sm">
+              <SelectValue placeholder="Select a day" />
+            </SelectTrigger>
+            <SelectContent className="bg-app border border-app2">
+              {program.days.map((day) => {
+                const exerciseCount = day.exercises.length;
+                return (
+                  <SelectItem
+                    key={day.id}
+                    value={String(day.id)}
+                    className="font-play text-sm text-app hover:bg-app2"
+                  >
+                    Day {day.day_order} – {day.name} ({exerciseCount}{" "}
+                    {exerciseCount === 1 ? "Ex" : "Exs"})
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </div>
+        {selectedDay && (
+          <SickButton
+            variant="text"
+            icon={<Pencil className="w-[14px] h-[14px]" />}
+            onClick={() => openRenameDay(selectedDay)}
+            disabled={isPending}
+            title="Rename Day"
+            className="mb-0.5 shrink-0"
+          >
+            {""}
+          </SickButton>
+        )}
+      </div>
+
       {/* Builder Layout: Sidebar + Canvas */}
       <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] xl:grid-cols-[340px_1fr] gap-5 lg:gap-8 items-start">
-        {/* LEFT: Sidebar */}
-        <div className="bg-muted/40 border border-app rounded-xl p-4 sm:p-5 lg:sticky lg:top-4 flex flex-col gap-4">
-          {/* Days List - Desktop */}
-          <div className="hidden lg:block">
+        {/* LEFT: Sidebar (desktop only) */}
+        <div className="hidden lg:flex bg-muted/40 border border-app rounded-xl p-4 sm:p-5 lg:sticky lg:top-4 flex-col gap-4">
+          <div>
             <div className="text-[11px] uppercase tracking-widest font-mono text-muted-foreground mb-2">
               Program Architecture
             </div>
@@ -167,107 +280,66 @@ export function ProgramDetailClient({
                 const exerciseCount = day.exercises.length;
 
                 return (
-                  <button
+                  <div
                     key={day.id}
-                    onClick={() => setSelectedDayId(day.id)}
                     className={cn(
-                      "w-full font-play text-left rounded-lg border px-3.5 py-3 flex items-center justify-between transition-all cursor-pointer text-sm",
+                      "flex items-center gap-1 rounded-lg border transition-all",
                       isActive
-                        ? "border-primary/50 bg-primary/3 hover:border-primary/80"
-                        : "border-app text-muted hover:bg-muted",
+                        ? "border-primary/50 bg-primary/3"
+                        : "border-app",
                     )}
                   >
-                    <span>
-                      Day {day.day_order} – {day.name}
-                    </span>
-                    <span
+                    <button
+                      type="button"
+                      onClick={() => setSelectedDayId(day.id)}
                       className={cn(
-                        "text-[10px] rounded px-1.5 py-0.5",
+                        "flex-1 min-w-0 font-play text-left px-3.5 py-3 flex items-center justify-between cursor-pointer text-sm transition-colors",
                         isActive
-                          ? "bg-accent text-black font-bold"
-                          : "bg-app3 text-muted",
+                          ? "hover:border-primary/80"
+                          : "text-muted hover:bg-muted rounded-lg",
                       )}
                     >
-                      {exerciseCount} {exerciseCount === 1 ? "Ex" : "Exs"}
-                    </span>
-                  </button>
+                      <span className="truncate pr-2">
+                        Day {day.day_order} – {day.name}
+                      </span>
+                      <span
+                        className={cn(
+                          "text-[10px] rounded px-1.5 py-0.5 shrink-0",
+                          isActive
+                            ? "bg-accent text-black font-bold"
+                            : "bg-app3 text-muted",
+                        )}
+                      >
+                        {exerciseCount} {exerciseCount === 1 ? "Ex" : "Exs"}
+                      </span>
+                    </button>
+                    <SickButton
+                      variant="text"
+                      icon={<Pencil className="w-[13px] h-[13px]" />}
+                      onClick={() => openRenameDay(day)}
+                      disabled={isPending}
+                      title="Rename Day"
+                      className="shrink-0 mr-1"
+                    >
+                      {""}
+                    </SickButton>
+                  </div>
                 );
               })}
             </div>
           </div>
 
-          {/* Days List - Mobile Select */}
-          <div className="block lg:hidden">
-            <div className="text-[11px] uppercase tracking-widest font-mono text-muted-foreground mb-2">
-              Select Training Day
-            </div>
-            <Select
-              value={selectedDayId ? String(selectedDayId) : ""}
-              onValueChange={(val) => setSelectedDayId(Number(val))}
-            >
-              <SelectTrigger className="w-full bg-app2 border-app font-play py-5 h-10 text-left text-sm flex items-center justify-between">
-                <SelectValue placeholder="Select a day" />
-              </SelectTrigger>
-              <SelectContent className="bg-app border border-app2">
-                {program.days.map((day) => {
-                  const exerciseCount = day.exercises.length;
-                  return (
-                    <SelectItem
-                      key={day.id}
-                      value={String(day.id)}
-                      className="font-play text-sm text-app hover:bg-app2"
-                    >
-                      Day {day.day_order} – {day.name} ({exerciseCount}{" "}
-                      {exerciseCount === 1 ? "Ex" : "Exs"})
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Delete Program */}
           <div className="pt-3 border-t border-app/60 mt-auto">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <SickButton
-                  variant="danger"
-                  className="w-full"
-                  // size="sm"
-                  // className="w-full border-red-900/50 text-red-400/80 hover:bg-red-950/40 hover:text-red-400 hover:border-red-800/60 transition-colors"
-                  disabled={isPending}
-                >
-                  <Trash2 className="w-3.5 h-3.5 mr-1.5" />
-                  Delete Program
-                </SickButton>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="bg-app border border-app2 text-app">
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="font-play uppercase">
-                    Delete Program?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription className="text-muted">
-                    This will permanently delete{" "}
-                    <span className="text-app font-semibold">
-                      &ldquo;{program.name}&rdquo;
-                    </span>{" "}
-                    and all its days and exercises. This action cannot be
-                    undone.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter className="border-app bg-app3/50">
-                  <AlertDialogCancel className="border-app2 bg-transparent hover:bg-app2">
-                    Cancel
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    variant="destructive"
-                    onClick={handleDeleteProgram}
-                  >
-                    Delete Program
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            {deleteProgramDialog(
+              <SickButton
+                variant="danger"
+                className="w-full"
+                disabled={isPending}
+              >
+                <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                Delete Program
+              </SickButton>,
+            )}
           </div>
         </div>
 
@@ -277,13 +349,25 @@ export function ProgramDetailClient({
             <>
               {/* Day Header */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-app">
-                <div>
-                  <h2 className="text-2xl font-play leading-tight tracking-tight">
-                    {selectedDay.name} Track
-                  </h2>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <h2 className="text-2xl font-play leading-tight tracking-tight truncate">
+                      {selectedDay.name} Track
+                    </h2>
+                    <SickButton
+                      variant="text"
+                      icon={<Pencil className="w-[14px] h-[14px]" />}
+                      onClick={() => openRenameDay(selectedDay)}
+                      disabled={isPending}
+                      title="Rename Day"
+                      className="shrink-0"
+                    >
+                      {""}
+                    </SickButton>
+                  </div>
                   <p className="text-sm text-muted mt-1">
-                    {exercises.length}{" "}
-                    {exercises.length === 1 ? "exercise" : "exercises"} total
+                    Day {selectedDay.day_order} · {exercises.length}{" "}
+                    {exercises.length === 1 ? "exercise" : "exercises"}
                   </p>
                 </div>
                 <Button
@@ -336,6 +420,24 @@ export function ProgramDetailClient({
         </div>
       </div>
 
+      {/* Mobile: delete at bottom, de-emphasized */}
+      <div className="lg:hidden pt-8 mt-2 border-t border-app/40">
+        <p className="text-[11px] uppercase tracking-widest font-mono text-muted-foreground mb-3">
+          Program Settings
+        </p>
+        {deleteProgramDialog(
+          <Button
+            variant="ghost"
+            size="sm"
+            disabled={isPending}
+            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 px-0 h-auto font-normal"
+          >
+            <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+            Delete program
+          </Button>,
+        )}
+      </div>
+
       {/* Add Exercise Dialog */}
       {selectedDayId && (
         <AddExerciseDialog
@@ -347,6 +449,59 @@ export function ProgramDetailClient({
           onExerciseAdded={refreshPage}
         />
       )}
+
+      {/* Rename Day Dialog */}
+      <Dialog open={renameDayOpen} onOpenChange={handleRenameDayOpenChange}>
+        <DialogContent className="max-w-sm bg-app border border-app2 rounded-xl p-0">
+          <DialogHeader className="px-5 pt-5 sm:px-7 sm:pt-6 gap-0">
+            <DialogTitle className="text-lg font-play uppercase">
+              Rename Day
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted">
+              {renameDayTarget
+                ? `Update the name for Day ${renameDayTarget.day_order}.`
+                : "Update the display name for this training day."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="px-5 sm:px-7 pb-2">
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-2">
+              Day name
+            </label>
+            <Input
+              type="text"
+              value={renameDayValue}
+              onChange={(e) => setRenameDayValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleRenameDay();
+                }
+              }}
+              placeholder="e.g. Push, Pull, Legs"
+              className="bg-app2 border-app2 text-app font-play"
+              autoFocus
+            />
+          </div>
+
+          <DialogFooter className="m-0 border-t border-app bg-[rgba(0,0,0,0.2)]">
+            <Button
+              variant="outline"
+              onClick={() => setRenameDayOpen(false)}
+              className="border-app2"
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleRenameDay}
+              disabled={isPending || !renameDayValue.trim()}
+            >
+              {isPending ? "Saving..." : "Save"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Rename Program Dialog */}
       <Dialog open={renameOpen} onOpenChange={handleRenameOpenChange}>

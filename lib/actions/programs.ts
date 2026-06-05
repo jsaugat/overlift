@@ -668,6 +668,25 @@ export async function renameProgram(
   return { success: true };
 }
 
+export async function renameProgramDay(
+  userId: string,
+  dayId: number,
+  newName: string,
+): Promise<{ success: boolean; error?: string }> {
+  const trimmed = newName.trim();
+  if (!trimmed) return { success: false, error: "Day name cannot be empty" };
+
+  const supabase = await createSupabaseServerClient();
+
+  const { error } = await (supabase.from("user_program_days") as any)
+    .update({ name: trimmed })
+    .eq("id", dayId)
+    .eq("user_id", userId);
+
+  if (error) return { success: false, error: "Failed to rename day" };
+  return { success: true };
+}
+
 export async function createCustomExercise(
   userId: string,
   name: string,
