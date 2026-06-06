@@ -54,9 +54,13 @@ export function ProgramDayExercises({
     useState<ProgramExercise[]>(exercises);
   const [isReordering, setIsReordering] = useState(false);
 
+  const serverOrderKey = exercises
+    .map((item) => `${item.id}:${item.position}`)
+    .join(",");
+
   useEffect(() => {
     setOrderedExercises(exercises);
-  }, [exercises]);
+  }, [selectedDay?.id, serverOrderKey]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -67,8 +71,9 @@ export function ProgramDayExercises({
     }),
   );
 
-  const handleDragEnd = async (event: DragEndEvent) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    if (isReordering || isPending) return;
     if (!over || active.id === over.id || !selectedDay) return;
 
     const oldIndex = orderedExercises.findIndex(
@@ -80,41 +85,46 @@ export function ProgramDayExercises({
     if (oldIndex === -1 || newIndex === -1) return;
 
     const previousOrder = orderedExercises;
-    const nextOrder = arrayMove(orderedExercises, oldIndex, newIndex);
+    const nextOrder = arrayMove(orderedExercises, oldIndex, newIndex).map(
+      (item, index) => ({
+        ...item,
+        position: index + 1,
+      }),
+    );
     setOrderedExercises(nextOrder);
-
     setIsReordering(true);
-    try {
-      await toast.promise(
-        (async () => {
-          const result = await reorderDayExercises(
-            userId,
-            selectedDay.id,
-            nextOrder.map((item) => item.id),
-          );
-          if (!result.success) {
-            throw new Error(result.error ?? "Could not reorder exercises.");
-          }
-          return result;
-        })(),
-        {
-          loading: "Saving order...",
-          success: "Exercise order saved",
-          error: (err) =>
-            err instanceof Error
-              ? err.message
-              : "Could not reorder exercises.",
-        },
-      );
-      onReordered();
-    } catch {
-      setOrderedExercises(previousOrder);
-    } finally {
-      setIsReordering(false);
-    }
+
+    const saveOrder = reorderDayExercises(
+      userId,
+      selectedDay.id,
+      nextOrder.map((item) => item.id),
+    ).then((result) => {
+      if (!result.success) {
+        throw new Error(result.error ?? "Could not reorder exercises.");
+      }
+      return result;
+    });
+
+    void toast.promise(saveOrder, {
+      loading: "Saving order...",
+      success: "Exercise order saved",
+      error: (err) =>
+        err instanceof Error ? err.message : "Could not reorder exercises.",
+    });
+
+    void saveOrder
+      .then(() => {
+        onReordered();
+      })
+      .catch(() => {
+        setOrderedExercises(previousOrder);
+      })
+      .finally(() => {
+        setIsReordering(false);
+      });
   };
 
-  const rowDisabled = isPending || isReordering;
+  const dragDisabled = isPending || isReordering;
 
   if (!selectedDay) {
     return (
@@ -130,7 +140,7 @@ export function ProgramDayExercises({
 
   return (
     <div className="min-w-0">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-app">
+      <div className="max-sm:mt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-app">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 min-w-0">
             <h2 className="text-2xl font-play leading-tight tracking-tight truncate">
@@ -140,7 +150,7 @@ export function ProgramDayExercises({
               variant="text"
               icon={<Pencil className="w-[14px] h-[14px]" />}
               onClick={() => onRenameDay(selectedDay)}
-              disabled={rowDisabled}
+              disabled={isPending}
               title="Rename Day"
               className="shrink-0 sm:hidden"
             >
@@ -154,7 +164,7 @@ export function ProgramDayExercises({
         </div>
         <Button
           onClick={onAddExercise}
-          disabled={rowDisabled}
+          disabled={dragDisabled}
           className="w-full sm:w-auto"
         >
           <Plus className="w-4 h-4 mr-1.5" />
@@ -195,7 +205,8 @@ export function ProgramDayExercises({
                   index={index}
                   onEdit={() => onEditExercise(item)}
                   onRemove={() => onRemoveExercise(item.id)}
-                  isPending={rowDisabled}
+                  isPending={isPending}
+                  dragDisabled={dragDisabled}
                 />
               ))}
             </div>

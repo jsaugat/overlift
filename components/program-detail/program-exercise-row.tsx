@@ -26,6 +26,7 @@ interface ProgramExerciseRowProps {
   onEdit: () => void;
   onRemove: () => void;
   isPending: boolean;
+  dragDisabled?: boolean;
 }
 
 export function ProgramExerciseRow({
@@ -34,6 +35,7 @@ export function ProgramExerciseRow({
   onEdit,
   onRemove,
   isPending,
+  dragDisabled = false,
 }: ProgramExerciseRowProps) {
   const {
     attributes,
@@ -42,7 +44,7 @@ export function ProgramExerciseRow({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: String(item.id), disabled: isPending });
+  } = useSortable({ id: String(item.id), disabled: dragDisabled });
 
   const name = item.exercise.name || "Custom Exercise";
   const muscle = item.exercise.muscle_group || "General";
@@ -67,9 +69,11 @@ export function ProgramExerciseRow({
           type="button"
           className={cn(
             "text-muted pr-3 sm:pr-4 touch-none",
-            isPending ? "cursor-not-allowed opacity-30" : "cursor-grab active:cursor-grabbing opacity-50 hover:opacity-80",
+            dragDisabled
+              ? "cursor-not-allowed opacity-30"
+              : "cursor-grab active:cursor-grabbing opacity-50 hover:opacity-80",
           )}
-          disabled={isPending}
+          disabled={dragDisabled}
           aria-label={`Reorder ${name}`}
           {...attributes}
           {...listeners}
