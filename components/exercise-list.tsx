@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { Check, Timer } from "lucide-react";
+import { MuscleGroupBadge } from "@/components/muscle-group-badge";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
 import type { ProgramDay, ProgramExercise } from "@/lib/program";
@@ -319,9 +320,11 @@ export function ExerciseList({ day }: ExerciseListProps) {
                 <div className="text-xs text-muted mt-0.5">
                   {setCount} sets · {repLabel} reps
                 </div>
-                <div className="text-[11px] text-faint mt-0.5 italic">
-                  {ex.exercise.muscle_group}
-                </div>
+                <MuscleGroupBadge
+                  muscle={ex.exercise.muscle_group}
+                  fallback=""
+                  className={cn("mt-1.5", isDone && "opacity-50")}
+                />
 
                 {/* Interesting Sets Card */}
                 {!isDone && (

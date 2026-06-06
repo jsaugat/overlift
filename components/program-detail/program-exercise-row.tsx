@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import type { ProgramExercise } from "@/lib/actions/programs";
 import { cn } from "@/lib/utils";
-import { getMuscleClass } from "@/lib/muscle-utils";
+import { MuscleGroupBadge } from "@/components/muscle-group-badge";
 
 interface ProgramExerciseRowProps {
   item: ProgramExercise;
@@ -46,7 +46,6 @@ export function ProgramExerciseRow({
   } = useSortable({ id: String(item.id), disabled: dragDisabled });
 
   const name = item.exercise.name || "Custom Exercise";
-  const muscle = item.exercise.muscle_group || "General";
   const equipment = item.exercise.equipment || "Bodyweight";
   const positionLabel = String(index + 1).padStart(2, "0");
 
@@ -94,14 +93,7 @@ export function ProgramExerciseRow({
             {name}
           </h3>
           <div className="flex flex-wrap gap-1.5">
-            <span
-              className={cn(
-                "rounded px-2 py-[3px] text-[0.65rem] font-bold uppercase tracking-wide",
-                getMuscleClass(muscle),
-              )}
-            >
-              {muscle}
-            </span>
+            <MuscleGroupBadge muscle={item.exercise.muscle_group} />
             <span className="rounded bg-[#222222] px-2 py-[3px] text-[0.65rem] font-bold uppercase tracking-wide text-[#aaaaaa]">
               {equipment}
             </span>
