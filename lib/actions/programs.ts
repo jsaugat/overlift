@@ -611,6 +611,49 @@ export async function addExerciseToDay(
   return { success: true };
 }
 
+export async function reorderDayExercises(
+  userId: string,
+  dayId: number,
+  orderedExerciseRowIds: number[],
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createSupabaseServerClient();
+
+  const { data: existing, error: fetchError } = await supabase
+    .from("user_program_exercises")
+    .select("id")
+    .eq("user_program_day_id", dayId)
+    .eq("user_id", userId);
+
+  if (fetchError) {
+    return { success: false, error: "Failed to fetch exercises" };
+  }
+
+  const existingIds = new Set(
+    (existing ?? []).map((row) => (row as { id: number }).id),
+  );
+
+  if (
+    existingIds.size !== orderedExerciseRowIds.length ||
+    orderedExerciseRowIds.some((id) => !existingIds.has(id))
+  ) {
+    return { success: false, error: "Invalid exercise order" };
+  }
+
+  for (let i = 0; i < orderedExerciseRowIds.length; i++) {
+    const { error } = await (supabase.from("user_program_exercises") as any)
+      .update({ position: i + 1 })
+      .eq("id", orderedExerciseRowIds[i])
+      .eq("user_id", userId)
+      .eq("user_program_day_id", dayId);
+
+    if (error) {
+      return { success: false, error: "Failed to reorder exercises" };
+    }
+  }
+
+  return { success: true };
+}
+
 export async function removeExerciseFromDay(
   userId: string,
   exerciseRowId: number,

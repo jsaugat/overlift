@@ -190,7 +190,9 @@ export function ProgramDetailClient({
           deleteProgramTrigger={sidebarDeleteTrigger}
         />
 
+        {/* Program Day Exercises */}
         <ProgramDayExercises
+          userId={userId}
           selectedDay={selectedDay}
           exercises={exercises}
           isPending={isPending}
@@ -198,6 +200,7 @@ export function ProgramDetailClient({
           onRenameDay={openRenameDay}
           onEditExercise={setEditTarget}
           onRemoveExercise={handleRemoveExercise}
+          onReordered={refreshPage}
         />
       </div>
 
@@ -216,6 +219,7 @@ export function ProgramDetailClient({
         />
       )}
 
+      {/* Rename Day Dialog */}
       <Dialog open={renameDayOpen} onOpenChange={handleRenameDayOpenChange}>
         <DialogContent className="max-w-sm bg-app border border-app2 rounded-xl p-0">
           <DialogHeader className="px-5 pt-5 sm:px-7 sm:pt-6 gap-0">
@@ -268,6 +272,7 @@ export function ProgramDetailClient({
         </DialogContent>
       </Dialog>
 
+      {/* Rename Program Dialog */}
       <Dialog open={renameOpen} onOpenChange={handleRenameOpenChange}>
         <DialogContent className="max-w-sm bg-app border border-app2 rounded-xl p-0">
           <DialogHeader className="px-5 pt-5 sm:px-7 sm:pt-6 gap-0">
@@ -318,6 +323,8 @@ export function ProgramDetailClient({
         </DialogContent>
       </Dialog>
 
+
+      {/* Edit Exercise Dialog */}
       {editTarget && (
         <EditExerciseDialog
           open={!!editTarget}

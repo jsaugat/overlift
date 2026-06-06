@@ -1,6 +1,8 @@
 "use client";
 
 import { Pencil, Trash2, GripHorizontal } from "lucide-react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { Badge } from "@/components/ui/badge";
 import { SickButton } from "@/components/ui/sick-button";
 import {
@@ -33,16 +35,47 @@ export function ProgramExerciseRow({
   onRemove,
   isPending,
 }: ProgramExerciseRowProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: String(item.id), disabled: isPending });
+
   const name = item.exercise.name || "Custom Exercise";
   const muscle = item.exercise.muscle_group || "General";
   const equipment = item.exercise.equipment || "Bodyweight";
 
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-0 bg-app2 border border-app rounded-lg p-4 sm:px-5 sm:py-4 transition-all hover:border-app2 select-none group">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-0 bg-app2 border border-app rounded-lg p-4 sm:px-5 sm:py-4 transition-all hover:border-app2 select-none group",
+        isDragging && "opacity-60 z-10 shadow-lg border-accent/40",
+      )}
+    >
       <div className="flex items-center flex-1 min-w-0 w-full">
-        <div className="text-muted pr-3 sm:pr-4 cursor-grab opacity-30">
+        <button
+          type="button"
+          className={cn(
+            "text-muted pr-3 sm:pr-4 touch-none",
+            isPending ? "cursor-not-allowed opacity-30" : "cursor-grab active:cursor-grabbing opacity-50 hover:opacity-80",
+          )}
+          disabled={isPending}
+          aria-label={`Reorder ${name}`}
+          {...attributes}
+          {...listeners}
+        >
           <GripHorizontal className="w-[18px] h-[18px]" />
-        </div>
+        </button>
 
         <div className="font-mono text-xs text-muted font-semibold w-6 sm:w-7 shrink-0">
           {String(index + 1).padStart(2, "0")}
