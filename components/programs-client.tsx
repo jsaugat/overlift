@@ -226,21 +226,22 @@ export function ProgramsClient({ userId, programs }: ProgramsClientProps) {
                 Starting Day
               </label>
               <div className="flex gap-1.5 flex-wrap">
-                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
+                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
                   (day, i) => (
-                    <button
+                    <Button
                       key={day}
                       type="button"
                       onClick={() => setStartingDay(i)}
+                      size={"xs"}
                       className={cn(
-                        "flex-1 min-w-[2.5rem] px-2 py-1.5 text-[11px] font-mono uppercase rounded-md border transition-all duration-150 cursor-pointer",
+                        "flex-1 font-mono uppercase rounded-md border transition-all duration-150 cursor-pointer",
                         startingDay === i
-                          ? "bg-accent/15 border-accent/50 text-accent font-bold"
+                          ? "bg-accent/15 border-accent/50 text-accent font-medium"
                           : "bg-app2 border-app2 text-muted hover:text-app hover:border-app",
                       )}
                     >
                       {day}
-                    </button>
+                    </Button>
                   ),
                 )}
               </div>
