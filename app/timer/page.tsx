@@ -1,8 +1,14 @@
+"use client";
+
 import { AppHeader } from "@/components/app-header";
 import { Nav } from "@/components/nav";
 import { RestTimer } from "@/components/rest-timer";
+import { useSearchParams } from "next/navigation";
 
 export default function TimerPage() {
+  const searchParams = useSearchParams();
+  const seconds = searchParams.get("seconds");
+
   return (
     <>
       <AppHeader />
@@ -17,7 +23,7 @@ export default function TimerPage() {
               Select a preset or set a custom duration between sets.
             </p>
           </div>
-          <RestTimer />
+          <RestTimer initialSeconds={seconds ? parseInt(seconds) : 60} />
         </div>
       </div>
     </>

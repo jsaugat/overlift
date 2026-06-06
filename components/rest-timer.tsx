@@ -19,9 +19,13 @@ function formatTime(s: number): string {
   return `${m}:${sec < 10 ? "0" : ""}${sec}`;
 }
 
-export function RestTimer() {
-  const [duration, setDuration] = useState(90);
-  const [remaining, setRemaining] = useState(90);
+export function RestTimer({
+  initialSeconds = 90,
+}: {
+  initialSeconds?: number;
+}) {
+  const [duration, setDuration] = useState(initialSeconds);
+  const [remaining, setRemaining] = useState(initialSeconds);
   const [running, setRunning] = useState(false);
   const [customMin, setCustomMin] = useState("1");
   const [customSec, setCustomSec] = useState("30");
