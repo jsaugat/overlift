@@ -1,10 +1,9 @@
 "use client";
 
-import { Pencil, Trash2, GripHorizontal } from "lucide-react";
+import type { ReactNode } from "react";
+import { Pencil, Trash2, GripVertical } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Badge } from "@/components/ui/badge";
-import { SickButton } from "@/components/ui/sick-button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,6 +28,36 @@ interface ProgramExerciseRowProps {
   dragDisabled?: boolean;
 }
 
+function ActionButton({
+  onClick,
+  disabled,
+  title,
+  children,
+  className,
+}: {
+  onClick?: () => void;
+  disabled?: boolean;
+  title: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      title={title}
+      className={cn(
+        "flex items-center justify-center p-2 rounded-md border border-[#2c2c2e] bg-[#1c1c1e] text-muted transition-colors",
+        "hover:text-app hover:border-app2 disabled:opacity-40 disabled:pointer-events-none",
+        className,
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
 export function ProgramExerciseRow({
   item,
   index,
@@ -49,6 +78,7 @@ export function ProgramExerciseRow({
   const name = item.exercise.name || "Custom Exercise";
   const muscle = item.exercise.muscle_group || "General";
   const equipment = item.exercise.equipment || "Bodyweight";
+  const positionLabel = String(index + 1).padStart(2, "0");
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -60,96 +90,89 @@ export function ProgramExerciseRow({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-0 bg-app2 border border-app rounded-lg p-4 sm:px-5 sm:py-4 transition-all hover:border-app2 select-none group",
-        isDragging && "opacity-60 z-10 shadow-lg border-accent/40",
+        "relative overflow-hidden flex flex-col gap-4 rounded-xl border border-app bg-app2 p-[18px] select-none transition-all",
+        "hover:border-app2",
+        isDragging && "z-10 opacity-60 shadow-lg border-accent/40",
       )}
     >
-      <div className="flex items-center flex-1 min-w-0 w-full">
+      <span
+        aria-hidden
+        className="pointer-events-none absolute right-3 -top-4 z-[1] font-sans text-[4.5rem] font-black leading-none text-white/[0.03] select-none"
+      >
+        {positionLabel}
+      </span>
+
+      <div className="relative z-[2] flex items-start gap-3">
         <button
           type="button"
           className={cn(
-            "text-muted pr-3 sm:pr-4 touch-none",
+            "touch-none flex items-center pt-0.5 text-[#444]",
             dragDisabled
               ? "cursor-not-allowed opacity-30"
-              : "cursor-grab active:cursor-grabbing opacity-50 hover:opacity-80",
+              : "cursor-grab active:cursor-grabbing hover:text-muted",
           )}
           disabled={dragDisabled}
           aria-label={`Reorder ${name}`}
           {...attributes}
           {...listeners}
         >
-          <GripHorizontal className="w-[18px] h-[18px]" />
+          <GripVertical className="h-[18px] w-[18px]" />
         </button>
 
-        <div className="font-mono text-xs text-muted font-semibold w-6 sm:w-7 shrink-0">
-          {String(index + 1).padStart(2, "0")}
-        </div>
-
-        <div className="flex-1 min-w-0 pr-2">
-          <div className="uppercase text-[15px] sm:text-base font-play truncate mb-1.5 capitalize">
+        <div className="min-w-0 max-w-[85%] flex-1">
+          <h3 className="mb-2 font-play text-[1.05rem] font-bold uppercase leading-snug tracking-wide text-app capitalize">
             {name}
-          </div>
-          <div className="flex gap-1.5 flex-wrap">
-            <Badge
-              variant="secondary"
+          </h3>
+          <div className="flex flex-wrap gap-1.5">
+            <span
               className={cn(
-                "text-[10px] font-bold uppercase tracking-wide rounded px-1.5 py-0 h-[18px] border-0",
+                "rounded px-2 py-[3px] text-[0.65rem] font-bold uppercase tracking-wide",
                 getMuscleClass(muscle),
               )}
             >
               {muscle}
-            </Badge>
-            <Badge
-              variant="secondary"
-              className="text-[10px] font-bold uppercase tracking-wide rounded px-1.5 py-0 h-[18px] border-0 badge-generic"
-            >
+            </span>
+            <span className="rounded bg-[#222222] px-2 py-[3px] text-[0.65rem] font-bold uppercase tracking-wide text-[#aaaaaa]">
               {equipment}
-            </Badge>
+            </span>
           </div>
         </div>
       </div>
 
-      <div className="flex items-center justify-between w-full sm:w-auto border-t sm:border-t-0 border-app pt-3.5 sm:pt-0">
-        <div className="flex items-center gap-5 sm:gap-7 sm:mr-6">
-          <div className="text-center">
-            <div className="font-mono text-[15px] sm:text-base text-app">
+      <div className="relative z-[2] flex items-center justify-between border-t border-[#1f1f1f] pt-3.5">
+        <div className="flex gap-6">
+          <div className="flex flex-col gap-0.5">
+            <span className="font-mono text-[1.1rem] font-semibold text-app">
               {item.sets ?? 3}
-            </div>
-            <div className="text-[9px] sm:text-[10px] text-muted uppercase tracking-wide mt-0.5">
-              Sets
-            </div>
+            </span>
+            <span className="text-[0.65rem] uppercase text-muted">Sets</span>
           </div>
-          <div className="text-center">
-            <div className="font-mono text-[15px] sm:text-base">
+          <div className="flex flex-col gap-0.5">
+            <span className="font-mono text-[1.1rem] font-semibold text-app">
               {item.rep_min ?? 8} - {item.rep_max ?? 12}
-            </div>
-            <div className="text-[9px] sm:text-[10px] text-muted uppercase tracking-wide mt-0.5">
-              Reps
-            </div>
+            </span>
+            <span className="text-[0.65rem] uppercase text-muted">Reps</span>
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 sm:border-l sm:border-app sm:pl-4">
-          <SickButton
-            variant="text"
-            icon={<Pencil className="w-[14px] h-[14px]" />}
+        <div className="flex gap-2">
+          <ActionButton
             onClick={onEdit}
             disabled={isPending}
-            title="Edit Target Ranges"
+            title="Edit target ranges"
           >
-            {""}
-          </SickButton>
+            <Pencil className="h-3.5 w-3.5" />
+          </ActionButton>
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <SickButton
-                variant="danger"
-                icon={<Trash2 className="w-[14px] h-[14px]" />}
+              <ActionButton
                 disabled={isPending}
-                title="Remove Exercise"
+                title="Remove exercise"
+                className="hover:text-destructive hover:border-destructive/30"
               >
-                {""}
-              </SickButton>
+                <Trash2 className="h-3.5 w-3.5" />
+              </ActionButton>
             </AlertDialogTrigger>
             <AlertDialogContent className="bg-app border border-app2 text-app">
               <AlertDialogHeader>
@@ -158,7 +181,7 @@ export function ProgramExerciseRow({
                 </AlertDialogTitle>
                 <AlertDialogDescription className="text-muted">
                   Remove{" "}
-                  <span className="text-app font-semibold capitalize">
+                  <span className="font-semibold capitalize text-app">
                     &ldquo;{name}&rdquo;
                   </span>{" "}
                   from this training day? You can always add it back later.

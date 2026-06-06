@@ -237,20 +237,23 @@ export function ProgramDetailClient({
             <label className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-2">
               Day name
             </label>
-            <Input
-              type="text"
-              value={renameDayValue}
-              onChange={(e) => setRenameDayValue(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleRenameDay();
-                }
-              }}
-              placeholder="e.g. Push, Pull, Legs"
-              className="bg-app2 border-app2 text-app font-play"
-              autoFocus
-            />
+            <div className="flex items-center gap-2 font-play">
+              <Input
+                type="text"
+                value={renameDayValue}
+                onChange={(e) => setRenameDayValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleRenameDay();
+                  }
+                }}
+                placeholder="e.g. Push, Pull, Legs"
+                className="bg-app2 border-app2 "
+                autoFocus
+              />
+                <span className="text-base">Day</span>
+            </div>
           </div>
 
           <DialogFooter className="m-0 border-t border-app bg-[rgba(0,0,0,0.2)]">
