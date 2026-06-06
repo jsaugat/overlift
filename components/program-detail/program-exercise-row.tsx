@@ -1,9 +1,9 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { Pencil, Trash2, GripVertical } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { SickButton } from "@/components/ui/sick-button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,36 +26,6 @@ interface ProgramExerciseRowProps {
   onRemove: () => void;
   isPending: boolean;
   dragDisabled?: boolean;
-}
-
-function ActionButton({
-  onClick,
-  disabled,
-  title,
-  children,
-  className,
-}: {
-  onClick?: () => void;
-  disabled?: boolean;
-  title: string;
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      title={title}
-      className={cn(
-        "flex items-center justify-center p-2 rounded-md border border-[#2c2c2e] bg-[#1c1c1e] text-muted transition-colors",
-        "hover:text-app hover:border-app2 disabled:opacity-40 disabled:pointer-events-none",
-        className,
-      )}
-    >
-      {children}
-    </button>
-  );
 }
 
 export function ProgramExerciseRow({
@@ -97,7 +67,7 @@ export function ProgramExerciseRow({
     >
       <span
         aria-hidden
-        className="pointer-events-none absolute right-3 -top-4 z-[1] font-sans text-[4.5rem] font-black leading-none text-white/[0.03] select-none"
+        className="pointer-events-none absolute right-3 -top-1 z-[1] font-sans text-[4.5rem] font-bold leading-none text-white/[0.03] select-none"
       >
         {positionLabel}
       </span>
@@ -120,7 +90,7 @@ export function ProgramExerciseRow({
         </button>
 
         <div className="min-w-0 max-w-[85%] flex-1">
-          <h3 className="mb-2 font-play text-[1.05rem] font-bold uppercase leading-snug tracking-wide text-app capitalize">
+          <h3 className="mb-2 font-play text-[1.05rem] font-medium uppercase leading-snug tracking-wide text-app capitalize">
             {name}
           </h3>
           <div className="flex flex-wrap gap-1.5">
@@ -142,37 +112,40 @@ export function ProgramExerciseRow({
       <div className="relative z-[2] flex items-center justify-between border-t border-[#1f1f1f] pt-3.5">
         <div className="flex gap-6">
           <div className="flex flex-col gap-0.5">
-            <span className="font-mono text-[1.1rem] font-semibold text-app">
+            <span className="font-play text-[1.1rem] font-medium text-app">
               {item.sets ?? 3}
             </span>
             <span className="text-[0.65rem] uppercase text-muted">Sets</span>
           </div>
           <div className="flex flex-col gap-0.5">
-            <span className="font-mono text-[1.1rem] font-semibold text-app">
+            <span className="font-play text-[1.1rem] font-medium text-app">
               {item.rep_min ?? 8} - {item.rep_max ?? 12}
             </span>
             <span className="text-[0.65rem] uppercase text-muted">Reps</span>
           </div>
         </div>
 
-        <div className="flex gap-2">
-          <ActionButton
+        <div className="flex items-center gap-1.5">
+          <SickButton
+            variant="text"
+            icon={<Pencil className="w-[14px] h-[14px]" />}
             onClick={onEdit}
             disabled={isPending}
-            title="Edit target ranges"
+            title="Edit Target Ranges"
           >
-            <Pencil className="h-3.5 w-3.5" />
-          </ActionButton>
+            {""}
+          </SickButton>
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <ActionButton
+              <SickButton
+                variant="danger"
+                icon={<Trash2 className="w-[14px] h-[14px]" />}
                 disabled={isPending}
-                title="Remove exercise"
-                className="hover:text-destructive hover:border-destructive/30"
+                title="Remove Exercise"
               >
-                <Trash2 className="h-3.5 w-3.5" />
-              </ActionButton>
+                {""}
+              </SickButton>
             </AlertDialogTrigger>
             <AlertDialogContent className="bg-app border border-app2 text-app">
               <AlertDialogHeader>
