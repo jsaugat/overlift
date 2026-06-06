@@ -71,6 +71,12 @@ export function AddExerciseDialog({
   const [customName, setCustomName] = useState("");
   const [customMuscle, setCustomMuscle] = useState("Chest");
   const [customEquipment, setCustomEquipment] = useState("Machine");
+  const [defaultSets, setDefaultSets] = useState(3);
+  const [defaultRepMin, setDefaultRepMin] = useState(8);
+  const [defaultRepMax, setDefaultRepMax] = useState(12);
+  const [defaultRestSeconds, setDefaultRestSeconds] = useState<number | null>(
+    90,
+  );
   const [isPending, startTransition] = useTransition();
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -81,6 +87,10 @@ export function AddExerciseDialog({
       setFilterEquipment("All");
       setShowCustomForm(false);
       setCustomName("");
+      setDefaultSets(3);
+      setDefaultRepMin(8);
+      setDefaultRepMax(12);
+      setDefaultRestSeconds(90);
       setTimeout(() => searchRef.current?.focus(), 100);
     }
   }, [open]);
@@ -127,7 +137,15 @@ export function AddExerciseDialog({
 
   const handleSelectExercise = (exerciseId: number) => {
     startTransition(async () => {
-      await addExerciseToDay(userId, dayId, exerciseId);
+      await addExerciseToDay(
+        userId,
+        dayId,
+        exerciseId,
+        defaultSets,
+        defaultRepMin,
+        defaultRepMax,
+        defaultRestSeconds,
+      );
       onExerciseAdded();
       onOpenChange(false);
     });
@@ -145,7 +163,15 @@ export function AddExerciseDialog({
         customEquipment,
       );
       if (result.success && result.exerciseId) {
-        await addExerciseToDay(userId, dayId, result.exerciseId);
+        await addExerciseToDay(
+          userId,
+          dayId,
+          result.exerciseId,
+          defaultSets,
+          defaultRepMin,
+          defaultRepMax,
+          defaultRestSeconds,
+        );
         onExerciseAdded();
         onOpenChange(false);
       }
@@ -165,6 +191,65 @@ export function AddExerciseDialog({
         </DialogHeader>
 
         <div className="px-5 sm:px-7 shrink-0 flex flex-col gap-3">
+          {/* Default Settings */}
+          <div className="flex flex-wrap gap-2 items-end">
+            <div className="flex-1 min-w-[80px]">
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-muted mb-1">
+                Sets
+              </label>
+              <Input
+                type="number"
+                value={defaultSets}
+                onChange={(e) => setDefaultSets(Number(e.target.value))}
+                className="bg-app2 border-app2 text-app h-8 text-sm"
+                min="1"
+                max="10"
+              />
+            </div>
+            <div className="flex-1 min-w-[100px]">
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-muted mb-1">
+                Reps
+              </label>
+              <div className="flex gap-1">
+                <Input
+                  type="number"
+                  value={defaultRepMin}
+                  onChange={(e) => setDefaultRepMin(Number(e.target.value))}
+                  className="bg-app2 border-app2 text-app h-8 text-sm w-16"
+                  min="1"
+                  max="30"
+                />
+                <span className="text-muted self-center">-</span>
+                <Input
+                  type="number"
+                  value={defaultRepMax}
+                  onChange={(e) => setDefaultRepMax(Number(e.target.value))}
+                  className="bg-app2 border-app2 text-app h-8 text-sm w-16"
+                  min="1"
+                  max="30"
+                />
+              </div>
+            </div>
+            <div className="flex-1 min-w-[80px]">
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-muted mb-1">
+                Rest (s)
+              </label>
+              <Input
+                type="number"
+                value={defaultRestSeconds ?? ""}
+                onChange={(e) =>
+                  setDefaultRestSeconds(
+                    e.target.value ? Number(e.target.value) : null,
+                  )
+                }
+                placeholder="90"
+                className="bg-app2 border-app2 text-app h-8 text-sm"
+                min="0"
+                max="600"
+              />
+            </div>
+          </div>
+
           {/* Search Input */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />

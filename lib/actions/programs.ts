@@ -576,6 +576,7 @@ export async function addExerciseToDay(
   sets: number = 3,
   repMin: number = 8,
   repMax: number = 12,
+  restSeconds: number | null = null,
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = await createSupabaseServerClient();
 
@@ -606,6 +607,7 @@ export async function addExerciseToDay(
       sets,
       rep_min: repMin,
       rep_max: repMax,
+      rest_seconds: restSeconds,
     } as any);
 
   if (insertError) {

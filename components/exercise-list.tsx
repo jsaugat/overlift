@@ -326,9 +326,9 @@ export function ExerciseList({ day }: ExerciseListProps) {
                     className={cn("", isDone && "opacity-50")}
                   />
 
-                  <Badge variant="outline" className="text-xs uppercase">
+                  <div className="text-xs text-muted mt-0.5">
                     {setCount} sets · {repLabel} reps
-                  </Badge>
+                  </div>
 
                   {ex.rest_seconds && (
                     <Badge
@@ -336,7 +336,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
                       className={cn("cursor-pointer", isDone && "opacity-50")}
                       title="Rest"
                       onClick={() =>
-                        router.push("/timer?seconds=" + ex.rest_seconds)
+                        router.push(`/timer?seconds=${ex.rest_seconds}`)
                       }
                     >
                       <Timer />
