@@ -317,14 +317,17 @@ export function ExerciseList({ day }: ExerciseListProps) {
                 >
                   {ex.exercise.name}
                 </div>
-                <div className="text-xs text-muted mt-0.5">
-                  {setCount} sets · {repLabel} reps
+                <div className="flex items-center gap-1.5">
+                  <MuscleGroupBadge
+                    muscle={ex.exercise.muscle_group}
+                    fallback=""
+                    className={cn("mt-1.5", isDone && "opacity-50")}
+                    />
+
+                  <div className="text-xs text-muted mt-0.5">
+                    {setCount} sets · {repLabel} reps
+                  </div>
                 </div>
-                <MuscleGroupBadge
-                  muscle={ex.exercise.muscle_group}
-                  fallback=""
-                  className={cn("mt-1.5", isDone && "opacity-50")}
-                />
 
                 {/* Interesting Sets Card */}
                 {!isDone && (
