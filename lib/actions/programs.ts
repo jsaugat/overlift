@@ -13,6 +13,7 @@ export interface ProgramExercise {
   sets: number | null;
   rep_min: number | null;
   rep_max: number | null;
+  rest_seconds: number | null;
   exercise: {
     id: number;
     name: string;
@@ -86,6 +87,7 @@ interface ActiveProgramQueryExercise {
   sets: number | null;
   rep_min: number | null;
   rep_max: number | null;
+  rest_seconds: number | null;
   exercises: {
     id: number;
     name: string;
@@ -238,7 +240,7 @@ export async function getActiveProgram(
     const { data, error } = await supabase
       .from("user_programs")
       .select(
-        "id, name, is_active, created_at, starting_day, user_program_days ( id, day_order, name, user_program_exercises ( id, exercise_id, position, sets, rep_min, rep_max, exercises ( id, name, muscle_group, equipment ) ) )",
+        "id, name, is_active, created_at, starting_day, user_program_days ( id, day_order, name, user_program_exercises ( id, exercise_id, position, sets, rep_min, rep_max, rest_seconds, exercises ( id, name, muscle_group, equipment ) ) )",
       )
       .eq("user_id", userId)
       .eq("is_active", true)
@@ -274,6 +276,7 @@ export async function getActiveProgram(
           sets: exercise.sets,
           rep_min: exercise.rep_min,
           rep_max: exercise.rep_max,
+          rest_seconds: exercise.rest_seconds,
           exercise: {
             id: exercise.exercises?.id ?? exercise.exercise_id,
             name: exercise.exercises?.name ?? "",
@@ -502,7 +505,7 @@ export async function getProgramWithExercises(
     const { data, error } = await supabase
       .from("user_programs")
       .select(
-        "id, name, is_active, created_at, starting_day, user_program_days ( id, day_order, name, user_program_exercises ( id, exercise_id, position, sets, rep_min, rep_max, exercises ( id, name, muscle_group, equipment ) ) )",
+        "id, name, is_active, created_at, starting_day, user_program_days ( id, day_order, name, user_program_exercises ( id, exercise_id, position, sets, rep_min, rep_max, rest_seconds, exercises ( id, name, muscle_group, equipment ) ) )",
       )
       .eq("user_id", userId)
       .eq("id", programId)
@@ -535,6 +538,7 @@ export async function getProgramWithExercises(
         sets: exercise.sets,
         rep_min: exercise.rep_min,
         rep_max: exercise.rep_max,
+        rest_seconds: exercise.rest_seconds,
         exercise: {
           id: exercise.exercises?.id ?? exercise.exercise_id,
           name: exercise.exercises?.name ?? "",

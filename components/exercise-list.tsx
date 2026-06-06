@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { Check, Timer } from "lucide-react";
 import { MuscleGroupBadge } from "@/components/muscle-group-badge";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
 import type { ProgramDay, ProgramExercise } from "@/lib/program";
@@ -198,6 +199,7 @@ export function ExerciseList({ day }: ExerciseListProps) {
   const displayExercises = useMemo(() => {
     return day.exercises.slice().sort((a, b) => a.position - b.position);
   }, [day.exercises]);
+  console.log(displayExercises, "displayExercises");
 
   const dayTypeLabel = day.name
     ? day.name[0].toUpperCase() + day.name.slice(1)
@@ -321,12 +323,26 @@ export function ExerciseList({ day }: ExerciseListProps) {
                   <MuscleGroupBadge
                     muscle={ex.exercise.muscle_group}
                     fallback=""
-                    className={cn("mt-1.5", isDone && "opacity-50")}
-                    />
+                    className={cn("", isDone && "opacity-50")}
+                  />
 
-                  <div className="text-xs text-muted mt-0.5">
+                  <Badge variant="outline" className="text-xs uppercase">
                     {setCount} sets · {repLabel} reps
-                  </div>
+                  </Badge>
+
+                  {ex.rest_seconds && (
+                    <Badge
+                      variant="outline"
+                      className={cn("cursor-pointer", isDone && "opacity-50")}
+                      title="Rest"
+                      onClick={() =>
+                        router.push("/timer?seconds=" + ex.rest_seconds)
+                      }
+                    >
+                      <Timer />
+                      {ex.rest_seconds}s
+                    </Badge>
+                  )}
                 </div>
 
                 {/* Interesting Sets Card */}

@@ -1,5 +1,6 @@
 import { getMuscleClass } from "@/lib/muscle-utils";
 import { cn } from "@/lib/utils";
+import { Badge } from "./ui/badge";
 
 interface MuscleGroupBadgeProps {
   muscle: string | null | undefined;
@@ -16,14 +17,8 @@ export function MuscleGroupBadge({
   if (!label) return null;
 
   return (
-    <span
-      className={cn(
-        "inline-flex rounded px-2 py-[3px] text-[0.65rem] font-bold uppercase tracking-wide",
-        getMuscleClass(label),
-        className,
-      )}
-    >
+    <Badge className={cn("uppercase", getMuscleClass(label), className)}>
       {label}
-    </span>
+    </Badge>
   );
 }
