@@ -1,10 +1,10 @@
-# Overlift App Context
+# Temper Lab App Context
 
 This file is a quick reference for chatting about the app, its flows, and its database.
 
 ## What this app is
 
-Overlift is a workout tracking app built with:
+Temper Lab is a workout tracking app built with:
 
 - Next.js App Router
 - Supabase for auth + Postgres
